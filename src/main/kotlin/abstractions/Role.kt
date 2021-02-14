@@ -1,6 +1,11 @@
 package abstractions
 
-class Role(Name: String){
-    val Paramss: MutableList<String> = mutableListOf()
+data class Role(val Name: String){
+    val Param: MutableList<String> = mutableListOf()
+
+
+    override fun toString():String{
+        return Name
+    }
 
 }
