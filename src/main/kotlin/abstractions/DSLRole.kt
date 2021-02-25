@@ -1,5 +1,5 @@
 package abstractions
 
-class DSLRole(ObjetName: String, Roles: List<Role>){
+data class DSLRole(var ObjetName: String, var Roles: List<Role>){
 
 }
