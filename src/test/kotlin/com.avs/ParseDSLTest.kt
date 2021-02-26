@@ -15,7 +15,7 @@ internal class ParseDSLTest {
         val createRole: Role = Role("create")
         var Roles: MutableList<Role> = mutableListOf(readRole, writeRole, createRole)
         var ObjectRules : DSLRole = DSLRole("requests", Roles)
-        parser.getDSLRulestoObject(input)?.let { assertEquals(ObjectRules.ObjetName, it.ObjetName) }
+        assertEquals(ObjectRules, parser.getDSLRulesfromString(input))
     }
 @Test
     fun testParseRole() {
