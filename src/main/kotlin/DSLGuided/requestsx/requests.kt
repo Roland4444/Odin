@@ -1,9 +1,15 @@
 package DSLGuided.requestsx
 import abstractions.Role
-class requests(override val DSL: String?) : DSLProcessor(DSL!!  ) {
-    val write: RoleHandler = {print("Apply write\n")}
-    val read: RoleHandler = {print("Apply read\n")}
-    val super_: RoleHandler = {print("Apply super\n")}
+class requests() : DSLProcessor() {
+    val write: RoleHandler = {
+    }
+    val default: RoleHandler = {outtemplate="<h1>Недостаточно прав</h1>"}
+    val marina: RoleHandler = {}
+    val olga: RoleHandler = {print("Apply olga\n")
+        outtemplate = outtemplate.replace("'SUSPENDING'}; ", "'EMPTY'};");
+        outtemplate = outtemplate.replace("<script type=\"text/babel\"  src=\"js/processJSON.js\">", "<script type=\"text/babel\"  src=\">");
+
+    }
     val guest: RoleHandler = {outtemplate="<h1>BOLT</h1>"}
     val add: DumbHandler={it+2}
     val add2: DumbHandler2 = { i: Int, i1: Int -> i+i1}
@@ -11,7 +17,10 @@ class requests(override val DSL: String?) : DSLProcessor(DSL!!  ) {
     override fun render(DSL: String): String {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
-        mapper.forEach { it.value.invoke()  }
+        if (mapper.size==0)
+            default.invoke()
+        else
+            mapper.forEach { it.value.invoke()  }
         return  outtemplate
     }
 
@@ -19,14 +28,16 @@ class requests(override val DSL: String?) : DSLProcessor(DSL!!  ) {
         return parser.parseRoles(DSL!!)
     }
     fun appendRole(R: Role){
+
         print("Adding role ${R.Name}\n")
         when (R?.Name){
-            "read" -> mapper.put(R, read)
-            "write" -> mapper.put(R, write)
-            "super" -> mapper.put(R, super_)
+            "marina" -> mapper.put(R, marina)
+            "olga" -> mapper.put(R, olga)
+            "guest" -> mapper.put(R, guest)
         }
     }
     fun loadRoles(D: List<Role>): Unit{
+        mapper.clear()
         D.forEach { appendRole(it) }
     }
     val test2: RoleHandler = {outtemplate += "xxx"}

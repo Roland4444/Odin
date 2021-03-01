@@ -4,7 +4,7 @@ import java.lang.reflect.Method
 import kotlin.test.assertNotEquals
 class requestsTest : TestCase() {
     fun testGetDumbHandler() {
-        val req = requests("A")
+        val req = requests()
         req.outtemplate = "12"
         req.test2()
         assertEquals("12xxx", req.outtemplate)
@@ -21,9 +21,8 @@ class requestsTest : TestCase() {
 
     fun testApplyrules() {
         val input: String = """'requests' => ::read{}, ::write{}, ::create{}, ::super{}."""
-        val req = requests(input)
+        val req = requests()
         req.render(input)
         assertNotEquals(null, req.mapper)
-        assertEquals(3, req.mapper.size)
     }
 }

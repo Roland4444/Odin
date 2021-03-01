@@ -8,15 +8,14 @@ typealias RoleHandler = () -> Unit
 typealias DumbHandler = (Param:Int) -> Int
 typealias DumbHandler2 = (Param:Int, Param2: Int) -> Int
 
-abstract class DSLProcessor(DSL: String) {
+abstract class DSLProcessor() {
     var parser = ParseDSL()
     var mapper = mutableMapOf<Role, RoleHandler>()
     init{
-        print("From constructor::  $DSL\n")
+
     }
     abstract fun render(DSL: String): String
     abstract fun parseRoles(DSL: String): List<Role>
-    abstract val DSL: Any?
     var outtemplate: String = """"""
     fun init(){
 
