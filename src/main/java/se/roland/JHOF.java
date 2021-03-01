@@ -1,18 +1,10 @@
 package se.roland;
-import org.reflections.Reflections;
 import se.roland.abstractions.Doc;
-import se.roland.abstractions.SuperM;
 import se.roland.docs.SimpleDoc;
 import se.roland.docs.SuperDoc;
-
-import java.io.File;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 
 public class JHOF {
