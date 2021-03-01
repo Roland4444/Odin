@@ -20,10 +20,10 @@ class requestsTest : TestCase() {
     }
 
     fun testApplyrules() {
-        val input: String = """'requests' => ::read{}, ::write{}, ::create{}."""
+        val input: String = """'requests' => ::read{}, ::write{}, ::create{}, ::super{}."""
         val req = requests(input)
         req.render(input)
         assertNotEquals(null, req.mapper)
-        assertEquals(2, req.mapper.size)
+        assertEquals(3, req.mapper.size)
     }
 }
