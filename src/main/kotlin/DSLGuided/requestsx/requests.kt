@@ -4,6 +4,7 @@ class requests(override val DSL: String?) : DSLProcessor(DSL!!  ) {
     val write: RoleHandler = {print("Apply write\n")}
     val read: RoleHandler = {print("Apply read\n")}
     val super_: RoleHandler = {print("Apply super\n")}
+    val guest: RoleHandler = {outtemplate="<h1>BOLT</h1>"}
     val add: DumbHandler={it+2}
     val add2: DumbHandler2 = { i: Int, i1: Int -> i+i1}
     fun dumbsum(A: Int, B: Int)=A+B
