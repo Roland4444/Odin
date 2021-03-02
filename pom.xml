@@ -20,6 +20,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>uk.roland</groupId>
+            <artifactId>Messaging</artifactId>
+            <version>4.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.example</groupId>
             <artifactId>MessagingAVS</artifactId>
             <version>1.5-SNAPSHOT</version>
