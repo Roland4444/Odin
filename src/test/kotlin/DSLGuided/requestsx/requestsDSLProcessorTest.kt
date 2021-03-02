@@ -2,9 +2,9 @@ package DSLGuided.requestsx
 import junit.framework.TestCase
 import java.lang.reflect.Method
 import kotlin.test.assertNotEquals
-class requestsTest : TestCase() {
+class requestsDSLProcessorTest : TestCase() {
     fun testGetDumbHandler() {
-        val req = requests()
+        val req = RequestsDSLProcessor()
         req.outtemplate = "12"
         req.test2()
         assertEquals("12xxx", req.outtemplate)
@@ -21,7 +21,7 @@ class requestsTest : TestCase() {
 
     fun testApplyrules() {
         val input: String = """'requests' => ::read{}, ::write{}, ::create{}, ::super{}."""
-        val req = requests()
+        val req = RequestsDSLProcessor()
         req.render(input)
         assertNotEquals(null, req.mapper)
     }

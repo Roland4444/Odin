@@ -1,6 +1,6 @@
 package DSLGuided.requestsx
 import abstractions.Role
-class requests() : DSLProcessor() {
+class RequestsDSLProcessor() : DSLProcessor() {
     val write: RoleHandler = {
     }
     val default: RoleHandler = {outtemplate="<h1>Недостаточно прав</h1>"}
