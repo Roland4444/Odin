@@ -1,10 +1,17 @@
 package DSLGuided.requestsx
+import abstractions.Param
 import abstractions.Role
 class RequestsDSLProcessor() : DSLProcessor() {
+    companion object{
+        val req = RequestsDSLProcessor()
+
+    }
     val write: RoleHandler = {
     }
     val default: RoleHandler = {outtemplate="<h1>Недостаточно прав</h1>"}
     val marina: RoleHandler = {}
+    val defaultParam: Param = Param()
+
     val olga: RoleHandler = {print("Apply olga\n")
         outtemplate = outtemplate.replace("'SUSPENDING'}; ", "'EMPTY'};");
         outtemplate = outtemplate.replace("<script type=\"text/babel\"  src=\"js/processJSON.js\">", "<script type=\"text/babel\"  src=\">");
@@ -14,13 +21,14 @@ class RequestsDSLProcessor() : DSLProcessor() {
     val add: DumbHandler={it+2}
     val add2: DumbHandler2 = { i: Int, i1: Int -> i+i1}
     fun dumbsum(A: Int, B: Int)=A+B
+
     override fun render(DSL: String): String {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         if (mapper.size==0)
-            default.invoke()
+            default.invoke(defaultParam)
         else
-            mapper.forEach { it.value.invoke()  }
+            mapper.forEach { it.value.invoke(it.key.Param)  }
         return  outtemplate
     }
 

@@ -1,7 +1,6 @@
-package se.roland;
-import se.roland.abstractions.Doc;
-import se.roland.docs.SimpleDoc;
-import se.roland.docs.SuperDoc;
+package se.roland.example;
+import se.roland.example.docs.SimpleDoc;
+import se.roland.example.docs.SuperDoc;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

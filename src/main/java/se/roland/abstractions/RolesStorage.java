@@ -1,9 +1,7 @@
 package se.roland.abstractions;
 import Message.abstractions.BinaryMessage;
 import abstractions.DSLRole;
-
 import java.util.*;
-
 public class RolesStorage implements BinaryMessage{
     public Map<String, Set<DSLRole>> storage=new HashMap<>();
     public String name;
@@ -16,7 +14,6 @@ public class RolesStorage implements BinaryMessage{
     }
 
     public int save(String User, DSLRole role){
-
         var set=  storage.get(User);
         if (set == null) {
             set = new HashSet<>();
@@ -29,5 +26,4 @@ public class RolesStorage implements BinaryMessage{
         set.add(role);
         return 0;
     }
-
 }

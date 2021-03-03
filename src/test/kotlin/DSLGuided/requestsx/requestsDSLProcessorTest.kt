@@ -6,7 +6,7 @@ class requestsDSLProcessorTest : TestCase() {
     fun testGetDumbHandler() {
         val req = RequestsDSLProcessor()
         req.outtemplate = "12"
-        req.test2()
+        req.test2(req.defaultParam)
         assertEquals("12xxx", req.outtemplate)
         assertEquals(4, req.add(2))
         assertEquals(7, req.add2(2,5))

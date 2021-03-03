@@ -1,6 +1,7 @@
 package se.roland;
 
 import junit.framework.TestCase;
+import se.roland.example.JHOF;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
-package se.roland;
+package se.roland.example;
 import org.reflections.Reflections;
-import se.roland.abstractions.SuperM;
 
 import java.util.ArrayList;
 import java.util.Set;

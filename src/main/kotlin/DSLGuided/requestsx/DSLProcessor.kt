@@ -1,10 +1,12 @@
 package DSLGuided.requestsx
 
+import abstractions.Param
 import abstractions.Role
 import com.avs.ParseDSL
+import java.util.*
 
 
-typealias RoleHandler = () -> Unit
+typealias RoleHandler = (Param: Param) -> Unit
 typealias DumbHandler = (Param:Int) -> Int
 typealias DumbHandler2 = (Param:Int, Param2: Int) -> Int
 
