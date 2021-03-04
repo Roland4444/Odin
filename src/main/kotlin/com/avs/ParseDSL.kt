@@ -110,6 +110,36 @@ class ParseDSL {
         return result
     }
 
+    fun head_(input: String): String{
+        return input.head()
+    }
+
+    fun tail_(input: String): String{
+        return input.tail()
+    }
+
+    fun String.head(): String {
+        var data = this.removeWhites()
+        if ((data[0]=='[') && (data[data.length-1]==']'))   /////TUPPle
+            return data.substring(1, data.length-1);
+        if (data.indexOf(",") <0)                     ///////ATOM   <> KEY VALUE
+            return data;
+        if (data.indexOf(",") >0)                     ///////ATOM   <> KEY VALUE
+            return data.substring(0,data.indexOf(",") );
+        return "";
+    }
+
+    fun String.tail(): String{
+        var data = this.removeWhites()
+        println("""data>>($data)""")
+        var head = data.head()
+        println("""head>>($head)""")
+        var tail =data.substring(head.length, data.length)
+        if (tail[0]==',')
+            tail = data.substring(1+head.length, data.length)
+        return tail
+    }
+
     fun getAtom(input: String): Any {
         val type = getType(input)
         var map = mutableMapOf<String, Any>()
@@ -137,9 +167,12 @@ class ParseDSL {
                 for (i in 0..data.length-1){
                     println(data[i])
                     if  (data[i]==']') {
+                        println("]$currentStr")
                         lst.add(getAtom(currentStr))
                     }
                     if ((data[i]==',') && ObjectCreating) {
+                        println("ObjectCreating  $currentStr")
+
                         ObjectCreating = false
                         lst.add(getAtom(currentStr))
                         currentStr=""
@@ -147,12 +180,15 @@ class ParseDSL {
                     }
                     if ((data[i]==',') && !ObjectCreating) {
                         ObjectCreating = true
+                        println("ObjectNotCreating  $currentStr")
+
                         lst.add(getAtom(currentStr))
                         currentStr=""
                         continue
                     }
                     currentStr += data[i]
                 }
+                lst.add(getAtom(currentStr))
                 return lst
             }
 

@@ -90,8 +90,10 @@ internal class ParseDSLTest {
 
         val etalonMap = mutableMapOf<String, Any>()
         var arr = mutableListOf(12,12)
-        var arr2 = mutableListOf(arr,12)
-        etalonMap.put("12", arr)
+        var arr2 = mutableListOf<Any>()
+        arr2.add(arr)
+        arr2.add(12)
+        etalonMap.put("12", arr2)
         assertEquals(etalonMap, parser.getAtom(initial))
     }
     @Test
@@ -127,15 +129,34 @@ internal class ParseDSLTest {
     fun testGetTuppletreeStr() {
         val initial = "[12,'aaaa',[[[12]]]]]";
         var etalon = mutableListOf<String>()
-
         etalon.add("12")
         etalon.add("'aaaa'")
         etalon.add("'f':56")
-
         assertEquals(etalon, parser.getTuppleStr(initial))
-
-
     }
+
+    @Test
+    fun testhead(){
+        val initial = "[12], 57";
+        val initial2 ="12,33,44";
+        val initial3 = "'12':12, '44'"
+        val initial4 = "[], '44'"
+        val initial5 = "'12':[],'12':12, '44'"
+        assertEquals("[12]", parser.head_(initial))
+        assertEquals("12", parser.head_(initial2))
+        assertEquals("'12':12", parser.head_(initial3))
+        assertEquals("[]", parser.head_(initial4))
+        assertEquals("'12':[]", parser.head_(initial5))
+
+        assertEquals("57", parser.tail_(initial))
+        assertEquals("33,44", parser.tail_(initial2))
+        assertEquals("'44'", parser.tail_(initial3))
+        assertEquals("'44'", parser.tail_(initial4))
+        assertEquals("'12':12,'44'", parser.tail_(initial5))
+    }
+
+    fun testHead() {}
+    fun testTail() {}
 
 }
 
