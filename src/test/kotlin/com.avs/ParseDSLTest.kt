@@ -3,6 +3,7 @@ package com.avs
 import abstractions.DSLRole
 import abstractions.Role
 import org.junit.Test
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.collections.List as List1
 
@@ -33,13 +34,13 @@ internal class ParseDSLTest {
         etalon.add(12);
         etalon.add("Добрый день");
         val hashmap = mutableMapOf<String, List1<Any>>();
-        val param: String = "12,'Добрый день', 'таблицы':['касса','склад','приход'], '12 декабря'";
+        val param: String = "[12,'Добрый день', 'таблицы':['касса','склад','приход'], '12 декабря']";
 
         var list = mutableListOf("касса","склад","приход");
         hashmap.put("таблицы", list);
         etalon.add(hashmap);
         etalon.add("12 декабря");
-        assertEquals(etalon.size, parser.parseParams(param))
+        assertEquals(etalon.size, parser.getTupple(param).size)
     }
     fun testParseParam() {}
   //  @Test
@@ -78,6 +79,20 @@ internal class ParseDSLTest {
         val initial = "'12':[12,12,56]";
         val etalon = "[12,12,56]";
         assertEquals(etalon,parser.getValue_(initial))
+        val etalonMap = mutableMapOf<String, Any>()
+        var arr = mutableListOf(12,12,56)
+        etalonMap.put("12", arr)
+        assertEquals(etalonMap, parser.getAtom(initial))
+    }
+    @Test
+    fun nestedtupple() {
+        val initial = "'12':[[12,12],12]";
+
+        val etalonMap = mutableMapOf<String, Any>()
+        var arr = mutableListOf(12,12)
+        var arr2 = mutableListOf(arr,12)
+        etalonMap.put("12", arr)
+        assertEquals(etalonMap, parser.getAtom(initial))
     }
     @Test
     fun testGetTupple() {
@@ -106,6 +121,22 @@ internal class ParseDSLTest {
         assertEquals(etalon2, parser.getTuppleStr(initial2))
 
     }
+
+
+    @Test
+    fun testGetTuppletreeStr() {
+        val initial = "[12,'aaaa',[[[12]]]]]";
+        var etalon = mutableListOf<String>()
+
+        etalon.add("12")
+        etalon.add("'aaaa'")
+        etalon.add("'f':56")
+
+        assertEquals(etalon, parser.getTuppleStr(initial))
+
+
+    }
+
 }
 
 

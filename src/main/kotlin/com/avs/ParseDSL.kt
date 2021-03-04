@@ -113,6 +113,7 @@ class ParseDSL {
     fun getAtom(input: String): Any {
         val type = getType(input)
         var map = mutableMapOf<String, Any>()
+        var lst = mutableListOf<Any>()
         when (type){
             Atom.String->return (input.replace("'",""))
             Atom.Number->{
@@ -129,7 +130,31 @@ class ParseDSL {
                 }
                 return map
             }
-          //  Atom.Tupple->
+            Atom.Tupple->{
+                var data = input.removeWhites()
+                var currentStr=""
+                var ObjectCreating = true
+                for (i in 0..data.length-1){
+                    println(data[i])
+                    if  (data[i]==']') {
+                        lst.add(getAtom(currentStr))
+                    }
+                    if ((data[i]==',') && ObjectCreating) {
+                        ObjectCreating = false
+                        lst.add(getAtom(currentStr))
+                        currentStr=""
+                        continue
+                    }
+                    if ((data[i]==',') && !ObjectCreating) {
+                        ObjectCreating = true
+                        lst.add(getAtom(currentStr))
+                        currentStr=""
+                        continue
+                    }
+                    currentStr += data[i]
+                }
+                return lst
+            }
 
         }
         return ""
