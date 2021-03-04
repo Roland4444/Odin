@@ -3,7 +3,6 @@ package com.avs
 import abstractions.DSLRole
 import abstractions.Role
 import org.junit.Test
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.collections.List as List1
 
@@ -142,6 +141,7 @@ internal class ParseDSLTest {
         val initial3 = "'12':12, '44'"
         val initial4 = "[], '44'"
         val initial5 = "'12':[],'12':12, '44'"
+        val initial6 = "'12', 12,55,55"
         assertEquals("[12]", parser.head_(initial))
         assertEquals("12", parser.head_(initial2))
         assertEquals("'12':12", parser.head_(initial3))
@@ -153,6 +153,9 @@ internal class ParseDSLTest {
         assertEquals("'44'", parser.tail_(initial3))
         assertEquals("'44'", parser.tail_(initial4))
         assertEquals("'12':12,'44'", parser.tail_(initial5))
+        var tail2 = parser.tail_(initial6)
+        var tail3 = parser.tail_(tail2)
+        assertEquals("55,55", tail3)
     }
 
     fun testHead() {}
