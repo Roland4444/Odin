@@ -1,5 +1,6 @@
 package com.avs
 import abstractions.DSLBNF.Atom
+import abstractions.DSLBNF.Expression
 import abstractions.DSLRole
 import abstractions.Role
 import se.roland.util.Checker
@@ -54,6 +55,58 @@ class ParseDSL {
 
     fun getTupple(input: String): List<Any>{
         var result = mutableListOf<Any>()
+        var strs = getTuppleStr(input)
+        for (i in strs)
+            result.add(getAtom(i))
+        return result
+    }
+
+    fun getTuppleStr(input: String): List<String>{
+        var data = input.removeWhites()
+        var result = mutableListOf<String>()
+        var currentStr=""
+        var ObjectCreating = true
+        for (i in 1..data.length-1){
+            println(data[i])
+            if  (data[i]==']') {
+                result.add(currentStr)
+            }
+            if ((data[i]==',') && ObjectCreating) {
+                ObjectCreating = false
+                result.add(currentStr)
+                currentStr=""
+                continue
+            }
+            if ((data[i]==',') && !ObjectCreating) {
+                ObjectCreating = true
+                result.add(currentStr)
+                currentStr=""
+                continue
+            }
+            currentStr += data[i]
+        }
+        return result
+    }
+
+    fun getTypeExpression(input: String): Expression{
+        if (input.length==0) return Expression.Empty
+        if (input.indexOf(",")<0) return Expression.One
+        if (input.indexOf(",")>0) return Expression.Many
+        return Expression.Empty
+    }
+
+    fun getAtomsStr(input: String): List<Any>{
+        var result = mutableListOf<String>()
+        var type = getTypeExpression(input)
+        when (type){
+            Expression.One -> {
+                result.add(input)
+                return result
+            };
+            Expression.Empty -> return result;
+
+        }
+
         return result
     }
 

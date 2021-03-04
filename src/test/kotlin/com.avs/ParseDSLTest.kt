@@ -41,10 +41,7 @@ internal class ParseDSLTest {
         etalon.add("12 декабря");
         assertEquals(etalon.size, parser.parseParams(param))
     }
-
     fun testParseParam() {}
-
-
   //  @Test
     fun testGetAtoms() {
         val etalon= mutableListOf<Any>();
@@ -52,7 +49,6 @@ internal class ParseDSLTest {
         etalon.add("'Добрый день'")
         assertEquals(parser.getAtoms(simple), etalon)
     }
-
     @Test
     fun testGetAtom() {
         val keyvalue= mutableMapOf<String, Any>()
@@ -63,16 +59,11 @@ internal class ParseDSLTest {
         assertEquals("xyz",parser.getAtom("'xyz'"))
         assertEquals(keyvalue, parser.getAtom("'key':12"))
     }
-
-    fun testContains() {}
-
     @Test
     fun testGetKey() {
         val example = "'таблица':12";
         assertEquals("'таблица'", parser.getKey_(example))
     }
-
-
     @Test
     fun testRemoveWhites() {
         val initial = "12, 'Добрый день',  122";
@@ -81,21 +72,38 @@ internal class ParseDSLTest {
         val etalon2: String = "12,'    Добрый день','табли   цы':['  к  а  с с а',' скл ад','приход'],'12 декабря'";
         assertEquals(etalon, parser.removeWhites_(initial))
         assertEquals(etalon2, parser.removeWhites_(param2))
-
     }
-
     @Test
     fun testGetValue_() {
         val initial = "'12':[12,12,56]";
         val etalon = "[12,12,56]";
         assertEquals(etalon,parser.getValue_(initial))
     }
-
     @Test
     fun testGetTupple() {
         val initial = "[12,'aaaa','f':56]";
         var etalon = mutableListOf<Any>()
-        etalon.add(12.0.toFloat())
+        etalon.add(12)
+        etalon.add("aaaa")
+        var keyvalue= mutableMapOf<String, Any>()
+        keyvalue.put("f",56)
+        etalon.add(keyvalue)
+        assertEquals(etalon, parser.getTupple(initial))
+    }
+    @Test
+    fun testGetTuppleStr() {
+        val initial = "[12,'aaaa','f':56]";
+        val initial2 = "['12   ','aaaa','f'   :      56]";
+        var etalon = mutableListOf<String>()
+        var etalon2 = mutableListOf<String>()
+        etalon.add("12")
+        etalon.add("'aaaa'")
+        etalon.add("'f':56")
+        etalon2.add("'12   '");
+        etalon2.add("'aaaa'");
+        etalon2.add("'f':56")
+        assertEquals(etalon, parser.getTuppleStr(initial))
+        assertEquals(etalon2, parser.getTuppleStr(initial2))
 
     }
 }
