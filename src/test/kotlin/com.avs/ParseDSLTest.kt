@@ -156,6 +156,7 @@ internal class ParseDSLTest {
         var tail2 = parser.tail_(initial6)
         var tail3 = parser.tail_(tail2)
         assertEquals("55,55", tail3)
+        assertEquals("'12'", parser.head_(initial6))
     }
 
     fun testHead() {}
