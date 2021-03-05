@@ -1,5 +1,7 @@
 package com.avs
 
+import abstractions.DSLBNF.Atom
+import abstractions.DSLBNF.Expression
 import abstractions.DSLRole
 import abstractions.Role
 import org.junit.Test
@@ -93,7 +95,12 @@ internal class ParseDSLTest {
         arr2.add(arr)
         arr2.add(12)
         etalonMap.put("12", arr2)
-        assertEquals(etalonMap, parser.getAtom(initial))
+      //  assertEquals(etalonMap, parser.getAtom(initial))
+        assertEquals("'12':[[12,12],12]", parser.head_(initial))   ////<====uncorrect;  need process open braces
+        assertEquals("", parser.tail_(initial))
+
+        assertEquals(Atom.KeyValue, parser.getType(parser.head_(initial)))
+        assertEquals(Expression.One, parser.getTypeExpression(initial))
     }
     @Test
     fun testGetTupple() {
@@ -161,6 +168,7 @@ internal class ParseDSLTest {
 
     fun testHead() {}
     fun testTail() {}
+    fun testGetType() {}
 
 }
 

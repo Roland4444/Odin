@@ -90,8 +90,8 @@ class ParseDSL {
 
     fun getTypeExpression(input: String): Expression{
         if (input.length==0) return Expression.Empty
-        if (input.indexOf(",")<0) return Expression.One
-        if (input.indexOf(",")>0) return Expression.Many
+        if ((input.head()!="") && (input.tail()=="")) return Expression.One
+        if (input.tail()!="") return Expression.Many
         return Expression.Empty
     }
 
@@ -140,8 +140,14 @@ class ParseDSL {
         return tail
     }
 
+
     fun getAtom(input: String): Any {
+        val typeHead = getType(input.head())
+        val typeTail =  getType(input.tail())
         val type = getType(input)
+        when (typeHead){
+
+        }
         var map = mutableMapOf<String, Any>()
         var lst = mutableListOf<Any>()
         when (type){
