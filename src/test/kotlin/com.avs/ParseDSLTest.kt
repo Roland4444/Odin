@@ -88,7 +88,7 @@ internal class ParseDSLTest {
     @Test
     fun nestedtupple() {
         val initial = "'12':[[12,12],12]";
-
+        val initial2 = "['12':[[12,12],'12':22],44]";
         val etalonMap = mutableMapOf<String, Any>()
         var arr = mutableListOf(12,12)
         var arr2 = mutableListOf<Any>()
@@ -96,11 +96,16 @@ internal class ParseDSLTest {
         arr2.add(12)
         etalonMap.put("12", arr2)
       //  assertEquals(etalonMap, parser.getAtom(initial))
-        assertEquals("'12':[[12,12],12]", parser.head_(initial))   ////<====uncorrect;  need process open braces
-        assertEquals("", parser.tail_(initial))
+        assertEquals(Atom.KeyValue, parser.getType(initial))
+        assertEquals(Atom.Tupple, parser.getType(parser.getValue_(initial)))
+        assertEquals(Atom.Tupple, parser.getType(parser.getValue_(initial2)))
+        assertEquals("[[12,12],12]",parser.getValue_(initial))
+        assertEquals("[[12,12],'12':22]",parser.getValue_(initial2))
+  ////////      assertEquals("'12':[[12,12],12]", parser.head_(initial))   ////<====uncorrect;  need process open braces
+ /////////       assertEquals("", parser.tail_(initial))
 
-        assertEquals(Atom.KeyValue, parser.getType(parser.head_(initial)))
-        assertEquals(Expression.One, parser.getTypeExpression(initial))
+ //////////       assertEquals(Atom.KeyValue, parser.getType(parser.head_(initial)))
+  ///////////      assertEquals(Expression.One, parser.getTypeExpression(initial))
     }
     @Test
     fun testGetTupple() {

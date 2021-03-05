@@ -44,6 +44,7 @@ class ParseDSL {
         return result
     }
 
+    ////need refactor with head , tail
     fun getType(input:String): Atom {
         if (input.equals("")) return Atom.Empty
         if ((input.indexOf("'")>=0) && (input.indexOf(":")<0)) return Atom.String
