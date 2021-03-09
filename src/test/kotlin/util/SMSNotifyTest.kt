@@ -1,14 +1,12 @@
 package util
 
 import junit.framework.TestCase
-import org.junit.Test
 import kotlin.test.assertNotEquals
 
 class SMSNotifyTest : TestCase() {
 
-  //  @Test
+
     fun testSendSMS() {
-        val bad = "shit happens"
-        assertNotEquals(bad, SMSNotify.sendSMS("89996013370", "Привед медвед"))   //<<==passed
+        assertNotEquals(null, SMSNotify.sendSMS("avs2", "7BsdfdsfsdfsdfsL3r","89608607763", "Привед медвед снова"))   //<<==passed
     }
 }

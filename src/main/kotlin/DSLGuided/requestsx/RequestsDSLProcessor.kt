@@ -37,8 +37,8 @@ class RequestsDSLProcessor() : DSLProcessor() {
     fun appendRole(R: Role){
         print("Adding role ${R.Name}\n")
         when (R?.Name){
-            "marina" -> mapper.put(R, marina)
-            "olga" -> mapper.put(R, olga)
+            "full" -> mapper.put(R, marina)
+            "view" -> mapper.put(R, olga)
             "guest" -> mapper.put(R, guest)
         }
     }

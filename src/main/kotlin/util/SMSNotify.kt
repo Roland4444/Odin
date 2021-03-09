@@ -9,8 +9,8 @@ import java.time.Duration
 class SMSNotify {
 companion object {
     @JvmStatic
-    fun sendSMS(number: String, message: String): String {
-        val req = "https://smsc.ru/sys/send.php?login=avs&psw=7BBAP7nkTCA4L3r&phones=$number&mes=${message.replace(" ", "%20")}"
+    fun sendSMS(login: String, pass: String, number: String, message: String, ): String {
+        val req = "https://smsc.ru/sys/send.php?login=$login&psw=$pass&phones=$number&mes=${message.replace(" ", "%20")}"
         val request = HttpRequest.newBuilder()
             .uri(URI.create(req))
             .timeout(Duration.ofMinutes(2))

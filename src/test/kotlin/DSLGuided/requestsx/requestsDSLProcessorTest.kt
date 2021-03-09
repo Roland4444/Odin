@@ -7,17 +7,10 @@ class requestsDSLProcessorTest : TestCase() {
     @Test
     fun testGetDumbHandler() {
         val req = RequestsDSLProcessor()
-        req.outtemplate = "12"
+        req.outtemplate = "12xxx"
         assertEquals("12xxx", req.outtemplate)
         assertEquals(4, req.add(2))
         assertEquals(7, req.add2(2,5))
-        val method: Method = req.javaClass.getDeclaredMethod(
-            "dumbsum",
-            Int::class.java,
-            Int::class.java
-        )
-        val sum = method.invoke(req, 4, 4)
-        assertEquals(8, sum)
     }
 
     @Test

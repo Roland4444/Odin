@@ -16,7 +16,10 @@ class ParseDSL : Serializable {
     fun parseRole(input: String): Role? {
         if (input.indexOf("{") == -1) return null
         val rolename: String= input.substring(input.indexOf("::")+2, input.indexOf("{"))
-        val params = input.substring(input.indexOf("{")+1, input.indexOf("}")-1)
+        var params: String
+        if (input.indexOf("{")<input.indexOf("}")-2)
+            params = input.substring(input.indexOf("{")+1, input.indexOf("}")-1)
+        else params=""
         if ((rolename.length == 0) || (rolename ==null)) return null;
         return Role(rolename, params, this)
     }
@@ -31,24 +34,15 @@ class ParseDSL : Serializable {
         };
         return result
     }
-    fun parseParams(input: String): List<Any>{
-        var result: MutableList<Any>  = mutableListOf()
-        return result
-    }
-
-
-
     fun String.toSequence():String{
         return ToSequence(this)
     }
-
     fun ToSequence(input__: String):String{
         val input = input__.prepare()
         if (getType(input)==Atom.Tupple)
             return input.substring(1, input.length-1)
         return input
     }
-
     fun getType(input_:String): Atom {
         val input = input_.prepare()
         if (input.equals(""))
@@ -118,7 +112,6 @@ class ParseDSL : Serializable {
             Atom.Tupple->{
                 return Atom(input.toSequence())
             }
-
         }
         return ""
 
