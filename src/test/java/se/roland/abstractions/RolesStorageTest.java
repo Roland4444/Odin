@@ -24,8 +24,6 @@ public class RolesStorageTest extends TestCase {
         set.add(ObjectRules);
         rs.storage.put("olga", set);
         assertEquals("'requests' => ::read{}, ::write{}, ::create{}.", rs.loadDSLObject("requests", "olga"));
-
-
     }
 
     public void teststorage(){
