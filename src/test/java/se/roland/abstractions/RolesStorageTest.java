@@ -3,6 +3,7 @@ package se.roland.abstractions;
 import Message.abstractions.BinaryMessage;
 import abstractions.DSLRole;
 import abstractions.Role;
+import com.avs.ParseDSL;
 import junit.framework.TestCase;
 
 import java.io.File;
@@ -11,11 +12,11 @@ import java.util.*;
 
 public class RolesStorageTest extends TestCase {
     String temprs = "temp.rs.bin";
-
+    ParseDSL parser = new ParseDSL();
     public void testLoadDSLObject() {
-        var readRole = new Role("read");
-        var writeRole =new Role("write");
-        var createRole = new Role("create");
+        var readRole = new Role("read","", parser);
+        var writeRole =new Role("write","", parser);
+        var createRole = new Role("create","", parser);
         var Roles = new ArrayList<Role>(Arrays.asList(readRole, writeRole, createRole));
         var ObjectRules   = new DSLRole("requests", Roles);
         RolesStorage rs = new RolesStorage();
@@ -31,9 +32,9 @@ public class RolesStorageTest extends TestCase {
         RolesStorage rs = new RolesStorage();
         rs.storage=new HashMap<>();
         rs.storage.put("13",null);
-        var readRole = new Role("read");
-        var writeRole =new Role("write");
-        var createRole = new Role("create");
+        var readRole = new Role("read","", parser);
+        var writeRole =new Role("write","", parser);
+        var createRole = new Role("create","", parser);
         var Roles = new ArrayList<Role>(Arrays.asList(readRole, writeRole, createRole));
         var ObjectRules   = new DSLRole("requests", Roles);
         assertNotEquals(null, ObjectRules);
@@ -53,15 +54,15 @@ public class RolesStorageTest extends TestCase {
             new File(temprs).delete();
         RolesStorage rs = new RolesStorage();
         rs.storage=new HashMap<>();
-        var readRole = new Role("read");
-        var writeRole =new Role("write");
-        var createRole = new Role("create");
+        var readRole = new Role("read","", parser);
+        var writeRole =new Role("write","", parser);
+        var createRole = new Role("create","", parser);
         var Roles = new ArrayList<Role>(Arrays.asList(readRole, writeRole, createRole));
         var ObjectRules   = new DSLRole("requests", Roles);
         rs.save("olga", ObjectRules);
         System.out.println("Length:="+BinaryMessage.savedToBLOB(rs).length);
         BinaryMessage.write(BinaryMessage.savedToBLOB(rs), temprs );
         RolesStorage restored = (RolesStorage) BinaryMessage.restored(BinaryMessage.readBytes(temprs));
-        assertEquals(rs.storage.get("olga"), restored.storage.get("olga"));
+        assertEquals(rs.storage.get("olga").toString(), restored.storage.get("olga").toString());
     }
 }

@@ -4,7 +4,9 @@ import abstractions.DSLBNF.Expression
 import abstractions.DSLRole
 import abstractions.Role
 import se.roland.util.Checker
-class ParseDSL {
+import java.io.Serializable
+
+class ParseDSL : Serializable {
     val checker = Checker()
     fun getDSLRulesfromString(input: String): DSLRole? {
         val objectName: String = input.substring(input.indexOf("'")+1, input.lastIndexOf("'"))
@@ -14,8 +16,9 @@ class ParseDSL {
     fun parseRole(input: String): Role? {
         if (input.indexOf("{") == -1) return null
         val rolename: String= input.substring(input.indexOf("::")+2, input.indexOf("{"))
+        val params = input.substring(input.indexOf("{")+1, input.indexOf("}")-1)
         if ((rolename.length == 0) || (rolename ==null)) return null;
-        return Role(rolename)
+        return Role(rolename, params, this)
     }
     fun parseRoles(input: String): List<Role>{
         var result: MutableList<Role>  = mutableListOf()
@@ -33,65 +36,39 @@ class ParseDSL {
         return result
     }
 
-    fun getAtoms(input: String): List<Any>{
-        var result: MutableList<Any>  = mutableListOf()
-        var workingstring = input
-        while (workingstring.length>0) {
-            val firstdelim = input.indexOf(',');
-            workingstring = workingstring.substring(0, firstdelim)
-            result.add(workingstring)
-        }
-        return result
+
+
+    fun String.toSequence():String{
+        return ToSequence(this)
     }
 
-    ////need refactor with head , tail
-    fun getType(input:String): Atom {
+    fun ToSequence(input__: String):String{
+        val input = input__.prepare()
+        if (getType(input)==Atom.Tupple)
+            return input.substring(1, input.length-1)
+        return input
+    }
+
+    fun getType(input_:String): Atom {
+        val input = input_.prepare()
         if (input.equals(""))
             return Atom.Empty
+        if ((input.Head__() != "") && (input.Tail__()!=""))
+            return Atom.Sequence
+        if ((input[0]=='[') && (input[input.length-1]==']'))
+            return Atom.Tupple
         if ((input.indexOf("'")>=0) && (input.indexOf(":")<0))
             return Atom.String
-        if ((input.indexOf("'")>=0) && (input.indexOf(":")>0) && (input.Tail__()==""))
+        if ((input.indexOf("'")>=0) && (input.indexOf(":")>0) && (input.Tail__()=="")) {
+            val t = input.Tail__()
+            val h = input.Head__()
+            println("Tail $t")
+            println("Head $h")
             return Atom.KeyValue
+        }
         if  (checker.isnumber(input))
             return Atom.Number
-        if (input.indexOf("[")>=0 && input.indexOf("]")>=0)
-            return Atom.Tupple
         return Atom.None
-    }
-
-    fun getTupple(input: String): List<Any>{
-        var result = mutableListOf<Any>()
-        var strs = getTuppleStr(input)
-        for (i in strs)
-            result.add(getAtom(i))
-        return result
-    }
-
-    fun getTuppleStr(input: String): List<String>{
-        var data = input.removeWhites()
-        var result = mutableListOf<String>()
-        var currentStr=""
-        var ObjectCreating = true
-        for (i in 1..data.length-1){
-            println(data[i])
-            if  (data[i]==']') {
-                result.add(currentStr)
-            }
-            if ((data[i]==',') && ObjectCreating) {
-                ObjectCreating = false
-                result.add(currentStr)
-                currentStr=""
-                continue
-            }
-            if ((data[i]==',') && !ObjectCreating) {
-                ObjectCreating = true
-                result.add(currentStr)
-                currentStr=""
-                continue
-            }
-            currentStr += data[i]
-        }
-        return result
     }
 
     fun getTypeExpression(input: String): Expression{
@@ -99,6 +76,70 @@ class ParseDSL {
         if ((input.Head__()!="") && (input.Tail__()=="")) return Expression.One
         if (input.Tail__()!="") return Expression.Many
         return Expression.Empty
+    }
+
+    fun getList(input: String): List<String>{
+        var lst = mutableListOf<String>()
+        var head = input.Head__()
+        var tail = input.Tail__()
+        while ((head!="") ){
+            lst.add(head)
+            head = tail.Head__()
+            tail = tail.Tail__()
+        }
+        return lst
+    }
+
+    fun Atom(input:  String): Any{
+        val type = getType(input)
+        var map = mutableMapOf<String, Any>()
+        var lst = mutableListOf<Any>()
+        when (type){
+            Atom.String->return (input.replace("'",""))
+            Atom.Number->{
+                if (!input.contains__("."))
+                    return input.toInt()
+                return input.toFloat()
+            }
+            Atom.KeyValue->{
+                val key = Atom(getKey_(input)).toString()
+                val value = Atom(getValue_(input))
+                println("key=>$key,  value =>$value")
+                if (value != null) {
+                    map.put(key, value)
+                }
+                return map
+            }
+            Atom.Sequence->{
+                val lst2 = getList(input)
+                lst2.forEach { a -> lst.add(Atom(a)) }
+                return lst
+            }
+            Atom.Tupple->{
+                return Atom(input.toSequence())
+            }
+
+        }
+        return ""
+
+    }
+
+    fun String.hasData(): Boolean{
+        val head = this.Head__()
+        val tail = this.Tail__()
+        if (((getType(head) == Atom.Empty) || (getType(head) == Atom.None)) && ((getType(tail) == Atom.Empty) || (getType(tail) == Atom.None)))
+            return false;
+        return true;
+    }
+
+    fun process(input__: String): Any?{
+        var input = input__.prepare()
+        val typeExpression = getTypeExpression(input)
+        when (typeExpression){
+            Expression.Empty -> return null;
+            Expression.One -> return Atom(input)
+            Expression.Many -> return Atom(input)
+        }
     }
 
     fun getAtomsStr(input: String): List<Any>{
@@ -125,7 +166,7 @@ class ParseDSL {
     }
 
     fun String.head(): String {
-        var data = this.removeWhites()
+        var data = this.prepare()
         if ((data[0]=='[') && (data[data.length-1]==']'))   /////TUPPle
             return data.substring(1, data.length-1);
         if (data.indexOf(",") <0)                     ///////ATOM   <> KEY VALUE
@@ -136,7 +177,7 @@ class ParseDSL {
     }
 
     fun String.tail(): String{
-        var data = this.removeWhites()
+        var data = this.prepare()
         println("""data>>($data)""")
         var head = data.head()
         println("""head>>($head)""")
@@ -145,6 +186,7 @@ class ParseDSL {
             tail = data.substring(1+head.length, data.length)
         return tail
     }
+
 
 
     fun getAtom(input: String): Any {
@@ -173,7 +215,7 @@ class ParseDSL {
                 return map
             }
             Atom.Tupple->{
-                var data = input.removeWhites()
+                var data = input.prepare()
                 var currentStr=""
                 var ObjectCreating = true
                 for (i in 0..data.length-1){
@@ -224,14 +266,14 @@ class ParseDSL {
 
     fun String.getValue(): String{
         val index = this.indexOf(":");
-        return this.substring(index+1, this.length).removeWhites()
+        return this.substring(index+1, this.length).prepare()
     }
 
-    fun removeWhites_(input: String):String{
-        return input.removeWhites()
+    fun prepare_(input: String):String{
+        return input.prepare()
     }
 
-    fun String.removeWhites():String{
+    fun String.prepare():String{
         println(this)
         var buffer = StringBuilder()
         var appendWhite = false
@@ -262,7 +304,6 @@ class ParseDSL {
 
     fun Head(input: String): String{
         val p = getnumberopencolon(input)
-        println("HEAD::NUMBER COLON@$input=> $p")
         if (p>0)
             return input.substring(0, p)
         return input
@@ -270,7 +311,6 @@ class ParseDSL {
 
     fun Tail(input: String): String{
         val p =getnumberopencolon(input)
-        println("NUMBER COLON=> $p")
         if (p>0)
             return input.substring(p+1, input.length)
         return ""
@@ -294,14 +334,11 @@ class ParseDSL {
             var closetupple = 0
             var opentupple = 0
             while (index>=0){
-                println("index $index")
                 if (input[index]==']'){
                     closetupple++
-                    println("catched ] $closetupple")
                 }
                 if (input[index]=='['){
                     opentupple++
-                    println("catched [ $opentupple")
                 }
                 index--
             }
@@ -317,20 +354,15 @@ class ParseDSL {
         if (colonbuf.size<=0)
             return false
         colonbuf.forEach { a->
-            println("Into foreach '$a'")
             var index = a
             var closetupple = 0
             var opentupple = 0
             while (index>=0){
-                println("index $index")
-                println(input[index])
                 if (input[index]==']'){
                     closetupple++
-                    println("catched ] $closetupple")
                 }
                 if (input[index]=='['){
                     opentupple++
-                    println("catched [ $opentupple")
                 }
                 index--
             }

@@ -1,5 +1,4 @@
 package DSLGuided.requestsx
-import abstractions.Param
 import abstractions.Role
 class RequestsDSLProcessor() : DSLProcessor() {
     companion object{
@@ -8,9 +7,10 @@ class RequestsDSLProcessor() : DSLProcessor() {
     }
     val write: RoleHandler = {
     }
-    val default: RoleHandler = {outtemplate="<h1>Недостаточно прав</h1>"}
+    fun default():Unit{
+        outtemplate="<h1>Недостаточно прав</h1>"
+    }
     val marina: RoleHandler = {}
-    val defaultParam: Param = Param()
 
     val olga: RoleHandler = {print("Apply olga\n")
         outtemplate = outtemplate.replace("'SUSPENDING'}; ", "'EMPTY'};");
@@ -20,15 +20,14 @@ class RequestsDSLProcessor() : DSLProcessor() {
     val guest: RoleHandler = {outtemplate="<h1>BOLT</h1>"}
     val add: DumbHandler={it+2}
     val add2: DumbHandler2 = { i: Int, i1: Int -> i+i1}
-    fun dumbsum(A: Int, B: Int)=A+B
 
     override fun render(DSL: String): String {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         if (mapper.size==0)
-            default.invoke(defaultParam)
+            default()
         else
-            mapper.forEach { it.value.invoke(it.key.Param)  }
+            mapper.forEach { it.value.invoke(it.key)  }
         return  outtemplate
     }
 
@@ -36,7 +35,6 @@ class RequestsDSLProcessor() : DSLProcessor() {
         return parser.parseRoles(DSL!!)
     }
     fun appendRole(R: Role){
-
         print("Adding role ${R.Name}\n")
         when (R?.Name){
             "marina" -> mapper.put(R, marina)
@@ -50,6 +48,7 @@ class RequestsDSLProcessor() : DSLProcessor() {
     }
     val test2: RoleHandler = {outtemplate += "xxx"}
 }
+
 
 
 

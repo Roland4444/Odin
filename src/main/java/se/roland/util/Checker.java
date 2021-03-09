@@ -1,9 +1,10 @@
 package se.roland.util;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Checker {
+public class Checker implements Serializable {
     public Map<Character, Boolean> dictionary = new HashMap<>();
 
     public Checker(){
