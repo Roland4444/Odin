@@ -46,11 +46,16 @@ class ParseDSL {
 
     ////need refactor with head , tail
     fun getType(input:String): Atom {
-        if (input.equals("")) return Atom.Empty
-        if ((input.indexOf("'")>=0) && (input.indexOf(":")<0)) return Atom.String
-        if ((input.indexOf("'")>=0) && (input.indexOf(":")>0)) return Atom.KeyValue
-        if  (checker.isnumber(input)) return Atom.Number
-        if (input.indexOf("[")>=0 && input.indexOf("]")>=0) return Atom.Tupple
+        if (input.equals(""))
+            return Atom.Empty
+        if ((input.indexOf("'")>=0) && (input.indexOf(":")<0))
+            return Atom.String
+        if ((input.indexOf("'")>=0) && (input.indexOf(":")>0) && (input.Tail__()==""))
+            return Atom.KeyValue
+        if  (checker.isnumber(input))
+            return Atom.Number
+        if (input.indexOf("[")>=0 && input.indexOf("]")>=0)
+            return Atom.Tupple
         return Atom.None
     }
 
@@ -91,8 +96,8 @@ class ParseDSL {
 
     fun getTypeExpression(input: String): Expression{
         if (input.length==0) return Expression.Empty
-        if ((input.head()!="") && (input.tail()=="")) return Expression.One
-        if (input.tail()!="") return Expression.Many
+        if ((input.Head__()!="") && (input.Tail__()=="")) return Expression.One
+        if (input.Tail__()!="") return Expression.Many
         return Expression.Empty
     }
 
@@ -257,6 +262,7 @@ class ParseDSL {
 
     fun Head(input: String): String{
         val p = getnumberopencolon(input)
+        println("HEAD::NUMBER COLON@$input=> $p")
         if (p>0)
             return input.substring(0, p)
         return input
@@ -264,6 +270,7 @@ class ParseDSL {
 
     fun Tail(input: String): String{
         val p =getnumberopencolon(input)
+        println("NUMBER COLON=> $p")
         if (p>0)
             return input.substring(p+1, input.length)
         return ""
@@ -283,7 +290,7 @@ class ParseDSL {
         if (colonbuf.size<=0)
             return -1
         colonbuf.forEach { a->
-            var index = 0
+            var index = a
             var closetupple = 0
             var opentupple = 0
             while (index>=0){
@@ -310,11 +317,13 @@ class ParseDSL {
         if (colonbuf.size<=0)
             return false
         colonbuf.forEach { a->
-            var index = 0
+            println("Into foreach '$a'")
+            var index = a
             var closetupple = 0
             var opentupple = 0
             while (index>=0){
                 println("index $index")
+                println(input[index])
                 if (input[index]==']'){
                     closetupple++
                     println("catched ] $closetupple")

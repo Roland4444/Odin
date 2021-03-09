@@ -86,6 +86,28 @@ internal class ParseDSLTest {
         assertEquals(etalonMap, parser.getAtom(initial))
     }
     @Test
+    fun nestedTUpple(){
+        val initial = "'12':[[12,12],12]";
+        assertEquals(initial, parser.Head(initial))
+        assertEquals("", parser.Tail(initial))
+        println(parser.getType(""))
+        assertEquals(Atom.KeyValue, parser.getType(initial))
+    }
+
+    @Test
+    fun getnumbercolontest(){
+        val init = "'12':[[12,12],12]"
+        assertEquals(false, parser.opencolon(init))
+    }
+
+    @Test
+    fun testgettype(){
+        val initial = "'12':[[12,12],12]";
+        assertEquals(Atom.KeyValue, parser.getType(initial))
+    }
+
+
+    @Test
     fun nestedtupple() {
         val initial = "'12':[[12,12],12]";
         val initial2 = "['12':[[12,12],'12':22],44]";
@@ -95,18 +117,18 @@ internal class ParseDSLTest {
         arr2.add(arr)
         arr2.add(12)
         etalonMap.put("12", arr2)
-        assertEquals("", parser.tail_(initial))
+        assertEquals("", parser.Tail(initial))
 
-        //  assertEquals(etalonMap, parser.getAtom(initial))
+    ////    assertEquals(etalonMap, parser.getAtom(initial))
         assertEquals(Atom.KeyValue, parser.getType(initial))
         assertEquals(Atom.Tupple, parser.getType(parser.getValue_(initial)))
         assertEquals(Atom.Tupple, parser.getType(parser.getValue_(initial2)))
-        assertEquals("[[12,12],12]",parser.getValue_(initial))
-        assertEquals("[[12,12],'12':22]",parser.getValue_(initial2))
-  ////////      assertEquals("'12':[[12,12],12]", parser.head_(initial))   ////<====uncorrect;  need process open braces
+  //      assertEquals("[[12,12],12]",parser.getValue_(initial))
+  //      assertEquals("[[12,12],'12':22]",parser.getValue_(initial2))
+        assertEquals("'12':[[12,12],12]", parser.Head(initial))   ////<====uncorrect;  need process open braces
 
- //////////       assertEquals(Atom.KeyValue, parser.getType(parser.head_(initial)))
-  ///////////      assertEquals(Expression.One, parser.getTypeExpression(initial))
+        assertEquals(Atom.KeyValue, parser.getType(parser.Head(initial)))
+        assertEquals(Expression.One, parser.getTypeExpression(initial))
     }
     @Test
     fun testGetTupple() {
@@ -173,12 +195,10 @@ internal class ParseDSLTest {
         assertEquals("55,55", tail3)
         assertEquals("'12'", parser.head_(initial6))
         assertEquals("12:[[12,12]]", parser.tail_(tailtest))
-        assertEquals("", parser.Tail(tailtest2))
+
     }
 
-    fun testHead() {}
-    fun testTail() {}
-    fun testGetType() {}
+
 
 }
 
