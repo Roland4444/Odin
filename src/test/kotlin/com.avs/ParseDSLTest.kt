@@ -95,14 +95,15 @@ internal class ParseDSLTest {
         arr2.add(arr)
         arr2.add(12)
         etalonMap.put("12", arr2)
-      //  assertEquals(etalonMap, parser.getAtom(initial))
+        assertEquals("", parser.tail_(initial))
+
+        //  assertEquals(etalonMap, parser.getAtom(initial))
         assertEquals(Atom.KeyValue, parser.getType(initial))
         assertEquals(Atom.Tupple, parser.getType(parser.getValue_(initial)))
         assertEquals(Atom.Tupple, parser.getType(parser.getValue_(initial2)))
         assertEquals("[[12,12],12]",parser.getValue_(initial))
         assertEquals("[[12,12],'12':22]",parser.getValue_(initial2))
   ////////      assertEquals("'12':[[12,12],12]", parser.head_(initial))   ////<====uncorrect;  need process open braces
- /////////       assertEquals("", parser.tail_(initial))
 
  //////////       assertEquals(Atom.KeyValue, parser.getType(parser.head_(initial)))
   ///////////      assertEquals(Expression.One, parser.getTypeExpression(initial))
@@ -154,6 +155,8 @@ internal class ParseDSLTest {
         val initial4 = "[], '44'"
         val initial5 = "'12':[],'12':12, '44'"
         val initial6 = "'12', 12,55,55"
+        val tailtest = "'12':[12],12:[[12,12]]"
+        val tailtest2 = "['12':12]"
         assertEquals("[12]", parser.head_(initial))
         assertEquals("12", parser.head_(initial2))
         assertEquals("'12':12", parser.head_(initial3))
@@ -169,6 +172,8 @@ internal class ParseDSLTest {
         var tail3 = parser.tail_(tail2)
         assertEquals("55,55", tail3)
         assertEquals("'12'", parser.head_(initial6))
+        assertEquals("12:[[12,12]]", parser.tail_(tailtest))
+        assertEquals("", parser.Tail(tailtest2))
     }
 
     fun testHead() {}

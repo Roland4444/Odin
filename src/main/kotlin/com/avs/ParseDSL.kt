@@ -246,6 +246,93 @@ class ParseDSL {
     }
 
 
+
+    fun loadcolons(input: String): List<Int>{
+        var colonbuff = mutableListOf<Int>()
+        for (i in 0..input.length-1)
+            if (input[i]==',')
+                colonbuff.add(i)
+        return colonbuff
+    }
+
+    fun Head(input: String): String{
+        val p = getnumberopencolon(input)
+        if (p>0)
+            return input.substring(0, p)
+        return input
+    }
+
+    fun Tail(input: String): String{
+        val p =getnumberopencolon(input)
+        if (p>0)
+            return input.substring(p+1, input.length)
+        return ""
+    }
+
+    fun String.Tail__(): String{
+        return Tail(this)
+    }
+
+    fun String.Head__(): String{
+        return Head(this)
+    }
+
+    fun getnumberopencolon(input:String):Int{
+        println(input)
+        val colonbuf = loadcolons(input)
+        if (colonbuf.size<=0)
+            return -1
+        colonbuf.forEach { a->
+            var index = 0
+            var closetupple = 0
+            var opentupple = 0
+            while (index>=0){
+                println("index $index")
+                if (input[index]==']'){
+                    closetupple++
+                    println("catched ] $closetupple")
+                }
+                if (input[index]=='['){
+                    opentupple++
+                    println("catched [ $opentupple")
+                }
+                index--
+            }
+            if (opentupple==closetupple)
+                return  a
+        }
+        return -1
+    }
+
+    fun opencolon(input:String):Boolean{
+        println(input)
+        val colonbuf = loadcolons(input)
+        if (colonbuf.size<=0)
+            return false
+        colonbuf.forEach { a->
+            var index = 0
+            var closetupple = 0
+            var opentupple = 0
+            while (index>=0){
+                println("index $index")
+                if (input[index]==']'){
+                    closetupple++
+                    println("catched ] $closetupple")
+                }
+                if (input[index]=='['){
+                    opentupple++
+                    println("catched [ $opentupple")
+                }
+                index--
+            }
+            if (opentupple==closetupple)
+                return  true
+        }
+        return false
+    }
+
+
+
     fun String.getKey(): String{
         val index = this.indexOf(":");
         val key = this.substring(0, index).replace(" ","")
