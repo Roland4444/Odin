@@ -6,6 +6,7 @@ import com.avs.ParseDSL
 typealias RoleHandler = (Role: Role) -> Unit
 typealias DumbHandler = (Param:Int) -> Int
 typealias DumbHandler2 = (Param:Int, Param2: Int) -> Int
+typealias sendSMS = (Param:String) -> String
 
 abstract class DSLProcessor() {
     var parser = ParseDSL()
@@ -13,7 +14,7 @@ abstract class DSLProcessor() {
     init{
 
     }
-    abstract fun render(DSL: String): String
+    abstract fun render(DSL: String): Any
     abstract fun parseRoles(DSL: String): List<Role>
     var outtemplate: String = """"""
     fun init(){
