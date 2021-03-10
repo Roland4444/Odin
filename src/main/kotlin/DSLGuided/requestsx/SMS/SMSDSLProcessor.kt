@@ -1,6 +1,7 @@
 package DSLGuided.requestsx.SMS
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
+import DSLGuided.requestsx.sendSMS
 import abstractions.Role
 import java.lang.StringBuilder
 import java.net.URI
@@ -13,39 +14,17 @@ class SMSDSLProcessor : DSLProcessor() {
     var login_: String =""
     var pass_: String =""
     var sendto_ = mutableListOf<String>()
-    fun send():String{
-        if (!enabled) return ""
-        val sb: StringBuilder=StringBuilder()
-        sendto_.forEach {
-            val req = """https://smsc.ru/sys/send.php?login=$login&psw=$pass&phones=$it&mes="".replace(" ", "%20")}"""
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create(req))
-                .timeout(Duration.ofMinutes(2))
-                .GET()
-                .build()
-            val client = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .connectTimeout(Duration.ofSeconds(20))
-                .build()
-            val response = client.send(request, HttpResponse.BodyHandlers.ofByteArray())
-            if (response.statusCode() == 200)
-                sb.append("$it=>${String(response.body())}")
-            else
-                sb.append("$it=>shit happens")
-        }
-        return sb.toString()
+    fun emptyfunc()={
+        println("NOTHING TO DO")
     }
 
-    fun func(): () -> Unit {
-        return renderfunc()
-    }
-
-    fun renderfunc()=
+    val renderfunc:sendSMS=
          {
+            if (!enabled)
+                 ""
             val sb: StringBuilder=StringBuilder()
-
-            sendto_.forEach {
-                val req = """https://smsc.ru/sys/send.php?login=$login&psw=$pass&phones=$it&mes=${it.replace(" ", "%20")}"""
+            sendto_.forEach {a->
+                val req = """https://smsc.ru/sys/send.php?login=$login&psw=$pass&phones=$a&mes=${it.replace(" ", "%20")}"""
                 val request = HttpRequest.newBuilder()
                     .uri(URI.create(req))
                     .timeout(Duration.ofMinutes(2))
@@ -61,17 +40,16 @@ class SMSDSLProcessor : DSLProcessor() {
                 else
                     sb.append("$it=>shit happens")
             }
-
+            sb.toString()
 
     }
 
-    override fun render(DSL: String): String {
+    override fun render(DSL: String) :Any{
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
-        if (mapper.size==0)
-            return ""
         mapper.forEach { it.value.invoke(it.key)  }
-        return send()
+        if (enabled)        return renderfunc
+        return  emptyfunc()
 
     }
 
