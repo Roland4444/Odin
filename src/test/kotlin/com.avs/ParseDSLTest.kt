@@ -179,33 +179,7 @@ internal class ParseDSLTest {
         assertEquals(etalon, parser.Atom(initial))
     }
 
-    @Test
-    fun testhead(){
-        val initial = "[12], 57";
-        val initial2 ="12,33,44";
-        val initial3 = "'12':12, '44'"
-        val initial4 = "[], '44'"
-        val initial5 = "'12':[],'12':12, '44'"
-        val initial6 = "'12', 12,55,55"
-        val tailtest = "'12':[12],12:[[12,12]]"
-        val tailtest2 = "['12':12]"
-        assertEquals("[12]", parser.head_(initial))
-        assertEquals("12", parser.head_(initial2))
-        assertEquals("'12':12", parser.head_(initial3))
-        assertEquals("[]", parser.head_(initial4))
-        assertEquals("'12':[]", parser.head_(initial5))
 
-        assertEquals("57", parser.tail_(initial))
-        assertEquals("33,44", parser.tail_(initial2))
-        assertEquals("'44'", parser.tail_(initial3))
-        assertEquals("'44'", parser.tail_(initial4))
-        assertEquals("'12':12,'44'", parser.tail_(initial5))
-        var tail2 = parser.tail_(initial6)
-        var tail3 = parser.tail_(tail2)
-        assertEquals("55,55", tail3)
-        assertEquals("'12'", parser.head_(initial6))
-        assertEquals("12:[[12,12]]", parser.tail_(tailtest))
-    }
 }
 
 

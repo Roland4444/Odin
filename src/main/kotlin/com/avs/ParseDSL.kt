@@ -5,7 +5,6 @@ import abstractions.DSLRole
 import abstractions.Role
 import se.roland.util.Checker
 import java.io.Serializable
-
 class ParseDSL : Serializable {
     val checker = Checker()
     fun getDSLRulesfromString(input: String): DSLRole? {
@@ -64,14 +63,12 @@ class ParseDSL : Serializable {
             return Atom.Number
         return Atom.None
     }
-
     fun getTypeExpression(input: String): Expression{
         if (input.length==0) return Expression.Empty
         if ((input.Head__()!="") && (input.Tail__()=="")) return Expression.One
         if (input.Tail__()!="") return Expression.Many
         return Expression.Empty
     }
-
     fun getList(input: String): List<String>{
         var lst = mutableListOf<String>()
         var head = input.Head__()
@@ -83,7 +80,6 @@ class ParseDSL : Serializable {
         }
         return lst
     }
-
     fun Atom(input:  String): Any{
         val type = getType(input)
         var map = mutableMapOf<String, Any>()
@@ -114,158 +110,25 @@ class ParseDSL : Serializable {
             }
         }
         return ""
-
-    }
-
-    fun String.hasData(): Boolean{
-        val head = this.Head__()
-        val tail = this.Tail__()
-        if (((getType(head) == Atom.Empty) || (getType(head) == Atom.None)) && ((getType(tail) == Atom.Empty) || (getType(tail) == Atom.None)))
-            return false;
-        return true;
-    }
-
-    fun process(input__: String): Any?{
-        var input = input__.prepare()
-        val typeExpression = getTypeExpression(input)
-        when (typeExpression){
-            Expression.Empty -> return null;
-            Expression.One -> return Atom(input)
-            Expression.Many -> return Atom(input)
-        }
-    }
-
-    fun getAtomsStr(input: String): List<Any>{
-        var result = mutableListOf<String>()
-        var type = getTypeExpression(input)
-        when (type){
-            Expression.One -> {
-                result.add(input)
-                return result
-            };
-            Expression.Empty -> return result;
-
-        }
-
-        return result
-    }
-
-    fun head_(input: String): String{
-        return input.head()
-    }
-
-    fun tail_(input: String): String{
-        return input.tail()
-    }
-
-    fun String.head(): String {
-        var data = this.prepare()
-        if ((data[0]=='[') && (data[data.length-1]==']'))   /////TUPPle
-            return data.substring(1, data.length-1);
-        if (data.indexOf(",") <0)                     ///////ATOM   <> KEY VALUE
-            return data;
-        if (data.indexOf(",") >0)                     ///////ATOM   <> KEY VALUE
-            return data.substring(0,data.indexOf(",") );
-        return "";
-    }
-
-    fun String.tail(): String{
-        var data = this.prepare()
-        println("""data>>($data)""")
-        var head = data.head()
-        println("""head>>($head)""")
-        var tail =data.substring(head.length, data.length)
-        if (tail[0]==',')
-            tail = data.substring(1+head.length, data.length)
-        return tail
-    }
-
-
-
-    fun getAtom(input: String): Any {
-        val typeHead = getType(input.head())
-        val typeTail =  getType(input.tail())
-        val type = getType(input)
-        when (typeHead){
-
-        }
-        var map = mutableMapOf<String, Any>()
-        var lst = mutableListOf<Any>()
-        when (type){
-            Atom.String->return (input.replace("'",""))
-            Atom.Number->{
-                if (!input.contains__("."))
-                    return input.toInt()
-                return input.toFloat()
-            }
-            Atom.KeyValue->{
-                val key = getAtom(getKey_(input)).toString()
-                val value = getAtom(getValue_(input))
-                println("key=>$key,  value =>$value")
-                if (value != null) {
-                    map.put(key, value)
-                }
-                return map
-            }
-            Atom.Tupple->{
-                var data = input.prepare()
-                var currentStr=""
-                var ObjectCreating = true
-                for (i in 0..data.length-1){
-                    println(data[i])
-                    if  (data[i]==']') {
-                        println("]$currentStr")
-                        lst.add(getAtom(currentStr))
-                    }
-                    if ((data[i]==',') && ObjectCreating) {
-                        println("ObjectCreating  $currentStr")
-
-                        ObjectCreating = false
-                        lst.add(getAtom(currentStr))
-                        currentStr=""
-                        continue
-                    }
-                    if ((data[i]==',') && !ObjectCreating) {
-                        ObjectCreating = true
-                        println("ObjectNotCreating  $currentStr")
-
-                        lst.add(getAtom(currentStr))
-                        currentStr=""
-                        continue
-                    }
-                    currentStr += data[i]
-                }
-                lst.add(getAtom(currentStr))
-                return lst
-            }
-
-        }
-        return ""
-
     }
     fun String.contains__(s: String): Boolean {
         if (this.indexOf(s)>=0)
             return true;
         return false;
     }
-
-
     fun getKey_(input: String): String{
         return input.getKey()
     }
     fun getValue_(input: String): String{
         return input.getValue()
     }
-
     fun String.getValue(): String{
         val index = this.indexOf(":");
         return this.substring(index+1, this.length).prepare()
     }
-
     fun prepare_(input: String):String{
         return input.prepare()
     }
-
     fun String.prepare():String{
         println(this)
         var buffer = StringBuilder()
@@ -284,9 +147,6 @@ class ParseDSL : Serializable {
             }
             return buffer.toString()
     }
-
-
-
     fun loadcolons(input: String): List<Int>{
         var colonbuff = mutableListOf<Int>()
         for (i in 0..input.length-1)
@@ -364,17 +224,9 @@ class ParseDSL : Serializable {
         }
         return false
     }
-
-
-
     fun String.getKey(): String{
         val index = this.indexOf(":");
         val key = this.substring(0, index).replace(" ","")
         return key
     }
-
-    fun processAtom(input: String): Any{
-        return 2;
-    }
-
 }

@@ -1,8 +1,6 @@
 package util
-
 import java.io.*
 import java.nio.file.Files
-
 class Saver {
     companion object{
         @Throws(IOException::class)
@@ -11,12 +9,10 @@ class Saver {
             fos.write(data)
             fos.close()
         }
-
         @Throws(IOException::class)
         fun readBytes(filename: String?): ByteArray? {
             return Files.readAllBytes(File(filename).toPath())
         }
-
         fun restored(input: ByteArray?): Any? {
             var o: Any? = null
             val bis = ByteArrayInputStream(input)
@@ -36,7 +32,6 @@ class Saver {
             }
             return o
         }
-
         fun savedToBLOB(input: Any?): ByteArray? {
             var Result: ByteArray? = null
             val bos = ByteArrayOutputStream()
@@ -56,6 +51,5 @@ class Saver {
             }
             return Result
         }
-
     }
 }

@@ -15,7 +15,6 @@ public class ExampleReflections {
         arr.add("S");
         arr.add("S");
         arr.add("S");
-
         J.generate(arr);
         Reflections reflections = new Reflections("se.roland");
         Set<Class<?>> SuperMS = reflections
