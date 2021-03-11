@@ -111,7 +111,6 @@ internal class ParseDSLTest {
         print(parser.Head(initial2))
         print("tail>>"+parser.Tail(initial3))
     }
-
     @Test
     fun convertTuppletoSeq(){
         val initial2 = "[[12,12],12]";
@@ -120,8 +119,6 @@ internal class ParseDSLTest {
         assertEquals(Atom.Tupple, parser.getType(initial3))
         assertEquals("'12':[12,12],'12':22,44", parser.ToSequence(initial3))
     }
-
-
     @Test
     fun nestedtupple() {
         val initial = "'12':[[12,12],12]";
