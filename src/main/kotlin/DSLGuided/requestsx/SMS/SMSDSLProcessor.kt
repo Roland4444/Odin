@@ -19,7 +19,6 @@ class SMSDSLProcessor : DSLProcessor() {
             print("START SENDING!!!")
             val sb: StringBuilder = StringBuilder()
             if (enabled=="true") {
-
                 sendto_.forEach { a ->
                     if (a.length>3)
                     {
@@ -68,8 +67,6 @@ class SMSDSLProcessor : DSLProcessor() {
                     login_= a.key.Param as String
         }
     }
-
-
     val pass: RoleHandler ={
         mapper.forEach {
                 a->
@@ -77,7 +74,6 @@ class SMSDSLProcessor : DSLProcessor() {
                 pass_= a.key.Param as String
         }
     }
-
     val sendto: RoleHandler = {
         mapper.forEach {
                 a->
