@@ -12,15 +12,12 @@ class SMSDSLProcessor : DSLProcessor() {
     var login_: String =""
     var pass_: String =""
     var sendto_ = mutableListOf<String>()
-    fun emptyfunc()={
-        println("NOTHING TO DO")
-    }
-
     val renderfunc:StringHandler=
          {
+            print("enabled==> $enabled")
             print("renderfunc")
             print("START SENDING!!!")
-
+            if (enabled=="true") {
                 val sb: StringBuilder = StringBuilder()
                 sendto_.forEach { a ->
                     println(":::SENDING!!!:::")
@@ -46,6 +43,7 @@ class SMSDSLProcessor : DSLProcessor() {
                         sb.append("$it=>shit happens")
                 }
                 sb.toString()
+            }
          }
 
     val add: DumbHandler={it+2}
@@ -82,26 +80,22 @@ class SMSDSLProcessor : DSLProcessor() {
             }
         }
     }
-
-
-
     val enable: RoleHandler = {
         mapper.forEach {
                 a->
-            if (a.key.Name=="enable")
-                enabled= a.key.Param as String
+            if (a.key.Name=="enabled") {
+                println("\n\n\ninto enable lambda")
+                enabled = a.key.Param as String
+            }
         }
     }
-
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
     }
-
     fun loadRoles(D: List<Role>): Unit{
         mapper.clear()
         D.forEach { appendRole(it) }
     }
-
     fun appendRole(R: Role){
         print("Adding role ${R.Name}\n")
         when (R?.Name){
