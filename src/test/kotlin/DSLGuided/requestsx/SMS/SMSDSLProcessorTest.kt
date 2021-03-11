@@ -1,20 +1,16 @@
 package DSLGuided.requestsx.SMS
 
-import com.avs.ParseDSL
+import DSLGuided.requestsx.StringHandler
 import junit.framework.TestCase
 
 class SMSDSLProcessorTest : TestCase() {
-
+    val msg = "FFX"
     fun testGetSendto() {
-        var login ="avs"
-        var pass = "7BBAP7nkTCA4L3r"
-        val msg = "FFX"
-        val dsl: String = "'sms'=>::login{'$login'}, ::pass{'$pass'},::sendto{'89608607763','89996013370',::enabled{'true'}}"
-        val parser: ParseDSL
+        val dsl: String = "'sms'=>::login{'avs'}, ::pass{'7BBAP7nkTCA4L3r'},::sendto{'89608607763','89996013370'},::enabled{'true'}}"
         val smsDSL: SMSDSLProcessor = SMSDSLProcessor()
-        val f = smsDSL.render(dsl)
-        f("high")
-
-
+        val f: StringHandler = smsDSL.render(dsl) as StringHandler
+        smsDSL.add(2)
+        smsDSL.str("aaa")
+        f(msg)
     }
 }

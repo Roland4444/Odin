@@ -1,7 +1,5 @@
 package DSLGuided.requestsx.SMS
-import DSLGuided.requestsx.DSLProcessor
-import DSLGuided.requestsx.RoleHandler
-import DSLGuided.requestsx.sendSMS
+import DSLGuided.requestsx.*
 import abstractions.Role
 import java.lang.StringBuilder
 import java.net.URI
@@ -10,7 +8,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
 class SMSDSLProcessor : DSLProcessor() {
-    var enabled: Boolean = false
+    var enabled: String = "false"
     var login_: String =""
     var pass_: String =""
     var sendto_ = mutableListOf<String>()
@@ -18,39 +16,45 @@ class SMSDSLProcessor : DSLProcessor() {
         println("NOTHING TO DO")
     }
 
-    val renderfunc:sendSMS=
+    val renderfunc:StringHandler=
          {
-            if (!enabled)
-                 ""
-            val sb: StringBuilder=StringBuilder()
-            sendto_.forEach {a->
-                val req = """https://smsc.ru/sys/send.php?login=$login&psw=$pass&phones=$a&mes=${it.replace(" ", "%20")}"""
-                val request = HttpRequest.newBuilder()
-                    .uri(URI.create(req))
-                    .timeout(Duration.ofMinutes(2))
-                    .GET()
-                    .build()
-                val client = HttpClient.newBuilder()
-                    .version(HttpClient.Version.HTTP_1_1)
-                    .connectTimeout(Duration.ofSeconds(20))
-                    .build()
-                val response = client.send(request, HttpResponse.BodyHandlers.ofByteArray())
-                if (response.statusCode() == 200)
-                    sb.append("$it=>${String(response.body())}")
-                else
-                    sb.append("$it=>shit happens")
-            }
-            sb.toString()
+            print("renderfunc")
+            print("START SENDING!!!")
 
-    }
+                val sb: StringBuilder = StringBuilder()
+                sendto_.forEach { a ->
+                    println(":::SENDING!!!:::")
+                    val req = """https://smsc.ru/sys/send.php?login=$login_&psw=$pass_&phones=$a&mes=${
+                        it.replace(
+                            " ",
+                            "%20"
+                        )
+                    }"""
+                    val request = HttpRequest.newBuilder()
+                        .uri(URI.create(req))
+                        .timeout(Duration.ofMinutes(2))
+                        .GET()
+                        .build()
+                    val client = HttpClient.newBuilder()
+                        .version(HttpClient.Version.HTTP_1_1)
+                        .connectTimeout(Duration.ofSeconds(20))
+                        .build()
+                    val response = client.send(request, HttpResponse.BodyHandlers.ofByteArray())
+                    if (response.statusCode() == 200)
+                        sb.append("$it=>${String(response.body())}")
+                    else
+                        sb.append("$it=>shit happens")
+                }
+                sb.toString()
+         }
 
+    val add: DumbHandler={it+2}
+    val str: StringHandler={ print(it); }
     override fun render(DSL: String) :Any{
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
-        if (enabled)        return renderfunc
-        return  emptyfunc()
-
+        return renderfunc
     }
 
     val login: RoleHandler = {
@@ -85,7 +89,7 @@ class SMSDSLProcessor : DSLProcessor() {
         mapper.forEach {
                 a->
             if (a.key.Name=="enable")
-                enabled= a.key.Param as Boolean
+                enabled= a.key.Param as String
         }
     }
 
