@@ -17,37 +17,43 @@ class SMSDSLProcessor : DSLProcessor() {
             print("enabled==> $enabled")
             print("renderfunc")
             print("START SENDING!!!")
+            val sb: StringBuilder = StringBuilder()
             if (enabled=="true") {
-                val sb: StringBuilder = StringBuilder()
+
                 sendto_.forEach { a ->
-                    println(":::SENDING!!!:::")
-                    val req = """https://smsc.ru/sys/send.php?login=$login_&psw=$pass_&phones=$a&mes=${
+                    if (a.length>3)
+                    {
+                        println(":::SENDING to $a:::")
+                        sb.append(":::SENDING to $a:::")
+                        val req = """https://smsc.ru/sys/send.php?login=$login_&psw=$pass_&phones=$a&mes=${
                         it.replace(
-                            " ",
-                            "%20"
-                        )
-                    }"""
-                    val request = HttpRequest.newBuilder()
-                        .uri(URI.create(req))
-                        .timeout(Duration.ofMinutes(2))
-                        .GET()
-                        .build()
-                    val client = HttpClient.newBuilder()
-                        .version(HttpClient.Version.HTTP_1_1)
-                        .connectTimeout(Duration.ofSeconds(20))
-                        .build()
-                    val response = client.send(request, HttpResponse.BodyHandlers.ofByteArray())
-                    if (response.statusCode() == 200)
-                        sb.append("$it=>${String(response.body())}")
-                    else
-                        sb.append("$it=>shit happens")
+                                " ",
+                                "%20"
+                            )
+                        }"""
+                        val request = HttpRequest.newBuilder()
+                            .uri(URI.create(req))
+                            .timeout(Duration.ofMinutes(2))
+                            .GET()
+                            .build()
+                        val client = HttpClient.newBuilder()
+                            .version(HttpClient.Version.HTTP_1_1)
+                            .connectTimeout(Duration.ofSeconds(20))
+                            .build()
+                        val response = client.send(request, HttpResponse.BodyHandlers.ofByteArray())
+                        if (response.statusCode() == 200)
+                            sb.append("$it=>${String(response.body())}")
+                        else
+                            sb.append("$it=>shit happens")
+                    }
+
                 }
-                sb.toString()
-            }
+                }
+             sb.toString()
          }
 
     val add: DumbHandler={it+2}
-    val str: StringHandler={ print(it); }
+    val str: StringHandler={ (it); }
     override fun render(DSL: String) :Any{
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
