@@ -22,7 +22,8 @@ class ParseDSL : Serializable {
         if ((rolename.length == 0) || (rolename ==null)) return null;
         return Role(rolename, params, this)
     }
-    fun parseRoles(input: String): List<Role>{
+    fun parseRoles(input__: String): List<Role>{
+        val input = input__.prepare()
         var result: MutableList<Role>  = mutableListOf()
         var initialString = input
         var role: Role? = parseRole(initialString)
@@ -53,10 +54,6 @@ class ParseDSL : Serializable {
         if ((input.indexOf("'")>=0) && (input.indexOf(":")<0))
             return Atom.String
         if ((input.indexOf("'")>=0) && (input.indexOf(":")>0) && (input.Tail__()=="")) {
-            val t = input.Tail__()
-            val h = input.Head__()
-            println("Tail $t")
-            println("Head $h")
             return Atom.KeyValue
         }
         if  (checker.isnumber(input))
@@ -94,7 +91,6 @@ class ParseDSL : Serializable {
             Atom.KeyValue->{
                 val key = Atom(getKey_(input)).toString()
                 val value = Atom(getValue_(input))
-                println("key=>$key,  value =>$value")
                 if (value != null) {
                     map.put(key, value)
                 }

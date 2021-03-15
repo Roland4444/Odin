@@ -11,14 +11,7 @@ typealias DumbHandler2 = (Param:Int, Param2: Int) -> Int
 abstract class DSLProcessor() {
     var parser = ParseDSL()
     var mapper = mutableMapOf<Role, RoleHandler>()
-    init{
-
-    }
     abstract fun render(DSL: String): Any
     abstract fun parseRoles(DSL: String): List<Role>
     var outtemplate: String = """"""
-    fun init(){
-
-    }
-    
 }
