@@ -18,7 +18,7 @@ class ParseDSL : Serializable {
         val rolename: String= input.substring(input.indexOf("::")+2, input.indexOf("{"))
         var params: String
         if (input.indexOf("{")<input.indexOf("}")-2)
-            params = input.substring(input.indexOf("{")+1, input.indexOf("}")-1)
+            params = input.substring(input.indexOf("{")+1, input.indexOf("}"))
         else params=""
         if ((rolename.length == 0) || (rolename ==null)) return null;
         return Role(rolename, params, this)
@@ -44,6 +44,14 @@ class ParseDSL : Serializable {
             return input.substring(1, input.length-1)
         return input
     }
+    fun countStringDelims(input: String): Int{
+        var counter = 0
+        for (i in 0..input.length-1){
+            if (input[i]=='\'')
+                counter++
+        }
+        return counter
+    }
     fun getType(input_:String): Atom {
         val input = input_.prepare()
         if (input.equals(""))
@@ -52,7 +60,7 @@ class ParseDSL : Serializable {
             return Atom.Sequence
         if ((input[0]=='[') && (input[input.length-1]==']'))
             return Atom.Tupple
-        if ((input.indexOf("'")>=0) && (input.indexOf(":")<0))
+        if ((input.indexOf("'")>=0) && (input.indexOf(":")<0)&&(countStringDelims(input)==2))
             return Atom.String
         if ((input.indexOf("'")>=0) && (input.indexOf(":")>0) && (input.Tail__()=="")) {
             return Atom.KeyValue
@@ -80,6 +88,7 @@ class ParseDSL : Serializable {
     }
     fun Atom(input:  String): Any{
         val type = getType(input)
+        println("TYPE @ $input  = $type")
         var map = mutableMapOf<String, Any>()
         var lst = mutableListOf<Any>()
         when (type){
@@ -104,6 +113,9 @@ class ParseDSL : Serializable {
             }
             Atom.Tupple->{
                 return Atom(input.toSequence())
+            }
+            Atom.None->{
+                return input
             }
         }
         return ""

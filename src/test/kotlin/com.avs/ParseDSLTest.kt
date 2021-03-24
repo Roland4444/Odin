@@ -75,6 +75,25 @@ internal class ParseDSLTest {
         assertEquals(etalon2, parser.prepare_(param2))
     }
     @Test
+    fun countStringdelim(){
+        val etalon = "12,'Добрый день',122";
+        val initial = "'12':[12,12,56]";
+        val etalon2 = "[12,12,56]";
+        assertEquals(2, parser.countStringDelims(etalon))
+        assertEquals(2, parser.countStringDelims(initial))
+        assertEquals(0, parser.countStringDelims(etalon2))
+    }
+    @Test
+    fun extendedtest(){
+        val initial = "'urldb':jdbc:mysql://192.168.0.121:3306/psa"
+        assertEquals(Atom.KeyValue, parser.getType(initial))
+        assertEquals("'urldb'", parser.getKey_(initial))
+        assertEquals("jdbc:mysql://192.168.0.121:3306/psa", parser.getValue_(initial))
+        assertEquals(Atom.None, parser.getType(parser.getValue_(initial)))
+
+    }
+
+    @Test
     fun testGetValue_() {
         val initial = "'12':[12,12,56]";
         val etalon = "[12,12,56]";
@@ -175,6 +194,8 @@ internal class ParseDSLTest {
         etalon.add(keyvalue)
         assertEquals(etalon, parser.Atom(initial))
     }
+
+    fun testCountStringDelims() {}
 
 
 }
