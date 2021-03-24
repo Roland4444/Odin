@@ -3,7 +3,7 @@ package DSLGuided.requestsx.SMS
 import DSLGuided.requestsx.StringHandler
 import junit.framework.TestCase
 import util.Saver
-
+typealias simple2 = (in1: Int, in2: Int) -> Unit
 class SMSDSLProcessorTest : TestCase() {
     val msg = "DSL rulez white"
     fun testGetSendto() {
@@ -16,4 +16,16 @@ class SMSDSLProcessorTest : TestCase() {
         val b = nsg.encodeToByteArray()
         Saver.write(b, "report.log")
     }
+
+    fun sum(a: Int, b: Int): Int{
+        return a+b
+    }
+    fun testsimple2(){
+        val f : simple2
+        f = {
+            in1, in2 -> run { println(in1); sum(in1, in2)}
+        }
+        assertEquals(4, f(2,2))
+    }
 }
+

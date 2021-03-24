@@ -1,5 +1,6 @@
 package DSLGuided.requestsx.PSA
 
+import DSLGuided.requestsx.psaDraft
 import junit.framework.TestCase
 
 class PSADSLProcessorTest : TestCase() {
@@ -13,7 +14,9 @@ class PSADSLProcessorTest : TestCase() {
       //  assertEquals("http://192.168.0.121:8080/psa/psa/num", psa.dumb)
         assertEquals("password", psa.pass)
         assertEquals("user123", psa.login)
-        assertEquals("http://192.168.0.121:8080/psa/psa/num", psa.urlPsanumberUrl)
+        assertEquals("http://192.168.0.121:8080/psa/psa/num?department_id", psa.urlPsanumberUrl)
         assertEquals("department_id", psa.keyparam_)
+        //val f: psaDraft = psa.createdraft
+       // f(12f, "12", "fgfgf")
     }
 }
