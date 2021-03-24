@@ -25,7 +25,7 @@ class SMSDSLProcessorTest : TestCase() {
         f = {
             in1, in2 -> run { println(in1); sum(in1, in2)}
         }
-        assertEquals(4, f(2,2))
+        assertEquals(4, sum(2,2))
     }
 }
 

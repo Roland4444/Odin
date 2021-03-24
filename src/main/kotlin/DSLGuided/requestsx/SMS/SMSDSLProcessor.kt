@@ -10,7 +10,6 @@ import java.time.Duration
 ////////////Пример DSL для SMSDSLProcessor'a
 ///////////'sms'=>::login{'login'}, ::pass{'pass'},::sendto{'8958875755','89565888866'},::enabled{'false'}.  в sendto должно быть минимум два отправителя
 class SMSDSLProcessor : DSLProcessor() {
-    var enabled: String = "false"
     var login_: String =""
     var pass_: String =""
     var sendto_ = mutableListOf<String>()
@@ -84,15 +83,7 @@ class SMSDSLProcessor : DSLProcessor() {
             }
         }
     }
-    val enable: RoleHandler = {
-        mapper.forEach {
-                a->
-            if (a.key.Name=="enabled") {
-                println("\n\n\ninto enable lambda")
-                enabled = a.key.Param as String
-            }
-        }
-    }
+
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
     }

@@ -17,8 +17,9 @@ import java.time.LocalDate
 
 typealias psaDraft = (Brutto: Float, DepId:String, PlateNumber: String, GUID: String, Type: String) -> Unit
 ////////////Пример DSL для PSADSLProcessor'a
-///////////      login, pass,                                  db PSA                                                     URL service (get request)
-///////'psa2'=>::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id}
+///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
+//                                                                                                                                                                                  подключаться к БД
+///////'psa2'=>::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
 class PSADSLProcessor  : DSLProcessor() {
     val psaSql =                         """
 INSERT INTO `psa`(
@@ -37,7 +38,8 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         urlPsanumberUrl += "?"+keyparam_+"="
-        dbConnection = DriverManager.getConnection(urldb, login, pass)
+        if (enabled == "true")
+            dbConnection = DriverManager.getConnection(urldb, login, pass)
         return "OK"
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
@@ -129,6 +131,7 @@ NULL,    ? ,    ?,       ?,    'Необходимо выбрать', ?,        
             "getPsaNumberfrom" -> mapper.put(R, getPsaNumberfrom)
             "db" -> mapper.put(R, db)
             "keyparam" -> mapper.put(R, keyparam)
+            "enabled" -> mapper.put(R, enable)
         }
     }
 
