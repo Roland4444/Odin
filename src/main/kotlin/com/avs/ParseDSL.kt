@@ -2,6 +2,7 @@ package com.avs
 import abstractions.DSLBNF.Atom
 import abstractions.DSLBNF.Expression
 import abstractions.DSLRole
+import abstractions.KeyValue
 import abstractions.Role
 import se.roland.util.Checker
 import java.io.Serializable
@@ -94,7 +95,7 @@ class ParseDSL : Serializable {
                 if (value != null) {
                     map.put(key, value)
                 }
-                return map
+                return KeyValue(key, value)
             }
             Atom.Sequence->{
                 val lst2 = getList(input)

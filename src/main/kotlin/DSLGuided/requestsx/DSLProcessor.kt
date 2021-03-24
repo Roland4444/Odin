@@ -9,6 +9,7 @@ typealias StringHandler = (Param:String) -> String
 typealias DumbHandler2 = (Param:Int, Param2: Int) -> Int
 
 abstract class DSLProcessor() {
+    lateinit var exampleDSLString: String
     var parser = ParseDSL()
     var mapper = mutableMapOf<Role, RoleHandler>()
     abstract fun render(DSL: String): Any

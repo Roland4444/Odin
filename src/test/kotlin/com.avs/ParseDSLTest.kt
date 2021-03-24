@@ -3,6 +3,7 @@ package com.avs
 import abstractions.DSLBNF.Atom
 import abstractions.DSLBNF.Expression
 import abstractions.DSLRole
+import abstractions.KeyValue
 import abstractions.Role
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -34,10 +35,10 @@ internal class ParseDSLTest {
         val etalon= mutableListOf<Any>();
         etalon.add(12);
         etalon.add("Добрый день");
-        val hashmap = mutableMapOf<String, List1<Any>>();
+
         val param: String = "[12,'Добрый день', 'таблицы':['касса','склад','приход'], '12 декабря']";
         var list = mutableListOf("касса","склад","приход");
-        hashmap.put("таблицы", list);
+        val hashmap = KeyValue("таблицы", list);
         etalon.add(hashmap);
         etalon.add("12 декабря");
         assertEquals(etalon.toString(), parser.Atom(param).toString())
@@ -51,8 +52,8 @@ internal class ParseDSLTest {
     }
     @Test
     fun testGetAtom() {
-        val keyvalue= mutableMapOf<String, Any>()
-        keyvalue.put("key",12)
+        val keyvalue= KeyValue("key",12)
+        //keyvalue.put("key",12)
         assertEquals("", parser.Atom(""))
         assertEquals(true, "121212".contains("12"))
         assertEquals(12,parser.Atom("12"))
@@ -78,9 +79,9 @@ internal class ParseDSLTest {
         val initial = "'12':[12,12,56]";
         val etalon = "[12,12,56]";
         assertEquals(etalon,parser.getValue_(initial))
-        val etalonMap = mutableMapOf<String, Any>()
+
         var arr = mutableListOf(12,12,56)
-        etalonMap.put("12", arr)
+        val etalonMap = KeyValue("12", arr)
         assertEquals(etalonMap, parser.Atom(initial))
     }
     @Test
@@ -170,8 +171,7 @@ internal class ParseDSLTest {
         var etalon = mutableListOf<Any>()
         etalon.add(12)
         etalon.add("aaaa")
-        var keyvalue= mutableMapOf<String, Any>()
-        keyvalue.put("f",56)
+        var keyvalue= KeyValue("f",56)
         etalon.add(keyvalue)
         assertEquals(etalon, parser.Atom(initial))
     }

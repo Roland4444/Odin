@@ -7,6 +7,8 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
+////////////Пример DSL для SMSDSLProcessor'a
+///////////'sms'=>::login{'login'}, ::pass{'pass'},::sendto{'8958875755','89565888866'},::enabled{'false'}.  в sendto должно быть минимум два отправителя
 class SMSDSLProcessor : DSLProcessor() {
     var enabled: String = "false"
     var login_: String =""
