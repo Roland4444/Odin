@@ -41,7 +41,7 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         return "OK"
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
-    fun getPSANumver(DepsId : String): String{
+    fun getPSANumber(DepsId : String): String{
         return getRequest(urlPsanumberUrl+DepsId)
     };
 
@@ -54,7 +54,7 @@ INSERT INTO `psa`(
 `id`,`number`,`date`,`plate_number`,`client`,`department_id`,`description`,  `type`,     `created_at`,    `diamond`,`payment_date` ,`check_printed`,`deferred`,`filename`,`uuid`) 
 VALUES (
 NULL,    ? ,    ?,       ?,    'Необходимо выбрать', ?,           '?',         ?,      CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,      '0',        '0',        NULL,    ?);""");
-        prepared?.setString(1, getPSANumver(DepId))
+        prepared?.setString(1, getPSANumber(DepId))
         prepared?.setDate  (2, Date.valueOf(LocalDate.now() as String))
         prepared?.setString(3, PlateNumber)
         prepared?.setString(4, DepId)
