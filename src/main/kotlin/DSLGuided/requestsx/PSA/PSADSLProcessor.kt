@@ -9,13 +9,13 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.sql.Connection
-import java.sql.Date
-import java.sql.DriverManager
+import java.sql.*
 import java.time.Duration
 import java.time.LocalDate
+import java.util.*
 
-typealias psaDraft = (Brutto: Float, DepId:String, PlateNumber: String, GUID: String, Type: String) -> Unit
+
+typealias psaDraft = (Brutto: Float, Sor: Float, Metal: String, DepId:String, PlateNumber: String, GUID: String, Type: String) -> Unit
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
@@ -47,22 +47,107 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         return getRequest(urlPsanumberUrl+DepsId)
     };
 
-    var createdraft:psaDraft=
-    {
-        Brutto, DepId, PlateNumber, GUID, Type -> run{
+    fun getPassportId(): Int? {
+        val psaStmt: PreparedStatement?
+        try {
+            psaStmt = dbConnection?.prepareStatement("SELECT *  FROM psa.`passport` ORDER BY ID DESC LIMIT 1;")
+            val rs = psaStmt?.executeQuery()
+            rs?.next()
+            return rs?.getInt(1)
+        } catch (throwable: SQLException) {
+            throwable.printStackTrace()
+        }
+        return -1
+    }
+    var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->
+        run {
+            var prepared = dbConnection?.prepareStatement(               ////color/black
+                """
+INSERT INTO `psa` (
+`id`,`number`,`passport_id`, `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+VALUES (
+NULL,   ?,         ?,         ?,          ?, 'Необходимо выбрать',      ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+            );
+            val date: String = LocalDate.now().toString()
+            println("date => $date")
+            prepared?.setString(1, getPSANumber(DepId))
+            getPassportId()?.let { prepared?.setInt(2, it) }
+            prepared?.setDate(3, java.sql.Date.valueOf(date));
+            prepared?.setString(4, PlateNumber)
+            prepared?.setString(5, DepId)
+            prepared?.setString(6, descriptionMap.get(Type))////LocalDate getDate
+            prepared?.setString(7, Type)
+            prepared?.setString(8, UUID)
+            println("prepared=> $prepared")
+            if (prepared != null) {
+                prepared.execute()
+            }
+            prepared = dbConnection?.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
+                        AND `department_id` = ? AND `comment`='fromScales' AND `uuid`= ?;"""
+            )
+            prepared?.setDate(1, java.sql.Date.valueOf(date))
+            prepared?.setString(2, PlateNumber)
+            prepared?.setString(3, DepId)
+            prepared?.setString(4, UUID)
+            System.out.println(prepared)
+            val rs: ResultSet? = prepared?.executeQuery()
+            var PSAId = 0
+            if (rs != null) {
+                if (rs.next())
+                    PSAId = rs.getInt(1)
+            }
+
+            prepared = dbConnection?.prepareStatement(
+"""INSERT INTO `weighing` 
+(`id`, `brutto`,  `sor`, `tare`,`price`, `psa_id`, `metal_id`,  `client_price`, `inspection`, `uuid`) 
+VALUES 
+(NULL,     ?,       ?,    0.0,   0.0,          ?,        ?,             0.0,           ?,            ?);
+""")
+            prepared?.setFloat(1, Brutto)
+            prepared?.setFloat(2, Sor)
+            prepared?.setInt(3, PSAId)
+            val rnd = Random()
+            var inspect =  Random().nextFloat()/4
+            prepared?.setInt(4, getMetalId(Metal))
+            val m = getMetalId(Metal)
+            println("METALID==>$m")
+            prepared?.setString(5, (Math.round(inspect * 100.0) / 100.0).toString())
+            prepared?.setString(6, UUID)
+            println(prepared)
+            if (PSAId == 0)
+                println("Wrong psaId")
+            prepared?.execute()
+        }
+    }
+
+    fun getMetalId(metal: String?): Int {
+        val prepared =dbConnection?.prepareStatement("select id from `psa`.`metal` where title=?;")
+        prepared?.setString(1, metal)
+        val rs = prepared?.executeQuery()
+        if (rs?.next() == true)
+            return rs.getInt(1)
+        return -1;
+    }
+
+
+    var createdraft___:psaDraft=
+    {///,`client`                  'Необходимо выбрать',
+            Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type -> run{
         val prepared = dbConnection?.prepareStatement(               ////color/black
                         """
 INSERT INTO `psa`(
-`id`,`number`,`date`,`plate_number`,`client`,`department_id`,`description`,  `type`,     `created_at`,    `diamond`,`payment_date` ,`check_printed`,`deferred`,`filename`,`uuid`) 
+`id`,`number`,`date`,`plate_number`,`department_id`,`description`,  `type`,     `created_at`,    `diamond`,`payment_date` ,`check_printed`,`deferred`,`filename`,`uuid`) 
 VALUES (
-NULL,    ? ,    ?,       ?,    'Необходимо выбрать', ?,           '?',         ?,      CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,      '0',        '0',        NULL,    ?);""");
+NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,      '0',        '0',        NULL,    ?);""");
+        val date: String = LocalDate.now().toString()
+        println("date => $date")
         prepared?.setString(1, getPSANumber(DepId))
-        prepared?.setDate  (2, Date.valueOf(LocalDate.now() as String))
+        prepared?.setDate  (2, java.sql.Date.valueOf(date));
         prepared?.setString(3, PlateNumber)
         prepared?.setString(4, DepId)
-        prepared?.setString(5, descriptionMap.get(Type))
+        prepared?.setString(5, descriptionMap.get(Type))////LocalDate getDate
         prepared?.setString(6, Type)
-        prepared?.setString(6, GUID)
+        prepared?.setString(7, UUID)
         println("prepared=> $prepared")
         if (prepared != null) {
             prepared.execute()
