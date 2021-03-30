@@ -13,14 +13,37 @@ import java.sql.*
 import java.time.Duration
 import java.time.LocalDate
 import java.util.*
+typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
+typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
 
-
-typealias psaDraft = (Brutto: Float, Sor: Float, Metal: String, DepId:String, PlateNumber: String, GUID: String, Type: String) -> Unit
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
 ///////'psa2'=>::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
 class PSADSLProcessor  : DSLProcessor() {
+    companion object {
+        fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit{
+            PSAProc.render(DSL)
+            val f: psaDraft = PSAProc.createdraft
+            val Brutto = params.get("Brutto")
+            val Sor = params.get("Sor")
+            val Metal = params.get("Metal")
+            val DepId = params.get("DepId")
+            val PlateNumber = params.get("PlateNumber")
+            val UUID = params.get("UUID")
+            val Type = params.get("Type")
+            f(Brutto as String, Sor as String , Metal as String , DepId as String , PlateNumber as String , UUID as String, Type as String)
+        }
+        fun completePSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit{
+            PSAProc.render(DSL)
+            val m = PSAProc.completePSA
+            val Sor = params.get("Sor")
+            val Tara = params.get("Tara")
+            val UUID = params.get("UUID")
+            m(Tara as String, Sor as String,  UUID as String)
+
+        }
+    }
     val psaSql =                         """
 INSERT INTO `psa`(
 `id`,`number`,`passport_id`,`date`,`plate_number`,`client`,`department_id`,`description`,             `type`,     `created_at`,    `diamond`,`payment_date`, `comment`,`check_printed`,`deferred`,`filename`,`uuid`) 
@@ -44,10 +67,13 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
     fun getPSANumber(DepsId : String): String{
+        println("\n\n!!!!!!!!INTO getPSANumber\n\n")
         return getRequest(urlPsanumberUrl+DepsId)
     };
 
     fun getPassportId(): Int? {
+        println("\n\n!!!!!!!!INTO getPassportId\n\n")
+
         val psaStmt: PreparedStatement?
         try {
             psaStmt = dbConnection?.prepareStatement("SELECT *  FROM psa.`passport` ORDER BY ID DESC LIMIT 1;")
@@ -59,6 +85,23 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         }
         return -1
     }
+    var completePSA: completePSA = {Tare: String, Sor: String, UUID: String ->run {
+        var prepared = dbConnection?.prepareStatement(
+
+            """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ? WHERE `uuid` = ?;"""
+        )
+       // prepared?.setFloat(1, Final)
+      //  prepared?.setFloat(4, Final)
+        prepared?.setFloat(1, Tare.toFloat())
+        prepared?.setFloat(3, Tare.toFloat())
+        prepared?.setFloat(2, Sor.toFloat())
+        prepared?.setFloat(4, Sor.toFloat())
+        prepared?.setString(5, UUID)
+        prepared?.execute()
+    }
+
+    }
+
     var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->
         run {
             var prepared = dbConnection?.prepareStatement(               ////color/black
@@ -103,8 +146,9 @@ NULL,   ?,         ?,         ?,          ?, 'Необходимо выбрат�
 VALUES 
 (NULL,     ?,       ?,    0.0,   0.0,          ?,        ?,             0.0,           ?,            ?);
 """)
-            prepared?.setFloat(1, Brutto)
-            prepared?.setFloat(2, Sor)
+            val f = "25".toFloat()
+            prepared?.setInt(1,Brutto.toInt())
+            prepared?.setFloat(2, Sor.toFloat())
             prepared?.setInt(3, PSAId)
             val rnd = Random()
             var inspect =  Random().nextFloat()/4
@@ -121,11 +165,12 @@ VALUES
     }
 
     fun getMetalId(metal: String?): Int {
-        val prepared =dbConnection?.prepareStatement("select id from `psa`.`metal` where title=?;")
+        var prepared =dbConnection?.prepareStatement("select * from `psa`.`metal` where title=?;")
         prepared?.setString(1, metal)
         val rs = prepared?.executeQuery()
+        println("\n\n\n\nINTO getmetalid $prepared")
         if (rs?.next() == true)
-            return rs.getInt(1)
+            return rs.getInt("id")
         return -1;
     }
 

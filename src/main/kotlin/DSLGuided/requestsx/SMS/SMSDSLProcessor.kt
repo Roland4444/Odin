@@ -10,6 +10,12 @@ import java.time.Duration
 ////////////Пример DSL для SMSDSLProcessor'a
 ///////////'sms'=>::login{'login'}, ::pass{'pass'},::sendto{'8958875755','89565888866'},::enabled{'false'}.  в sendto должно быть минимум два отправителя
 class SMSDSLProcessor : DSLProcessor() {
+    companion object {
+        fun sendSMS(msg: String, DSL: String, SMSProc: SMSDSLProcessor): String{
+            val f: StringHandler = SMSProc.render(DSL) as StringHandler
+            return  f(msg)
+        }
+    }
     var login_: String =""
     var pass_: String =""
     var sendto_ = mutableListOf<String>()
