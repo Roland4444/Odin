@@ -24,7 +24,7 @@ class PSADSLProcessorTest : TestCase() {
         val f = psa.createdraft
         val uuid = timeBasedUUID.generate()
         println("UUID $uuid")
-        f("12", "0.2","5А","27", "KIRILL_F15", uuid, "black")
+        f("12", "0.2","5А","17", "KIRILL_F15", uuid, "black")
         val m = psa.completePSA
          m("12", "1",  uuid)
 
@@ -34,10 +34,11 @@ class PSADSLProcessorTest : TestCase() {
         val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
         var hash = mutableMapOf<String, String>()
         var psa  = PSADSLProcessor()
+        psa.render(copy)
         hash.put("Brutto", "12000")
         hash.put("Sor", "0.2")
         hash.put("Metal", "5А")
-        hash.put("DepId", "27")
+        hash.put("DepId", "25")
         hash.put("PlateNumber", "KIRILL_F22")
         hash.put("UUID",  timeBasedUUID.generate())
         hash.put("Type", "black")
@@ -46,7 +47,7 @@ class PSADSLProcessorTest : TestCase() {
     }
 
     fun testGetMetalId() {
-        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
+        val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
         var psa  = PSADSLProcessor()
         psa.render(copy)
         assertEquals(5, psa.getMetalId("Медь"))
