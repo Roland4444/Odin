@@ -1,6 +1,8 @@
 package DSLGuided.requestsx.PSA
 import junit.framework.TestCase
+import se.roland.abstractions.timeBasedUUID
 
+import java.util.HashMap
 class PSADSLProcessorTest : TestCase() {
 
     fun testRender() {
@@ -12,8 +14,6 @@ class PSADSLProcessorTest : TestCase() {
       //  assertEquals("http://192.168.0.121:8080/psa/psa/num", psa.dumb)
         assertEquals("123", psa.pass)
         assertEquals("root", psa.login)
-        assertEquals("http://192.168.0.121:8080/psa/psa/num?department_id=", psa.urlPsanumberUrl)
-        assertEquals("department_id", psa.keyparam_)
         //val f: psaDraft = psa.createdraft
        // f(12f, "12", "fgfgf")
     }
@@ -22,8 +22,36 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         psa.render(copy)
         val f = psa.createdraft
-        for (i in 8..20){
-            f(12f, 0.2f,"5А","27", "XOP"+i, "XOR"+i, "black")
-        }
+        val uuid = timeBasedUUID.generate()
+        println("UUID $uuid")
+        f("12", "0.2","5А","27", "KIRILL_F15", uuid, "black")
+        val m = psa.completePSA
+         m("12", "1",  uuid)
+
     }//Brutto, Sor, DepId, PlateNumber, UUID, Type
+
+    fun testcompanioncreatedraftpsa(){
+        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
+        var hash = mutableMapOf<String, String>()
+        var psa  = PSADSLProcessor()
+        hash.put("Brutto", "12000")
+        hash.put("Sor", "0.2")
+        hash.put("Metal", "5А")
+        hash.put("DepId", "27")
+        hash.put("PlateNumber", "KIRILL_F22")
+        hash.put("UUID",  timeBasedUUID.generate())
+        hash.put("Type", "black")
+        PSADSLProcessor.createdraftPSA(hash as HashMap<String, String>, copy, psa )
+
+    }
+
+    fun testGetMetalId() {
+        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
+        var psa  = PSADSLProcessor()
+        psa.render(copy)
+        assertEquals(5, psa.getMetalId("Медь"))
+        assertEquals(14, psa.getMetalId("3A"))
+
+
+    }
 }
