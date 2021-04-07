@@ -27,6 +27,11 @@
             <version>3.1.4</version>
         </dependency>
         <dependency>
+            <groupId>fr.roland</groupId>
+            <artifactId>Executor</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.22</version>

@@ -4,6 +4,7 @@ import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
+import fr.roland.DB.Executor
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -13,6 +14,7 @@ import java.sql.*
 import java.time.Duration
 import java.time.LocalDate
 import java.util.*
+
 typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
 typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
 
@@ -56,13 +58,16 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     var keyparam_: String =""
     var dumb: String = ""
     var dbConnection: Connection? = null
+    lateinit var executor: Executor
     override fun render(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
+        executor = Executor(urldb, login, pass)
         urlPsanumberUrl += "?"+keyparam_+"="
-        if (enabled == "true")
+        if (enabled == "true") {
             dbConnection = DriverManager.getConnection(urldb, login, pass)
+        }
         return "OK"
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
@@ -101,20 +106,27 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     }
 
     }
+    val initialsqldraft =    """
+INSERT INTO `psa` (
+`id`,`number`,`passport_id`, `company_id`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+VALUES (
+NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо выбрать',      ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+
 
     var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->
         run {
             var prepared = dbConnection?.prepareStatement(               ////color/black
                 """
 INSERT INTO `psa` (
-`id`,`number`,`passport_id`, `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+`id`,`number`, `company_id`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,         ?,         ?,          ?, 'Необходимо выбрать',      ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,          ?,          ?,           ?,          '   ',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
             );
             val date: String = LocalDate.now().toString()
             println("date => $date")
             prepared?.setString(1, getPSANumber(DepId))
-            getPassportId()?.let { prepared?.setInt(2, it) }
+           /// getPassportId()?.let { prepared?.setInt(2, it) }
+            prepared?.setInt(2, 2)
             prepared?.setDate(3, java.sql.Date.valueOf(date));
             prepared?.setString(4, PlateNumber)
             prepared?.setString(5, DepId)

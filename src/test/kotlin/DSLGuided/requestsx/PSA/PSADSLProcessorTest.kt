@@ -31,7 +31,7 @@ class PSADSLProcessorTest : TestCase() {
     }//Brutto, Sor, DepId, PlateNumber, UUID, Type
 
     fun testcompanioncreatedraftpsa(){
-        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
+        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
         var hash = mutableMapOf<String, String>()
         var psa  = PSADSLProcessor()
         psa.render(copy)
@@ -39,12 +39,31 @@ class PSADSLProcessorTest : TestCase() {
         hash.put("Sor", "0.2")
         hash.put("Metal", "5А")
         hash.put("DepId", "25")
-        hash.put("PlateNumber", "KIRILL_F22")
+        hash.put("PlateNumber", "VTB100")
         hash.put("UUID",  timeBasedUUID.generate())
         hash.put("Type", "black")
         PSADSLProcessor.createdraftPSA(hash as HashMap<String, String>, copy, psa )
 
     }
+
+    fun testcompanioncreatedraftpsafrommypc(){
+        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
+        var hash = mutableMapOf<String, String>()
+        var psa  = PSADSLProcessor()
+        psa.render(copy)
+        hash.put("Brutto", "12000")
+        hash.put("Sor", "0.2")
+        hash.put("Metal", "5А")
+        hash.put("DepId", "25")
+        hash.put("PlateNumber", "VTB100")
+        hash.put("UUID",  timeBasedUUID.generate())
+        hash.put("Type", "black")
+        PSADSLProcessor.createdraftPSA(hash as HashMap<String, String>, copy, psa )
+
+    }
+
+
+
 
     fun testGetMetalId() {
         val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}."

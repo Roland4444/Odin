@@ -1,0 +1,59 @@
+{
+  "id": 34494,
+  "waybill": 4,
+  "date": "2021-03-26",
+  "time": "08:53:43",
+  "comment": "Гумаров",
+  "exportId": 4,
+  "department": {
+    "id": 16,
+    "name": "ПЗУ 1 АЦКК Ц/М",
+    "value": 16,
+    "text": "ПЗУ 1 АЦКК Ц/М"
+  },
+  "departmentId": 16,
+  "totalMass": 2.37,
+  "totalPrice": 0,
+  "weighings": [
+    {
+      "id": 76755,
+      "trash": 0,
+      "clogging": 1,
+      "tare": 0,
+      "brutto": 1.6,
+      "metal": {
+        "id": 8,
+        "name": "Медь микс",
+        "def": false
+      },
+      "metalId": 8,
+      "mass": 1.58,
+      "price": "100",
+      "totalPrice": 0,
+      "newPrice": "100",
+      "calculatedMass": "158.00"
+    },
+    {
+      "id": 76756,
+      "trash": 0,
+      "clogging": 1,
+      "tare": 0,
+      "brutto": 0.8,
+      "metal": {
+        "id": 14,
+        "name": "Алюминий хлам",
+        "def": false
+      },
+      "metalId": 14,
+      "mass": 0.79,
+      "price": "100",
+      "totalPrice": 0,
+      "newPrice": "100",
+      "calculatedMass": "79.00"
+    }
+  ],
+  "customer": 48,
+  "totalPaidAmount": 0,
+  "hasBeenPaid": false,
+  "oldCustomer": 48
+}
