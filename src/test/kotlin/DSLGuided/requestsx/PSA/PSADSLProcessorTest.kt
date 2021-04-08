@@ -17,8 +17,8 @@ class PSADSLProcessorTest : TestCase() {
         //val f: psaDraft = psa.createdraft
        // f(12f, "12", "fgfgf")
     }
-    fun testcreatedraft(){
-        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
+    fun createdraft(){
+        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
         var psa  = PSADSLProcessor()
         psa.render(copy)
         val f = psa.createdraft
@@ -31,7 +31,7 @@ class PSADSLProcessorTest : TestCase() {
     }//Brutto, Sor, DepId, PlateNumber, UUID, Type
 
     fun testcompanioncreatedraftpsa(){
-        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
+        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
         var hash = mutableMapOf<String, String>()
         var psa  = PSADSLProcessor()
         psa.render(copy)

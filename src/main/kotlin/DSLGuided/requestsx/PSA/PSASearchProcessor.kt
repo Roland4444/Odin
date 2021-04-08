@@ -7,20 +7,14 @@ import abstractions.Role
 import fr.roland.DB.Executor
 import java.sql.ResultSet
 import java.util.*
-
-typealias search = () -> ResultSet
-
-////////////Пример DSL для PSASearchProcessor'a
-///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
-//                                                                                                                                                                                  подключаться к БД
-///////'search'=>::sql('SELECT * FROM psa')
-//               ::numberpsa{[1900, 1902]},
-//               ::department('ПЗУ№1'),
-//               ::datarange('12.06.1940':'12.07.1940'),
-//               ::client('ООО Артемий'),
-//               ::typepayment('cash','bank'),
-//               ::platenumber('KAMAZ K582HB30').
 class PSASearchProcessor  : DSLProcessor() {
+    companion object{
+        fun search(input: String, PSASearch : PSASearchProcessor): String{
+            PSASearch.render(input)
+            return PSASearch.createJSONResponce(PSASearch.getPSA())
+
+        }
+    }
     lateinit var searchFrom: String
     lateinit var searchTo: String
     lateinit var numberPsa:String
@@ -29,24 +23,17 @@ class PSASearchProcessor  : DSLProcessor() {
     lateinit var typepayment_: String
     var departments = mutableListOf<String>()
     lateinit var executor: Executor
-
     var if_present = false
     var initialString: StringBuilder = StringBuilder()
     var first = true
-
-
     override fun render(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         println("\n\n\nCALLING Handlers!\n\n\n")
         mapper.forEach { it.value.invoke(it.key)  }
-
         println("EFFECTIVE STRIUNG \n${initialString.toString()}")
         return "OK"
     }
-
-
-
     fun params(){
         if (!if_present){
             initialString.append(" where  ")
@@ -58,14 +45,11 @@ class PSASearchProcessor  : DSLProcessor() {
         }
         initialString.append(" AND  ")
     }
-
-
     fun getPSA(): ResultSet? {
         val stmt = executor.conn.createStatement()
         val res = stmt?.executeQuery(initialString.toString())
         return res
     }
-
     fun getdepIdExecutor(input: String): String {
         var param = ArrayList<Any?>()
         param.add(input)
@@ -75,6 +59,39 @@ class PSASearchProcessor  : DSLProcessor() {
             return res.getString("id")
         };
             return ""
+    }
+    fun getdepNameExecutor(input: String): String {
+        var param = ArrayList<Any?>()
+        param.add(input)
+        val res: ResultSet =
+            executor.executePreparedSelect("SELECT * FROM `psa`.`department` WHERE `id` = ?;", param)
+        if (res.next()) {
+            return res.getString("name")
+        };
+        return ""
+    }
+    fun appendRow(row:ResultSet): String{
+        var result = StringBuilder()
+        result.append("""{"id":"${row.getString("id")}",
+            "datetime":"${row.getString("date")}",
+            "department":"${getdepNameExecutor(row.getString("department_id"))}",
+            "psanumber":"${row.getString("number")}",
+            "client":"${row.getString("client")}", 
+            "platenumber":"${row.getString("plate_number")}",
+            "metals":"БРОНЗА", "uuid":"126103"},""")
+        return result.toString()
+    }
+    fun createJSONResponce(input : ResultSet?): String{
+        var result= StringBuilder()
+        result.append("[")
+        while (input?.next() == true){
+            result.append("${appendRow(input)}")
+        }
+        var resStr = result.toString()
+        print("Length"+resStr.length)
+        if( resStr.length==1)
+            return "[]"
+        return  resStr.substring(0, resStr.length-1)+"]"
     }
     fun departments(input: List<String>): String {
             val builder = StringBuilder()
@@ -131,7 +148,7 @@ class PSASearchProcessor  : DSLProcessor() {
                     searchFrom = keyvalue.Key
                     searchTo = keyvalue.Value as String
                     params()
-                    val appendix = "(date between '${searchTo}' and '${searchFrom}')"
+                    val appendix = "( `psa`.`date` between '${searchFrom}' and '${searchTo}')"
                     println("APPENDING ${appendix}")
                     initialString.append(appendix)
                 }
@@ -149,8 +166,6 @@ class PSASearchProcessor  : DSLProcessor() {
                 }
             }
         }
-
-
         val typepayment: RoleHandler = {
             mapper.forEach { a ->
                 if (a.key.Name == "typepayment") {
@@ -159,7 +174,6 @@ class PSASearchProcessor  : DSLProcessor() {
                 }
             }
         }
-
         val platenumber: RoleHandler = {
             mapper.forEach { a ->
                 if (a.key.Name == "platenumber") {
@@ -178,7 +192,6 @@ class PSASearchProcessor  : DSLProcessor() {
             mapper.clear()
             D.forEach { appendRole(it) }
         }
-
         fun appendRole(R: Role) {
             print("Adding role ${R.Name}\n")
             when (R?.Name) {
@@ -191,6 +204,4 @@ class PSASearchProcessor  : DSLProcessor() {
                 "sql" -> mapper.put(R, sql)
             }
         }
-
-
     }
