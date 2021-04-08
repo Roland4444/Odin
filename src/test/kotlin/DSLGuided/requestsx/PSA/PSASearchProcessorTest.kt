@@ -22,7 +22,7 @@ class PSASearchProcessorTest : TestCase() {
      //   psasearch.simplesearch()
     }
     fun testsearch() {
-        val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::client{'ШАПУРИН АНАТОЛИЙ 'ВИКТОРОВИЧ'}."
+        val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::client{'ШАПУРИН АНАТОЛИЙ ВИКТОРОВИЧ'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
         psasearch.executor=psaconnector.executor
