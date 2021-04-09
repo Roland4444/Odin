@@ -30,7 +30,7 @@ class PSADSLProcessorTest : TestCase() {
 
     }//Brutto, Sor, DepId, PlateNumber, UUID, Type
 
-    fun testcompanioncreatedraftpsa(){
+    fun companioncreatedraftpsa(){
         val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
         var hash = mutableMapOf<String, String>()
         var psa  = PSADSLProcessor()
@@ -46,7 +46,7 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
-    fun testcompanioncreatedraftpsafrommypc(){
+    fun companioncreatedraftpsafrommypc(){
         val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
         var hash = mutableMapOf<String, String>()
         var psa  = PSADSLProcessor()

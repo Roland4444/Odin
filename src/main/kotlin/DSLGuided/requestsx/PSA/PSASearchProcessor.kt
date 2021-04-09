@@ -26,12 +26,31 @@ class PSASearchProcessor  : DSLProcessor() {
     var if_present = false
     var initialString: StringBuilder = StringBuilder()
     var first = true
+    fun reset(){
+        initialString.clear()
+        searchFrom=""
+        searchTo=""
+        numberPsa=""
+        client__=""
+        platenumber_=""
+        typepayment_=""
+        departments.clear()
+        if_present = false
+        first = true
+    }
     override fun render(DSL: String): Any {
+        reset()
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         println("\n\n\nCALLING Handlers!\n\n\n")
         mapper.forEach { it.value.invoke(it.key)  }
         println("EFFECTIVE STRIUNG \n${initialString.toString()}")
+        if (initialString.toString().equals("SELECT * FROM psa ")) {
+            println("\n\n\n\n\nFULL REQUEST\n\n\n\n\n\n")
+            initialString.clear()
+            initialString.append("SELECT * FROM psa LIMIT 200")
+        }
+
         return "OK"
     }
     fun params(){
@@ -70,6 +89,33 @@ class PSASearchProcessor  : DSLProcessor() {
         };
         return ""
     }
+
+    fun getmetalName(metal_id: String):String{
+        var param = ArrayList<Any?>()
+
+        param.add(metal_id)
+        val res: ResultSet =
+            executor.executePreparedSelect("SELECT * FROM `psa`.`metal` WHERE `id` = ?;", param)
+        if (res.next())
+            return res.getString("title");
+        return ""
+    }
+
+    fun loadMetals(id: String): String{
+        var param = ArrayList<Any?>()
+        param.add(id)
+        var result = mutableListOf<String>()
+        val res: ResultSet =
+            executor.executePreparedSelect("SELECT * FROM `psa`.`weighing` WHERE `psa_id` = ?;", param)
+        while (res.next()){
+                var metalname =  getmetalName(   res.getString("metal_id"))
+                result.add(metalname)
+        }
+        var restr = result.toString()
+        var restr1 = restr.replace("[","")
+        var restr2 = restr1.replace("]","")
+        return restr2
+    }
     fun appendRow(row:ResultSet): String{
         var result = StringBuilder()
         result.append("""{"id":"${row.getString("id")}",
@@ -77,8 +123,8 @@ class PSASearchProcessor  : DSLProcessor() {
             "department":"${getdepNameExecutor(row.getString("department_id"))}",
             "psanumber":"${row.getString("number")}",
             "client":"${row.getString("client")}", 
-            "platenumber":"${row.getString("plate_number")}",
-            "metals":"БРОНЗА", "uuid":"126103"},""")
+            "platenumber":"${row.getString("plate_number")}","metals":"${loadMetals(row.getString("id"))}",
+             "uuid":"126103"},""")                  //////"metals":"БРОНЗА",
         return result.toString()
     }
     fun createJSONResponce(input : ResultSet?): String{
@@ -88,7 +134,6 @@ class PSASearchProcessor  : DSLProcessor() {
             result.append("${appendRow(input)}")
         }
         var resStr = result.toString()
-        print("Length"+resStr.length)
         if( resStr.length==1)
             return "[]"
         return  resStr.substring(0, resStr.length-1)+"]"
@@ -101,11 +146,9 @@ class PSASearchProcessor  : DSLProcessor() {
             for (i in 0..input.size - 1) {
                 if (input.get(i) == "") continue
                 val departmentId = getdepIdExecutor(input.get(i))
-                println("\n\nDEPARTMENT!!! $departmentId  @${input.get(i)}\n\n")
                 builder.append("(department_id=$departmentId)")
                 if ((i == input.size - 1) or  (input.get(i+1)==""))
                     break
-                println("I>>>>>$i");
                 builder.append("   or ")
             }
             builder.append(")")
@@ -118,7 +161,6 @@ class PSASearchProcessor  : DSLProcessor() {
                     departments = a.key.Param as MutableList<String>
                     params()
                     val appendix = departments(departments)
-                    println("APPENDING ${appendix}")
                     initialString.append(appendix)
                 }
             }
@@ -129,7 +171,6 @@ class PSASearchProcessor  : DSLProcessor() {
                     numberPsa = a.key.Param as String
                     params()
                     val appendix = "( number='$numberPsa')"
-                    println("APPENDING ${appendix}")
                     initialString.append(appendix)
                 }
             }
@@ -149,7 +190,6 @@ class PSASearchProcessor  : DSLProcessor() {
                     searchTo = keyvalue.Value as String
                     params()
                     val appendix = "( `psa`.`date` between '${searchFrom}' and '${searchTo}')"
-                    println("APPENDING ${appendix}")
                     initialString.append(appendix)
                 }
             }
@@ -159,8 +199,7 @@ class PSASearchProcessor  : DSLProcessor() {
                 if (a.key.Name == "client") {
                     client__ = a.key.Param as String
                     params()
-                    val appendix = " (client = '${client__}')"
-                    println("APPENDING ${appendix}")
+                    val appendix = " (client LIKE '%${client__}%')"               /// val appendix = " (client = '${client__}')"
                     initialString.append(appendix)
 
                 }
@@ -180,7 +219,6 @@ class PSASearchProcessor  : DSLProcessor() {
                     platenumber_ = a.key.Param as String
                     params()
                     val appendix = " (plate_number= '${platenumber_}')"
-                    println("APPENDING ${appendix}")
                     initialString.append(appendix)
                 }
             }
