@@ -1,6 +1,7 @@
 package abstractions
 
 import com.avs.ParseDSL
+import com.mysql.cj.xdevapi.JsonArray
 import junit.framework.TestCase
 import org.junit.Test
 import util.Saver
@@ -29,5 +30,12 @@ class DSLRoleTest : TestCase() {
         val bytes = Saver.savedToBLOB(dsl)
         val restored = Saver.restored(bytes)
         assertEquals(dsl.toString(), restored.toString())
+    }
+
+
+    @Test
+    fun testjson(){
+        var JSONArra = JsonArray()
+
     }
 }

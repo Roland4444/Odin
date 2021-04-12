@@ -1,7 +1,8 @@
 package DSLGuided.requestsx.PSA
 
 import junit.framework.TestCase
-
+import org . json . simple . JSONArray
+import org . json . simple . JSONObject
 
 ////////////Пример DSL для PSASearchProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
@@ -61,6 +62,16 @@ class PSASearchProcessorTest : TestCase() {
             println("FOUND! ${++counter} $number")
         }
         //   psasearch.simplesearch()
+    }
+
+    fun testjsonbuilder(){
+        var JSONObj = JSONObject()
+        var JSONArr = JSONArray()
+        var obj = JSONObject()
+        obj.put("client", "nameclient")
+        JSONArr.add(obj)
+        print(JSONArr.toString())
+
     }
 
     fun testGetdepIdExecutor() {

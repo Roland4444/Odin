@@ -118,13 +118,13 @@ class PSASearchProcessor  : DSLProcessor() {
     }
     fun appendRow(row:ResultSet): String{
         var result = StringBuilder()
-        result.append("""{"id":"${row.getString("id")}",
-            "datetime":"${row.getString("date")}",
-            "department":"${getdepNameExecutor(row.getString("department_id"))}",
-            "psanumber":"${row.getString("number")}",
-            "client":"${row.getString("client")}", 
-            "platenumber":"${row.getString("plate_number")}","metals":"${loadMetals(row.getString("id"))}",
-             "uuid":"126103"},""")                  //////"metals":"БРОНЗА",
+        result.append("""{"id":"${row.getString("id")}",\
+            "datetime":"${row.getString("date")}",\
+            "department":"${getdepNameExecutor(row.getString("department_id"))}",\
+            "psanumber":"${row.getString("number")}",\
+            "client":"${row.getString("client")}", \
+            "platenumber":"${row.getString("plate_number")}","metals":"${loadMetals(row.getString("id"))}",\
+             "uuid":"126103"},\""")                  //////"metals":"БРОНЗА",
         return result.toString()
     }
     fun createJSONResponce(input : ResultSet?): String{
@@ -136,7 +136,7 @@ class PSASearchProcessor  : DSLProcessor() {
         var resStr = result.toString()
         if( resStr.length==1)
             return "[]"
-        return  resStr.substring(0, resStr.length-1)+"]"
+        return  resStr.substring(0, resStr.length-2)+"]'"
     }
     fun departments(input: List<String>): String {
             val builder = StringBuilder()
