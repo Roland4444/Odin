@@ -5,6 +5,8 @@ import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
 import fr.roland.DB.Executor
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
 import java.sql.ResultSet
 import java.util.*
 class PSASearchProcessor  : DSLProcessor() {
@@ -116,27 +118,29 @@ class PSASearchProcessor  : DSLProcessor() {
         var restr2 = restr1.replace("]","")
         return restr2
     }
-    fun appendRow(row:ResultSet): String{
-        var result = StringBuilder()
-        result.append("""{"id":"${row.getString("id")}",\
-            "datetime":"${row.getString("date")}",\
-            "department":"${getdepNameExecutor(row.getString("department_id"))}",\
-            "psanumber":"${row.getString("number")}",\
-            "client":"${row.getString("client")}", \
-            "platenumber":"${row.getString("plate_number")}","metals":"${loadMetals(row.getString("id"))}",\
-             "uuid":"126103"},\""")                  //////"metals":"БРОНЗА",
-        return result.toString()
+    fun appendRow(row:ResultSet): JSONObject {
+        var jsonobj = JSONObject()
+        jsonobj.put("id", row.getString("id"))
+        jsonobj.put("datetime", row.getString("date"))
+        jsonobj.put("department", getdepNameExecutor(row.getString("department_id")))
+        jsonobj.put("psanumber", row.getString("number"))
+        jsonobj.put("client", row.getString("client"))
+        jsonobj.put("platenumber", row.getString("plate_number"))
+        jsonobj.put("metals", loadMetals(row.getString("id")))
+        jsonobj.put("uuid", row.getString("uuid"))
+        return jsonobj
+
     }
+
     fun createJSONResponce(input : ResultSet?): String{
-        var result= StringBuilder()
-        result.append("[")
-        while (input?.next() == true){
-            result.append("${appendRow(input)}")
+        var result= JSONArray()
+
+        while (input?.next() == true) {
+            println("client column="+input.getString("client"))
+            println("uuid column="+input.getString("uuid"))
+            result.add(appendRow(input))
         }
-        var resStr = result.toString()
-        if( resStr.length==1)
-            return "[]"
-        return  resStr.substring(0, resStr.length-2)+"]'"
+        return result.toString()
     }
     fun departments(input: List<String>): String {
             val builder = StringBuilder()

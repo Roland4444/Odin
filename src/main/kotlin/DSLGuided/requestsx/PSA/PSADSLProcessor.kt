@@ -120,7 +120,7 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
 INSERT INTO `psa` (
 `id`,`number`, `company_id`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,          ?,          ?,           ?,          '   ',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,          ?,          ?,           ?,          'Необходимо выбрать',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
             );
             val date: String = LocalDate.now().toString()
             println("date => $date")
@@ -133,6 +133,7 @@ NULL,   ?,          ?,          ?,           ?,          '   ',         ?,      
             prepared?.setString(6, descriptionMap.get(Type))////LocalDate getDate
             prepared?.setString(7, Type)
             prepared?.setString(8, UUID)
+            println("UUID= $UUID")
             println("prepared=> $prepared")
             if (prepared != null) {
                 prepared.execute()
