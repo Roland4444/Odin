@@ -147,5 +147,11 @@ fun testsearchplatenumber(){
         println("time execution:: " + duration / 1000000000)
     }
 
+    fun testPostRequest() {
+        var psasearch = PSASearchProcessor()
+        println(psasearch.postRequest("1203", "855467","http://192.168.0.126:4567/checkpost"))
+
+    }
+
 }
 
