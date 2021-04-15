@@ -1,5 +1,4 @@
 package se.roland.util;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -16,4 +15,9 @@ public class HTTPForm {
                 .collect(Collectors.joining("&"));
         return form;
     }
+
+
+
+
+
 }

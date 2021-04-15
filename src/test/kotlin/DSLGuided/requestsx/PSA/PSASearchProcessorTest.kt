@@ -13,7 +13,8 @@ import org . json . simple . JSONObject
 //               ::datarange('12.06.1940':'12.07.1940'),
 //               ::client('ООО Артемий'),
 //               ::typepayment('cash','bank'),
-//               ::platenumber('KAMAZ K582HB30').
+//               ::platenumber('KAMAZ K582HB30'),
+//               ::passcheckurl(https://passport.avs.com.ru/)
 class PSASearchProcessorTest : TestCase() {
     val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
     val psaconnector = PSAConnector()
@@ -147,11 +148,15 @@ fun testsearchplatenumber(){
         println("time execution:: " + duration / 1000000000)
     }
 
-    fun testPostRequest() {
-        var psasearch = PSASearchProcessor()
-        println(psasearch.postRequest("1203", "855467","http://192.168.0.126:4567/checkpost"))
 
-    }
+
+
+
+
+  //  ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ!
+
+
+
 
 }
 

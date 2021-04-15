@@ -18,9 +18,11 @@ import java.time.Duration
 import java.util.*
 
 
-
 class PSASearchProcessor  : DSLProcessor() {
     companion object {
+        @Throws(Exception::class)
+
+
         fun search(input: String, PSASearch: PSASearchProcessor): String {
             PSASearch.render(input)
             return PSASearch.createJSONResponce(PSASearch.getPSA())
@@ -34,6 +36,7 @@ class PSASearchProcessor  : DSLProcessor() {
     lateinit var client__: String
     lateinit var platenumber_: String
     lateinit var typepayment_: String
+    lateinit var passcheckurl_: String
     var departments = mutableListOf<String>()
     lateinit var executor: Executor
     var if_present = false
@@ -67,6 +70,8 @@ class PSASearchProcessor  : DSLProcessor() {
 
         return "OK"
     }
+
+
 
     fun params() {
         if (!if_present) {
@@ -204,6 +209,16 @@ class PSASearchProcessor  : DSLProcessor() {
             }
         }
     }
+
+    val passcheckurl: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "passcheckurl") {
+                println("\n\n\nADDING PASS CHECK URL!")
+                passcheckurl_= (a.key.Param as String)
+            }
+        }
+    }
+
     val datarange: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "datarange") {
@@ -256,6 +271,8 @@ class PSASearchProcessor  : DSLProcessor() {
         D.forEach { appendRole(it) }
     }
 
+
+
     fun appendRole(R: Role) {
         print("Adding role ${R.Name}\n")
         when (R?.Name) {
@@ -266,6 +283,7 @@ class PSASearchProcessor  : DSLProcessor() {
             "platenumber" -> mapper.put(R, platenumber)
             "department" -> mapper.put(R, department)
             "sql" -> mapper.put(R, sql)
+            "passcheckurl" -> mapper.put(R, passcheckurl)
         }
     }
 
@@ -291,4 +309,8 @@ class PSASearchProcessor  : DSLProcessor() {
         }
 
     }
+
+
+
+
 }
