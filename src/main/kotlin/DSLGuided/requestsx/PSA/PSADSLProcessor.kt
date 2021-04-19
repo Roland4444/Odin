@@ -91,8 +91,16 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         return JSONArr
     }
 
-    fun processinvägning(input: JSONObject){
-
+    fun processinvägning(input: JSONObject, depID: String, UUID: String){
+        val f: psaDraft = createdraft
+        val Brutto = input.get("brutto")
+        val Sor = input.get("clogging")
+        val Metal = input.get("metalId")
+        val DepId = depID
+        val PlateNumber = ""
+        val UUID = UUID
+        val Type = "color"
+        f(Brutto as String, Sor as String , Metal as String , DepId as String , PlateNumber as String , UUID as String, Type as String)
     }
 
     fun colorpsa(input: String){
