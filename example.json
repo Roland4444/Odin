@@ -1,0 +1,65 @@
+{"id":36113,"waybill":31,"date":"2021-04-14","time":"13:14:28","comment":"лиман","exportId":31,
+    "department":{"id":9,"name":"ПЗУ 2 БАБАЕВСКОГО Ц/М","value":9,"text":"ПЗУ 2 БАБАЕВСКОГО Ц/М"},
+    "departmentId":9,"totalMass":2650.2,"totalPrice":704745.19,
+    "weighings":[
+        {
+        "id":80641,
+        "trash":0,
+        "clogging":0.5,
+        "tare":459,"brutto":730,
+        "metal":{"id":14,"name":"Алюминий хлам","def":false,"psaid":6},
+        "metalId":14,
+        "mass":269.65,
+        "price":"107.00",
+        "totalPrice":28852.55,
+        "newPrice":"107.00",
+        "calculatedMass":"28852.55"},
+        
+        {
+            "id":80642,
+            "trash":0,
+            "clogging":0.5,
+            "tare":473,
+            "brutto":730,
+            "metal":{"id":14,"name":"Алюминий хлам","def":false,"psaid":6},
+            "metalId":14,
+            "mass":255.72,
+            "price":"107.00",
+            "totalPrice":27362.04,
+            "newPrice":"107.00",
+            "calculatedMass":"27362.04"},
+            
+            {
+                "id":80643,
+                "trash":0,
+                "clogging":10,
+                "tare":0,
+                "brutto":24,
+                "metal":{"id":8,"name":"Медь микс","def":false,"psaid":5},
+                "metalId":8,
+                "mass":21.6,
+                "price":"550.00",
+                "totalPrice":11880,
+                "newPrice":"550.00",
+                "calculatedMass":"11880.00"},
+                
+                
+                {"id":80644,"trash":0.2,"clogging":5,"tare":0,"brutto":32,"metal":
+                    {"id":8,"name":"Медь микс","def":false,"psaid":5},"metalId":8,"mass":30.21,"price":"550.00","totalPrice":16615.5,"newPrice":"550.00","calculatedMass":"16615.50"},
+                    
+                    {"id":80645,"trash":0.5,"clogging":0.5,"tare":459,"brutto":1106,"metal":{"id":8,"name":"Медь микс","def":false,"psaid":5},"metalId":8,"mass":643.27,"price":"550.00","totalPrice":353798.5,"newPrice":"550.00","calculatedMass":"353798.50"},
+                    {"id":80646,"trash":0,"clogging":10,"tare":0,"brutto":15,"metal":{"id":8,"name":"Медь микс","def":false,"psaid":5},"metalId":8,"mass":13.5,"price":"550.00","totalPrice":7425,"newPrice":"550.00","calculatedMass":"7425.00"},
+                    {"id":80647,"trash":0,"clogging":0.6,"tare":473,"brutto":754,"metal":{"id":9,"name":"Латунь","def":false,"psaid":8},"metalId":9,"mass":279.31,"price":"335.00","totalPrice":93568.85,"newPrice":"335.00","calculatedMass":"93568.85"},
+                    {"id":80648,"trash":0,"clogging":0.5,"tare":2,"brutto":17,"metal":{"id":8,"name":"Медь микс","def":false,"psaid":5},"metalId":8,"mass":14.93,"price":"550.00","totalPrice":8211.5,"newPrice":"550.00","calculatedMass":"8211.50"},
+                    {"id":80649,"trash":0.5,"clogging":1,"tare":473,"brutto":583,"metal":{"id":10,"name":"Радиатор латунный","def":false,"psaid":8},"metalId":10,"mass":108.41,"price":"340.00","totalPrice":36859.4,"newPrice":"340.00","calculatedMass":"36859.40"},
+                    {"id":80650,"trash":0,"clogging":1,"tare":0,"brutto":45,"metal":{"id":11,"name":"Бронза кусковая","def":false,"psaid":7},"metalId":11,"mass":44.55,"price":"370.00","totalPrice":16483.5,"newPrice":"370.00","calculatedMass":"16483.50"},{"id":80651,"trash":0,"clogging":0.5,"tare":473,"brutto":640,"metal":{"id":14,"name":"Алюминий хлам","def":false,"psaid":6},"metalId":14,"mass":166.17,"price":"107.00","totalPrice":17780.19,"newPrice":"107.00","calculatedMass":"17780.19"},
+                    {"id":80652,"trash":0,"clogging":0.5,"tare":473,"brutto":578,"metal":{"id":14,"name":"Алюминий хлам","def":false,"psaid":6},"metalId":14,"mass":104.48,"price":"107.00","totalPrice":11179.36,"newPrice":"107.00","calculatedMass":"11179.36"},{"id":80653,"trash":0,"clogging":1,"tare":223,"brutto":393,"metal":{"id":14,"name":"Алюминий хлам","def":false,"psaid":6},"metalId":14,"mass":168.3,"price":"107.00","totalPrice":18008.1,"newPrice":"107.00","calculatedMass":"18008.10"},
+                    {"id":80654,"trash":0.3,"clogging":0.5,"tare":439,"brutto":787,"metal":{"id":14,"name":"Алюминий хлам","def":false,"psaid":6},"metalId":14,"mass":345.96,"price":"107.00","totalPrice":37017.72,"newPrice":"107.00","calculatedMass":"37017.72"},{"id":80655,"trash":0,"clogging":1,"tare":473,"brutto":659,"metal":{"id":14,"name":"Алюминий хлам","def":false,"psaid":6},"metalId":14,"mass":184.14,"price":"107.00","totalPrice":19702.98,"newPrice":"107.00","calculatedMass":"19702.98"}],
+                    
+                    
+                    "customer":260,
+                    "totalPaidAmount":704745.19,
+                    "hasBeenPaid":true,"oldCustomer":260}
+    
+     
+    

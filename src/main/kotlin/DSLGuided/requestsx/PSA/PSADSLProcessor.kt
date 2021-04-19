@@ -5,6 +5,9 @@ import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
 import fr.roland.DB.Executor
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -36,6 +39,8 @@ class PSADSLProcessor  : DSLProcessor() {
             val Type = params.get("Type")
             f(Brutto as String, Sor as String , Metal as String , DepId as String , PlateNumber as String , UUID as String, Type as String)
         }
+
+
         fun completePSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit{
             PSAProc.render(DSL)
             val m = PSAProc.completePSA
@@ -76,6 +81,25 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         return getRequest(urlPsanumberUrl+DepsId)
     };
 
+    fun getinvägning(input: String):JSONArray{
+        var parser = JSONParser()
+        var JSONArr = JSONArray()
+        var obj = JSONObject()
+        obj = parser.parse(input) as JSONObject
+        JSONArr = obj.get("weighings") as JSONArray
+        JSONArr.forEach { a-> println(a.toString()) }
+        return JSONArr
+    }
+
+    fun processinvägning(input: JSONObject){
+
+    }
+
+    fun colorpsa(input: String){
+        var JSONObj = JSONObject()
+        var JSONArr = JSONArray()
+        var obj = JSONObject()
+    }
     fun getPassportId(): Int? {
         println("\n\n!!!!!!!!INTO getPassportId\n\n")
 

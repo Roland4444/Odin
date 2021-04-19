@@ -1,8 +1,13 @@
 package DSLGuided.requestsx.PSA
 import junit.framework.TestCase
 import se.roland.abstractions.timeBasedUUID
+import java.nio.file.Files
+import java.nio.file.Path
 
 import java.util.HashMap
+import kotlin.test.assertNotEquals
+import java.io.File as File
+
 class PSADSLProcessorTest : TestCase() {
 
     fun testRender() {
@@ -72,6 +77,13 @@ class PSADSLProcessorTest : TestCase() {
         assertEquals(5, psa.getMetalId("Медь"))
         assertEquals(14, psa.getMetalId("3A"))
 
+
+    }
+
+    fun testGetinvägning() {
+        val str: String = String(File("example.json").readBytes())
+        var psa  = PSADSLProcessor()
+        assertNotEquals(null, psa.getinvägning(str))
 
     }
 }
