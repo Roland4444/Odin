@@ -83,7 +83,23 @@ class PSADSLProcessorTest : TestCase() {
     fun testGetinvägning() {
         val str: String = String(File("example.json").readBytes())
         var psa  = PSADSLProcessor()
-        assertNotEquals(null, psa.getinvägning(str))
+        //assertNotEquals(null, psa.color(str))
 
     }
+
+    fun testColor() {
+        var psa  = PSADSLProcessor()
+        assertEquals(1, psa.DepsMap.get(6))
+        assertEquals(25, psa.DepsMap.get(9))
+
+    }
+
+    fun testProcessfarg() {
+        val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        var psa  = PSADSLProcessor()
+        psa.render(copy)
+        println("rendred succes!")
+        psa.processfarg(String(File("example.json").readBytes()))
+    }
+
 }

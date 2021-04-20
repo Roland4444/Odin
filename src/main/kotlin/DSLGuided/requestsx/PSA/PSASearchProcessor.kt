@@ -142,6 +142,7 @@ class PSASearchProcessor  : DSLProcessor() {
 
     fun appendRow(row: ResultSet): JSONObject {
         var jsonobj = JSONObject()
+
         jsonobj.put("id", row.getString("id"))
         jsonobj.put("datetime", row.getString("date"))
         jsonobj.put("department", getdepNameExecutor(row.getString("department_id")))

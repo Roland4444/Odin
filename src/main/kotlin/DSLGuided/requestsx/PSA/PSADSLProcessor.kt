@@ -8,6 +8,7 @@ import fr.roland.DB.Executor
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import se.roland.util.Department
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -51,6 +52,11 @@ class PSADSLProcessor  : DSLProcessor() {
 
         }
     }
+
+    val deps__: Department = Department()
+
+    val DepsMap = mapOf(6 to 1, 16 to 1, 10 to 2, 9 to 25)
+
     val psaSql =                         """
 INSERT INTO `psa`(
 `id`,`number`,`passport_id`,`date`,`plate_number`,`client`,`department_id`,`description`,             `type`,     `created_at`,    `diamond`,`payment_date`, `comment`,`check_printed`,`deferred`,`filename`,`uuid`) 
@@ -81,47 +87,8 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         return getRequest(urlPsanumberUrl+DepsId)
     };
 
-    fun getinvägning(input: String):JSONArray{
-        var parser = JSONParser()
-        var JSONArr = JSONArray()
-        var obj = JSONObject()
-        obj = parser.parse(input) as JSONObject
-        JSONArr = obj.get("weighings") as JSONArray
-        JSONArr.forEach { a-> println(a.toString()) }
-        return JSONArr
-    }
 
-    fun processinvägning(input: JSONObject, depID: String, UUID: String){
-        val f: psaDraft = createdraft
-        val Brutto = input.get("brutto")
-        val Sor = input.get("clogging")
-        val Metal = input.get("metalId")
-        val DepId = depID
-        val PlateNumber = ""
-        val UUID = UUID
-        val Type = "color"
-        f(Brutto as String, Sor as String , Metal as String , DepId as String , PlateNumber as String , UUID as String, Type as String)
-    }
 
-    fun colorpsa(input: String){
-        var JSONObj = JSONObject()
-        var JSONArr = JSONArray()
-        var obj = JSONObject()
-    }
-    fun getPassportId(): Int? {
-        println("\n\n!!!!!!!!INTO getPassportId\n\n")
-
-        val psaStmt: PreparedStatement?
-        try {
-            psaStmt = dbConnection?.prepareStatement("SELECT *  FROM psa.`passport` ORDER BY ID DESC LIMIT 1;")
-            val rs = psaStmt?.executeQuery()
-            rs?.next()
-            return rs?.getInt(1)
-        } catch (throwable: SQLException) {
-            throwable.printStackTrace()
-        }
-        return -1
-    }
     var completePSA: completePSA = {Tare: String, Sor: String, UUID: String ->run {
         var prepared = dbConnection?.prepareStatement(
 
@@ -145,6 +112,111 @@ VALUES (
 NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо выбрать',      ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
 
 
+    fun processfarg(inputJSON: String){
+        val parser = JSONParser()
+        val js = parser.parse(inputJSON) as JSONObject
+        val inputdepID = Integer.parseInt(js.get("departmentId").toString() )
+        println("inputdepID => $inputdepID")
+        val f = deps__.DepsMap.get(inputdepID)
+        println(f)
+        val realdepID = deps__.DepsMap.get(inputdepID)
+        println("realdepID => $realdepID")
+        val UUID: String = se.roland.abstractions.timeBasedUUID.generate()
+        val vagning = js.get("weighings") as JSONArray
+        if (realdepID != null) {
+            createdraftfarg(realdepID, UUID)
+        }
+        vagning.forEach { invagning ->
+            if (realdepID != null) {
+                processinvagning(invagning as JSONObject, UUID)
+            } }
+
+    }
+
+
+    fun createdraftfarg(depsId: Int, guuid: String) {
+        println("\n\n\n\n@@@@\n\n\n\n\nINTO FARG Draft!")
+        var prepared = dbConnection?.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
+            """
+INSERT INTO `psa` (
+`id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+VALUES (
+NULL,   ?,        ?,  'Необходимо выбрать',   ?,              ?,         ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+        );
+        val date: String = LocalDate.now().toString()
+        println("date => $date")
+        prepared?.setString(1, getPSANumber(depsId.toString()))
+        /// getPassportId()?.let { prepared?.setInt(2, it) }
+        prepared?.setDate(2, java.sql.Date.valueOf(date));
+
+        prepared?.setString(3, depsId.toString())
+        prepared?.setString(4, descriptionMap.get("color"))////LocalDate getDate
+        prepared?.setString(5, "color")
+        prepared?.setString(6, guuid)
+        println("UUID= $guuid")
+        println("prepared=> $prepared")
+        if (prepared != null) {
+            prepared.execute()
+        }
+    }
+
+
+    fun processinvagning(json: JSONObject, uuid: String){
+        val prepared = dbConnection?.prepareStatement(
+            """
+INSERT INTO `weighing` (
+`id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
+                                VALUES
+(NULL,   ?,      ?,    ?,     ?,      ?,        ?,          ?,           ?,            ?,            ?,           ?);
+                                
+                """  );
+
+        val inspect =  Random().nextFloat()/4
+        prepared?.setFloat(1, json.get("brutto").toString().toFloat() )
+        prepared?.setInt(2, json.get("tare").toString().toInt())
+        prepared?.setFloat(3, json.get("clogging").toString().toFloat())
+        prepared?.setFloat(4, (json.get("price").toString().toFloat())*1000)
+        prepared?.setInt(5, getPSAID(uuid))
+        prepared?.setInt(6, getmetalID(json))
+        prepared?.setInt(7, json.get("tare").toString().toInt())
+        prepared?.setFloat(8, json.get("clogging").toString().toFloat())
+        prepared?.setFloat(9, (json.get("price").toString().toFloat())*1000)
+        prepared?.setString(10, (Math.round(inspect * 100.0) / 100.0).toString())
+        prepared?.setString(11, uuid)
+
+        println("prepared=> $prepared")
+        if (prepared != null) {
+            prepared.execute()
+        }
+
+       // prepared.setString();
+
+    }
+
+    fun getmetalID(json: JSONObject): Int {
+        val metal: JSONObject = json.get("metal") as JSONObject
+        return metal.get("psaid").toString().toInt()
+
+    }
+
+    fun getPSAID(uuid: String): Int{
+        val prepared = dbConnection?.prepareStatement("""SELECT *  FROM `psa` WHERE `uuid`= ?;"""
+        )
+        prepared?.setString(1, uuid)
+
+        System.out.println(prepared)
+        val rs: ResultSet? = prepared?.executeQuery()
+        var PSAId = 0
+        if (rs != null) {
+            if (rs.next()) {
+                PSAId = rs.getInt("id")
+                println("ID! $PSAId")
+            }
+        }
+        return PSAId
+    }
+
+
     var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->
         run {
             var prepared = dbConnection?.prepareStatement(               ////color/black
@@ -152,7 +224,7 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
 INSERT INTO `psa` (
 `id`,`number`, `company_id`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,          ?,          ?,           ?,          'Необходимо выбрать',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,          ?,          ?,         ?,'Необходимо выбрать',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
             );
             val date: String = LocalDate.now().toString()
             println("date => $date")
@@ -189,9 +261,8 @@ NULL,   ?,          ?,          ?,           ?,          'Необходимо �
 """INSERT INTO `weighing` 
 (`id`, `brutto`,  `sor`, `tare`,`price`, `psa_id`, `metal_id`,  `client_price`, `inspection`, `uuid`) 
 VALUES 
-(NULL,     ?,       ?,    0.0,   0.0,          ?,        ?,             0.0,           ?,            ?);
-""")
-            val f = "25".toFloat()
+(NULL,     ?,       ?,    0.0,   0.0,          ?,        ?,             0.0,           ?,            ?);""")
+
             prepared?.setInt(1,Brutto.toInt())
             prepared?.setFloat(2, Sor.toFloat())
             prepared?.setInt(3, PSAId)
@@ -314,7 +385,7 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
     fun getRequest(url: String?):String {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
-            .timeout(Duration.ofMinutes(2))
+            .timeout(Duration.ofSeconds(20))
             .GET()
             .build()
         val client = HttpClient.newBuilder()
