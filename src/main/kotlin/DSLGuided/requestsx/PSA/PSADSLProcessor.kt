@@ -141,7 +141,7 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
 INSERT INTO `psa` (
 `id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,        ?,  'Необходимо выбрать',   ?,              ?,         ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,                  ?,  'Необходимо выбрать',   ?,              ?,         ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
         );
         val date: String = LocalDate.now().toString()
         println("date => $date")
@@ -149,7 +149,7 @@ NULL,   ?,        ?,  'Необходимо выбрать',   ?,              ?
         /// getPassportId()?.let { prepared?.setInt(2, it) }
         prepared?.setDate(2, java.sql.Date.valueOf(date));
 
-        prepared?.setString(3, depsId.toString())
+        prepared?.setInt(3, depsId.toString().toInt())
         prepared?.setString(4, descriptionMap.get("color"))////LocalDate getDate
         prepared?.setString(5, "color")
         prepared?.setString(6, guuid)
