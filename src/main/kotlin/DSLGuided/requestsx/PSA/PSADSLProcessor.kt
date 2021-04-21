@@ -222,21 +222,21 @@ INSERT INTO `weighing` (
             var prepared = dbConnection?.prepareStatement(               ////color/black
                 """
 INSERT INTO `psa` (
-`id`,`number`, `company_id`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+`id`,`number`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,          ?,          ?,         ?,'Необходимо выбрать',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,                   ?,         ?,'Необходимо выбрать',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
             );
             val date: String = LocalDate.now().toString()
             println("date => $date")
             prepared?.setString(1, getPSANumber(DepId))
            /// getPassportId()?.let { prepared?.setInt(2, it) }
-            prepared?.setInt(2, 2)
-            prepared?.setDate(3, java.sql.Date.valueOf(date));
-            prepared?.setString(4, PlateNumber)
-            prepared?.setString(5, DepId)
-            prepared?.setString(6, descriptionMap.get(Type))////LocalDate getDate
-            prepared?.setString(7, Type)
-            prepared?.setString(8, UUID)
+          ///  prepared?.setInt(2, 2)
+            prepared?.setDate(2, java.sql.Date.valueOf(date));
+            prepared?.setString(3, PlateNumber)
+            prepared?.setString(4, DepId)
+            prepared?.setString(5, descriptionMap.get(Type))////LocalDate getDate
+            prepared?.setString(6, Type)
+            prepared?.setString(7, UUID)
             println("UUID= $UUID")
             println("prepared=> $prepared")
             if (prepared != null) {
