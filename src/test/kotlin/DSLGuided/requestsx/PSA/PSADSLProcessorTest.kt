@@ -110,4 +110,12 @@ class PSADSLProcessorTest : TestCase() {
         psa.processfarg(String(File("example2.json").readBytes()))
     }
 
+    fun testProcessfarg3() {
+        val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        var psa  = PSADSLProcessor()
+        psa.render(copy)
+        println("rendred succes!")
+        psa.processfarg(String(File("example3.json").readBytes()))
+    }
+
 }
