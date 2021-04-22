@@ -28,6 +28,11 @@ typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
 ///////'psa2'=>::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
 class PSADSLProcessor  : DSLProcessor() {
     companion object {
+        fun processColorPSA(inputJSON: String, uuid: String,  DSL: String,PSAProc: PSADSLProcessor ){
+            PSAProc.render(DSL)
+            PSAProc.processfarg(uuid, inputJSON)
+        }
+
         fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit{
             PSAProc.render(DSL)
             val f: psaDraft = PSAProc.createdraft
@@ -69,6 +74,7 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     var keyparam_: String =""
     var dumb: String = ""
     var dbConnection: Connection? = null
+    var json_ = ""
     lateinit var executor: Executor
     override fun render(DSL: String): Any {
         parseRoles(DSL)
@@ -112,8 +118,24 @@ VALUES (
 NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо выбрать',      ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
 
 
-    fun processfarg(inputJSON: String){
+
+    fun checkpsaexist(uuid: String): Boolean{
+        var param = ArrayList<Any>()
+        param.add(uuid)
+        var prepared = executor.executePreparedSelect(" SELECT * from `psa` where  `uuid` = ?;", param)
+        return (prepared.next())
+    }
+
+    fun clearweignings(uuid : String){
+        var prepared = dbConnection?.prepareStatement(      "DELETE FROM `weighing` WHERE `uuid`=?;");
+        prepared?.setString(1, uuid);
+        prepared?.executeUpdate();
+
+    }
+
+    fun processfarg(uuid: String, inputJSON: String){
         val parser = JSONParser()
+        clearweignings(uuid)
         val js = parser.parse(inputJSON) as JSONObject
         val inputdepID = Integer.parseInt(js.get("departmentId").toString() )
         println("inputdepID => $inputdepID")
@@ -121,14 +143,14 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
         println(f)
         val realdepID = deps__.DepsMap.get(inputdepID)
         println("realdepID => $realdepID")
-        val UUID: String = se.roland.abstractions.timeBasedUUID.generate()
         val vagning = js.get("weighings") as JSONArray
-        if (realdepID != null) {
-            createdraftfarg(realdepID, UUID)
+        val checkpsa = checkpsaexist(uuid)
+        if ((realdepID != null) &&  !checkpsa) {
+            createdraftfarg(realdepID, uuid)
         }
         vagning.forEach { invagning ->
             if (realdepID != null) {
-                processinvagning(invagning as JSONObject, UUID)
+                processinvagning(invagning as JSONObject, uuid)
             } }
 
     }
@@ -354,6 +376,13 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
                 processPSASection(a.key.Param as MutableList<Any>)
         }
     }
+    val json: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "json")
+                json_ = (a.key.Param as String)
+        }
+    }
+
     val getPsaNumberfrom: RoleHandler = {
         println("\n\n\n\n<<<<<<<>>>>>>>INTO getPsaNumberfrom")
         mapper.forEach { a ->
@@ -378,6 +407,7 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
             "db" -> mapper.put(R, db)
             "keyparam" -> mapper.put(R, keyparam)
             "enabled" -> mapper.put(R, enable)
+            "json" -> mapper.put(R, json)
         }
     }
 

@@ -99,7 +99,7 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         psa.render(copy)
         println("rendred succes!")
-        psa.processfarg(String(File("example.json").readBytes()))
+       //// psa.processfarg(String(File("example.json").readBytes()))
     }
 
     fun testProcessfarg2() {
@@ -107,7 +107,7 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         psa.render(copy)
         println("rendred succes!")
-        psa.processfarg(String(File("example2.json").readBytes()))
+    ////    psa.processfarg(String(File("example2.json").readBytes()))
     }
 
     fun testProcessfarg3() {
@@ -115,7 +115,15 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         psa.render(copy)
         println("rendred succes!")
-        psa.processfarg(String(File("example3.json").readBytes()))
+     /////   psa.processfarg(String(File("example3.json").readBytes()))
+    }
+
+    fun testNoneJson(){
+        val etalon = "http://192.168.0.126:8888/psa/psa/num"
+        val copy="'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::json{http://192.168.0.126:8888/psa/psa/num}."
+        var psa  = PSADSLProcessor()
+        psa.render(copy)
+        assertEquals(etalon, psa.json_)
     }
 
 }
