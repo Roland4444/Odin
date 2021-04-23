@@ -36,7 +36,6 @@ class PSAConnector  : DSLProcessor() {
     }
 
     fun processPSASection(input: MutableList<Any>) {
-        println("into PSA section::")
         input.forEach {
             val f: KeyValue = it as KeyValue
             println("""KEY VALUE ${f.Key}::${f.Value}""")
@@ -57,7 +56,6 @@ class PSAConnector  : DSLProcessor() {
     }
 
     fun appendRole(R: Role){
-        print("Adding role ${R.Name}\n")
         when (R?.Name){
             "psa" -> mapper.put(R, psa)
             "db" -> mapper.put(R, db)

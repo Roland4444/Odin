@@ -28,6 +28,18 @@ class PSASearchProcessor  : DSLProcessor() {
             return PSASearch.createJSONResponce(PSASearch.getPSA())
 
         }
+
+        fun search(input: String, PSASearch: PSASearchProcessor, depsRestricted: String): String {
+            val departname = PSASearch.getdepNameExecutor(depsRestricted);
+            //input = input.replace()
+            var input = PSASearch.parser.removeRolefromStringDSL(input, "department")
+            val appendDep = "},::department{'"+departname+"',''}."
+            val finishDSL = input.replace("}.", appendDep)
+            print("final string dsl =>$finishDSL")
+            PSASearch.render(finishDSL)
+            return PSASearch.createJSONResponce(PSASearch.getPSA())
+
+        }
     }
 
     lateinit var searchFrom: String
@@ -63,7 +75,6 @@ class PSASearchProcessor  : DSLProcessor() {
         mapper.forEach { it.value.invoke(it.key) }
         println("EFFECTIVE STRIUNG \n${initialString.toString()}")
         if (initialString.toString().equals("SELECT * FROM psa ")) {
-            println("\n\n\n\n\nFULL REQUEST\n\n\n\n\n\n")
             initialString.clear()
             initialString.append("SELECT * FROM psa LIMIT 200")
         }
@@ -159,8 +170,6 @@ class PSASearchProcessor  : DSLProcessor() {
         var result = JSONArray()
 
         while (input?.next() == true) {
-            println("client column=" + input.getString("client"))
-            println("uuid column=" + input.getString("uuid"))
             result.add(appendRow(input))
         }
         return result.toString()
@@ -214,7 +223,6 @@ class PSASearchProcessor  : DSLProcessor() {
     val passcheckurl: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "passcheckurl") {
-                println("\n\n\nADDING PASS CHECK URL!")
                 passcheckurl_= (a.key.Param as String)
             }
         }

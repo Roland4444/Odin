@@ -196,6 +196,31 @@ internal class ParseDSLTest {
     }
 
     fun testCountStringDelims() {}
+    @Test
+    fun testRemoveRolefromStringDSL() {
+
+    val InitDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
+    val RemoveRole = "psa";
+    val RemoveRole2 = "enabled";
+    val RemoveRole3 = "db";
+    val Etalon = "'psadb'=>::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
+    val Etalon2 = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa}."
+    val Etalon3 = "'psadb'=>::psa{'login':'root','pass':'123'},::enabled{'true'}."
+    val Result = parser.removeRolefromStringDSL(InitDB, RemoveRole)
+    val Result2 = parser.removeRolefromStringDSL(InitDB, RemoveRole2)
+    val Result3 = parser.removeRolefromStringDSL(InitDB, RemoveRole3)
+    assertEquals(Etalon, Result)
+    assertEquals(Etalon2, Result2)
+    assertEquals(Etalon3, Result3)
+    val inputwithparam__: String = """'requests'=>::read{'tupple':["a","b","c"]},::write{<"load":12,"pay":40>},::create{<"number":""$90"","metal":["алюминий","сталь","никель"]>}."""
+    val Etalon4 ="""'requests'=>::read{'tupple':["a","b","c"]},::create{<"number":""$90"","metal":["алюминий","сталь","никель"]>}."""
+    val Remove = "write"
+    assertEquals(Etalon4, parser.removeRolefromStringDSL(inputwithparam__, Remove))
+
+
+
+
+    }
 
 
 }

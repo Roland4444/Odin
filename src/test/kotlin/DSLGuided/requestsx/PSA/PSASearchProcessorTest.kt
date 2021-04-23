@@ -3,6 +3,7 @@ package DSLGuided.requestsx.PSA
 import junit.framework.TestCase
 import org . json . simple . JSONArray
 import org . json . simple . JSONObject
+import org.json.simple.parser.JSONParser
 
 ////////////Пример DSL для PSASearchProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
@@ -29,7 +30,6 @@ class PSASearchProcessorTest : TestCase() {
         val f = psasearch.getPSA()
         while (f?.next() == true){
             val number = f.getString("number")
-            println(number)
         }
      //   psasearch.simplesearch()
     }
@@ -63,6 +63,20 @@ class PSASearchProcessorTest : TestCase() {
             println("FOUND! ${++counter} $number")
         }
         //   psasearch.simplesearch()
+    }
+
+    fun test_search_depsretricted(){
+        val search_dsl = "'search'=>::sql{'SELECT * FROM psa '},::numberpsa{'4926'}."
+        var psasearch = PSASearchProcessor()
+        psaconnector.render(initDB)
+        psasearch.executor = psaconnector.executor
+        val Res = PSASearchProcessor.search(search_dsl, psasearch, "24" )
+        val JSON: JSONArray = JSONParser().parse(Res) as JSONArray
+        println(JSON.size)
+        val Res2 = PSASearchProcessor.search(search_dsl, psasearch )
+        val JSON2: JSONArray = JSONParser().parse(Res2) as JSONArray
+        println(JSON2.size)
+
     }
 
     fun testjsonbuilder(){

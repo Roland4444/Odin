@@ -88,7 +88,6 @@ class ParseDSL : Serializable {
     }
     fun Atom(input:  String): Any{
         val type = getType(input)
-        println("TYPE @ $input  = $type")
         var map = mutableMapOf<String, Any>()
         var lst = mutableListOf<Any>()
         when (type){
@@ -139,7 +138,6 @@ class ParseDSL : Serializable {
         return input.prepare()
     }
     fun String.prepare():String{
-        println(this)
         var buffer = StringBuilder()
         var appendWhite = false
         var currentString = this
@@ -187,7 +185,6 @@ class ParseDSL : Serializable {
     }
 
     fun getnumberopencolon(input:String):Int{
-        println(input)
         val colonbuf = loadcolons(input)
         if (colonbuf.size<=0)
             return -1
@@ -211,7 +208,6 @@ class ParseDSL : Serializable {
     }
 
     fun opencolon(input:String):Boolean{
-        println(input)
         val colonbuf = loadcolons(input)
         if (colonbuf.size<=0)
             return false
@@ -237,5 +233,19 @@ class ParseDSL : Serializable {
         val index = this.indexOf(":");
         val key = this.substring(0, index).replace(" ","")
         return key
+    }
+
+    fun removeRolefromStringDSL(inputDSL : String, RoleName: String): String{
+
+        val Template = "::"+RoleName+"{"
+        var Index = inputDSL.indexOf(Template)
+        if (Index<0)
+            return inputDSL;
+        var OutPut = java.lang.StringBuilder()
+        OutPut.append(inputDSL.substring(0, Index))
+        val RemainingString = inputDSL.substring(Index)
+        val Index2 = RemainingString.indexOf("}")
+        OutPut.append(RemainingString.substring(Index2))
+        return OutPut.toString().replace("=>},","=>").replace(",}.","." ).replace("},},::", "},::")
     }
 }

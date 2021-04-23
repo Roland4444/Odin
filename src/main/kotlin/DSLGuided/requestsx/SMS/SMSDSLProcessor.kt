@@ -21,15 +21,11 @@ class SMSDSLProcessor : DSLProcessor() {
     var sendto_ = mutableListOf<String>()
     val renderfunc:StringHandler=
          {
-            print("enabled==> $enabled")
-            print("renderfunc")
-            print("START SENDING!!!")
             val sb: StringBuilder = StringBuilder()
             if (enabled=="true") {
                 sendto_.forEach { a ->
                     if (a.length>3)
                     {
-                        println(":::SENDING to $a:::")
                         sb.append(":::SENDING to $a:::")
                         val req = """https://smsc.ru/sys/send.php?login=$login_&psw=$pass_&phones=$a&mes=${
                         it.replace(
@@ -98,7 +94,6 @@ class SMSDSLProcessor : DSLProcessor() {
         D.forEach { appendRole(it) }
     }
     fun appendRole(R: Role){
-        print("Adding role ${R.Name}\n")
         when (R?.Name){
             "login" -> mapper.put(R, login)
             "pass" -> mapper.put(R, pass)

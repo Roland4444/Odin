@@ -89,7 +89,6 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
     fun getPSANumber(DepsId : String): String{
-        println("\n\n!!!!!!!!INTO getPSANumber\n\n")
         return getRequest(urlPsanumberUrl+DepsId)
     };
 
@@ -138,11 +137,8 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
         clearweignings(uuid)
         val js = parser.parse(inputJSON) as JSONObject
         val inputdepID = Integer.parseInt(js.get("departmentId").toString() )
-        println("inputdepID => $inputdepID")
         val f = deps__.DepsMap.get(inputdepID)
-        println(f)
         val realdepID = deps__.DepsMap.get(inputdepID)
-        println("realdepID => $realdepID")
         val vagning = js.get("weighings") as JSONArray
         val checkpsa = checkpsaexist(uuid)
         if ((realdepID != null) &&  !checkpsa) {
@@ -249,7 +245,6 @@ VALUES (
 NULL,   ?,                   ?,         ?,'Необходимо выбрать',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
             );
             val date: String = LocalDate.now().toString()
-            println("date => $date")
             prepared?.setString(1, getPSANumber(DepId))
            /// getPassportId()?.let { prepared?.setInt(2, it) }
           ///  prepared?.setInt(2, 2)
@@ -259,7 +254,6 @@ NULL,   ?,                   ?,         ?,'Необходимо выбрать',
             prepared?.setString(5, descriptionMap.get(Type))////LocalDate getDate
             prepared?.setString(6, Type)
             prepared?.setString(7, UUID)
-            println("UUID= $UUID")
             println("prepared=> $prepared")
             if (prepared != null) {
                 prepared.execute()
@@ -292,7 +286,6 @@ VALUES
             var inspect =  Random().nextFloat()/4
             prepared?.setInt(4, getMetalId(Metal))
             val m = getMetalId(Metal)
-            println("METALID==>$m")
             prepared?.setString(5, (Math.round(inspect * 100.0) / 100.0).toString())
             prepared?.setString(6, UUID)
             println(prepared)
@@ -306,7 +299,6 @@ VALUES
         var prepared =dbConnection?.prepareStatement("select * from `psa`.`metal` where title=?;")
         prepared?.setString(1, metal)
         val rs = prepared?.executeQuery()
-        println("\n\n\n\nINTO getmetalid $prepared")
         if (rs?.next() == true)
             return rs.getInt("id")
         return -1;
@@ -331,7 +323,6 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
         prepared?.setString(5, descriptionMap.get(Type))////LocalDate getDate
         prepared?.setString(6, Type)
         prepared?.setString(7, UUID)
-        println("prepared=> $prepared")
         if (prepared != null) {
             prepared.execute()
         }
@@ -342,7 +333,6 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
         println("into PSA section::")
         input.forEach{
             val f: KeyValue = it as KeyValue
-            println("""KEY VALUE ${f.Key}::${f.Value}""")
             when ((it as KeyValue).Key){
                 "login" -> login = it.Value as String;
                 "pass"  -> pass  = it.Value as String;
@@ -350,7 +340,6 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
         }
     }
     val stupid: RoleHandler = {
-        println("\n\n\nINTO DUMB\n\n\n")
         mapper.forEach { a ->
             if (a.key.Name == "stupid")
                 dumb = a.key.Param as String
@@ -384,7 +373,6 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
     }
 
     val getPsaNumberfrom: RoleHandler = {
-        println("\n\n\n\n<<<<<<<>>>>>>>INTO getPsaNumberfrom")
         mapper.forEach { a ->
             if (a.key.Name == "getPsaNumberfrom")
                 urlPsanumberUrl = a.key.Param as String
@@ -400,7 +388,6 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
     }
 
     fun appendRole(R: Role){
-        print("Adding role ${R.Name}\n")
         when (R?.Name){
             "psa" -> mapper.put(R, psa)
             "getPsaNumberfrom" -> mapper.put(R, getPsaNumberfrom)
