@@ -108,14 +108,17 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         psearch.render(buildSearchDSL)
         val res = psearch.getPSA()
         var counter = 1
+        var numberpsa = 0;
         if (res?.next()==false)
             return "1";
         while (res?.next() == true){
             //println(counter++)
-            counter++
+            numberpsa = res.getInt("number")
         }
-        counter++
-        return counter.toString()
+      //  counter++
+      //  return counter.toString()
+        numberpsa++
+        return numberpsa.toString()
     }
 
 
