@@ -93,8 +93,8 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
 
-    fun getPSANumber(DepsId : String): String{
-        return getRequest(urlPsanumberUrl+DepsId)
+    fun getPSANumber__(DepsId : String): String{
+        return getRequest__(urlPsanumberUrl+DepsId)
     };
 
     fun getPSANumberviaDSL(DepsId: String): String{
@@ -191,7 +191,7 @@ NULL,   ?,                  ?,  'Необходимо выбрать',   ?,     
         );
         val date: String = LocalDate.now().toString()
         println("date => $date")
-        prepared?.setString(1, getPSANumber(depsId.toString()))
+        prepared?.setString(1, getPSANumberviaDSL(depsId.toString()))//getPSANumber(depsId.toString()))
         /// getPassportId()?.let { prepared?.setInt(2, it) }
         prepared?.setDate(2, java.sql.Date.valueOf(date));
 
@@ -274,7 +274,7 @@ VALUES (
 NULL,   ?,                   ?,         ?,'Необходимо выбрать',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
             );
             val date: String = LocalDate.now().toString()
-            prepared?.setString(1, getPSANumber(DepId))
+            prepared?.setString(1, getPSANumberviaDSL(DepId))//getPSANumber(DepId))
            /// getPassportId()?.let { prepared?.setInt(2, it) }
           ///  prepared?.setInt(2, 2)
             prepared?.setDate(2, java.sql.Date.valueOf(date));
@@ -345,7 +345,7 @@ VALUES (
 NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,      '0',        '0',        NULL,    ?);""");
         val date: String = LocalDate.now().toString()
         println("date => $date")
-        prepared?.setString(1, getPSANumber(DepId))
+        prepared?.setString(1, getPSANumberviaDSL(DepId))//getPSANumber(DepId))
         prepared?.setDate  (2, java.sql.Date.valueOf(date));
         prepared?.setString(3, PlateNumber)
         prepared?.setString(4, DepId)
@@ -428,7 +428,7 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
     }
 
     @Throws(IOException::class)
-    fun getRequest(url: String?):String {
+    fun getRequest__(url: String?):String {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .timeout(Duration.ofSeconds(20))
