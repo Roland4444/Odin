@@ -10,7 +10,6 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import se.roland.util.Department
 import java.io.IOException
-import java.lang.StringBuilder
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -77,16 +76,19 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     var dumb: String = ""
     var dbConnection: Connection? = null
     var json_ = ""
+    lateinit var psearch: PSASearchProcessor
     lateinit var executor: Executor
     override fun render(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
-        executor = Executor(urldb, login, pass)
+    //    executor = Executor(urldb, login, pass)
         urlPsanumberUrl += "?"+keyparam_+"="
         if (enabled == "true") {
-            dbConnection = DriverManager.getConnection(urldb, login, pass)
+    ///        dbConnection = DriverManager.getConnection(urldb, login, pass)
+            dbConnection= executor.conn
         }
+
         return "OK"
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
@@ -95,12 +97,25 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         return getRequest(urlPsanumberUrl+DepsId)
     };
 
-    fun getPSANumber__(DepsId: String): String{
-        var buildSearchDSL = StringBuilder()
-        buildSearchDSL.append("'search'=>::sql{'SELECT * FROM psa '},::department{'${detI}',''},::datarange{'2021-01-01':'2021-04-26'}."
-
-
-        TODO()
+    fun getPSANumberviaDSL(DepsId: String): String{
+        println("in DSL psa getnumber")
+        val name = psearch.getdepNameExecutor(DepsId)
+        val year = Calendar.getInstance()[Calendar.YEAR]
+        val date: String = LocalDate.now().toString()
+        println("date => $date")
+        val buildSearchDSL = "'search'=>::sql{'SELECT * FROM psa '},::department{'${name}',''},::datarange{'${year}-01-01':'${java.sql.Date.valueOf(date)}'}."
+        println("PREPARED DSL=> $buildSearchDSL")
+        psearch.render(buildSearchDSL)
+        val res = psearch.getPSA()
+        var counter = 1
+        if (res?.next()==false)
+            return "1";
+        while (res?.next() == true){
+            //println(counter++)
+            counter++
+        }
+        counter++
+        return counter.toString()
     }
 
 

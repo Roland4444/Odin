@@ -15,6 +15,10 @@ class PSAConnector  : DSLProcessor() {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
+        executor = Executor(urldb, login, pass)
+        if (enabled == "true") {
+            executor = Executor(urldb, login, pass)
+        }
         return "OK"
     }
 

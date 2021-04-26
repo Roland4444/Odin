@@ -162,7 +162,7 @@ fun testsearchplatenumber(){
         println("time execution:: " + duration / 1000000000)
     }
 
-    fun testcountMaxNuberPSA(){
+    fun countMaxNuberPSA(){
         val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::department{'Test',''},::datarange{'2021-01-01':'2021-04-26'}."
         val search6_ = "'search'=>::sql{'SELECT * FROM psa '},::department{'ПЗУ №12',''},::datarange{'2021-01-01':'2021-04-26'}."
 
