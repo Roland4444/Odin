@@ -140,7 +140,7 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
-    fun testGetPSANumberviaDSL() {
+    fun GetPSANumberviaDSL() {
         var psa  = PSADSLProcessor()
         val PSASearchProcessor = PSASearchProcessor()
         psaconnector.render(initDB)
