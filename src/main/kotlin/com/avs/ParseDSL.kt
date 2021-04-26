@@ -56,12 +56,13 @@ class ParseDSL : Serializable {
         val input = input_.prepare()
         if (input.equals(""))
             return Atom.Empty
+        if ((input[0]=='\'') && (input.indexOf(":")<0)&&(countStringDelims(input)==2) && input[input.length-1]=='\'')
+            return Atom.String
         if ((input.Head__() != "") && (input.Tail__()!=""))
             return Atom.Sequence
         if ((input[0]=='[') && (input[input.length-1]==']'))
             return Atom.Tupple
-        if ((input.indexOf("'")>=0) && (input.indexOf(":")<0)&&(countStringDelims(input)==2))
-            return Atom.String
+
         if ((input.indexOf("'")>=0) && (input.indexOf(":")>0) && (input.Tail__()=="")) {
             return Atom.KeyValue
         }
@@ -88,6 +89,7 @@ class ParseDSL : Serializable {
     }
     fun Atom(input:  String): Any{
         val type = getType(input)
+        println("for string ${input} type = ${type}")
         var map = mutableMapOf<String, Any>()
         var lst = mutableListOf<Any>()
         when (type){

@@ -15,7 +15,7 @@ class PSAConnector  : DSLProcessor() {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
-        executor = Executor(urldb, login, pass)
+      //  executor = Executor(urldb, login, pass)
         if (enabled == "true") {
             executor = Executor(urldb, login, pass)
         }
@@ -35,6 +35,24 @@ class PSAConnector  : DSLProcessor() {
         }
     }
 
+    val psalogin: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "psalogin"){
+                login = a.key.Param as String
+            }
+             //   processPSASection(a.key.Param as MutableList<Any>)
+        }
+    }
+
+    val psapass: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "psapass"){
+                pass = a.key.Param as String
+            }
+              //  processPSASection(a.key.Param as MutableList<Any>)
+        }
+    }
+
     fun processPSASection(input: MutableList<Any>) {
         input.forEach {
             val f: KeyValue = it as KeyValue
@@ -42,6 +60,7 @@ class PSAConnector  : DSLProcessor() {
             when ((it as KeyValue).Key) {
                 "login" -> login = it.Value as String;
                 "pass" -> pass = it.Value as String;
+
             }
         }
     }
@@ -60,6 +79,8 @@ class PSAConnector  : DSLProcessor() {
             "psa" -> mapper.put(R, psa)
             "db" -> mapper.put(R, db)
             "enabled" -> mapper.put(R, enable)
+            "psapass" -> mapper.put(R, psapass)
+            "psalogin" -> mapper.put(R, psalogin)
         }
     }
 
