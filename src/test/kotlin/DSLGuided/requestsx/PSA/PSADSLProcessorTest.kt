@@ -124,6 +124,7 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         psa.render(copy)
         assertEquals(etalon, psa.json_)
+
     }
 
 }

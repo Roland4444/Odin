@@ -10,6 +10,7 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import se.roland.util.Department
 import java.io.IOException
+import java.lang.StringBuilder
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -18,6 +19,7 @@ import java.sql.*
 import java.time.Duration
 import java.time.LocalDate
 import java.util.*
+
 
 typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
 typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
@@ -88,10 +90,18 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         return "OK"
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
+
     fun getPSANumber(DepsId : String): String{
         return getRequest(urlPsanumberUrl+DepsId)
     };
 
+    fun getPSANumber__(DepsId: String): String{
+        var buildSearchDSL = StringBuilder()
+        buildSearchDSL.append("'search'=>::sql{'SELECT * FROM psa '},::department{'${detI}',''},::datarange{'2021-01-01':'2021-04-26'}."
+
+
+        TODO()
+    }
 
 
     var completePSA: completePSA = {Tare: String, Sor: String, UUID: String ->run {
@@ -233,6 +243,7 @@ INSERT INTO `weighing` (
         }
         return PSAId
     }
+
 
 
     var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->

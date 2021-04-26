@@ -162,7 +162,29 @@ fun testsearchplatenumber(){
         println("time execution:: " + duration / 1000000000)
     }
 
+    fun testcountMaxNuberPSA(){
+        val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::department{'Test',''},::datarange{'2021-01-01':'2021-04-26'}."
+        val search6_ = "'search'=>::sql{'SELECT * FROM psa '},::department{'ПЗУ №12',''},::datarange{'2021-01-01':'2021-04-26'}."
 
+        psaconnector.render(initDB)
+        var psasearch = PSASearchProcessor()
+        psasearch.executor=psaconnector.executor
+        psasearch.render(search6)
+        val res = psasearch.getPSA()
+        var counter = 0
+        while (res?.next() == true){
+            println(counter++)
+        }
+        assertEquals(6, ++counter)
+        val etalon25 = 3353
+        psasearch.render(search6_)
+        val res_ = psasearch.getPSA()
+        counter = 0
+        while (res_?.next() == true){
+            println(counter++)
+        }
+        assertEquals(etalon25, ++counter)
+    }
 
 
 
