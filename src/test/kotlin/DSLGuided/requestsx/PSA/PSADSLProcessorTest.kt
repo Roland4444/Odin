@@ -43,7 +43,10 @@ class PSADSLProcessorTest : TestCase() {
         var hash = mutableMapOf<String, String>()
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
+        val psearch = PSASearchProcessor()
+        psearch.executor = psaconnector.executor
         psa.executor=psaconnector.executor
+        psa.psearch=psearch
         psa.render(copy)
         hash.put("Brutto", "12000")
         hash.put("Sor", "0.2")
