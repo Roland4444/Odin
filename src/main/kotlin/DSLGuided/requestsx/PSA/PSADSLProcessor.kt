@@ -35,6 +35,7 @@ class PSADSLProcessor  : DSLProcessor() {
         }
 
         fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit{
+            println("into create draft psa")
             PSAProc.render(DSL)
             val f: psaDraft = PSAProc.createdraft
             val Brutto = params.get("Brutto")
@@ -71,8 +72,8 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     var login: String=""
     var pass: String=""
     var urldb: String =""
-    var urlPsanumberUrl: String =""
-    var keyparam_: String =""
+  /////  var urlPsanumberUrl: String =""   DEPRECATED!
+ ////   var keyparam_: String =""  DEPRECATED!
     var dumb: String = ""
     var dbConnection: Connection? = null
     var json_ = ""
@@ -83,7 +84,7 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
     //    executor = Executor(urldb, login, pass)
-        urlPsanumberUrl += "?"+keyparam_+"="
+    /////    urlPsanumberUrl += "?"+keyparam_+"="
         if (enabled == "true") {
     ///        dbConnection = DriverManager.getConnection(urldb, login, pass)
             dbConnection= executor.conn
@@ -93,9 +94,7 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     }
     val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
 
-    fun getPSANumber__(DepsId : String): String{
-        return getRequest__(urlPsanumberUrl+DepsId)
-    };
+
 
     fun getPSANumberviaDSL(DepsId: String): String{
         println("in DSL psa getnumber")
@@ -381,12 +380,12 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
                 urldb = a.key.Param as String
         }
     }
-    val keyparam: RoleHandler = {
-        mapper.forEach { a ->
-            if (a.key.Name == "keyparam")
-                keyparam_ = a.key.Param as String
-        }
-    }
+//    val keyparam: RoleHandler = {
+//        mapper.forEach { a ->
+//            if (a.key.Name == "keyparam")
+//                keyparam_ = a.key.Param as String
+//        }
+//    }
 
     val psa: RoleHandler = {
         mapper.forEach { a ->
@@ -401,12 +400,12 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
         }
     }
 
-    val getPsaNumberfrom: RoleHandler = {
-        mapper.forEach { a ->
-            if (a.key.Name == "getPsaNumberfrom")
-                urlPsanumberUrl = a.key.Param as String
-        }
-    }
+//    val getPsaNumberfrom: RoleHandler = {
+//        mapper.forEach { a ->
+//            if (a.key.Name == "getPsaNumberfrom")
+//                urlPsanumberUrl = a.key.Param as String
+//        }
+//    }
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
     }
@@ -419,9 +418,9 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
     fun appendRole(R: Role){
         when (R?.Name){
             "psa" -> mapper.put(R, psa)
-            "getPsaNumberfrom" -> mapper.put(R, getPsaNumberfrom)
+      //      "getPsaNumberfrom" -> mapper.put(R, getPsaNumberfrom)
             "db" -> mapper.put(R, db)
-            "keyparam" -> mapper.put(R, keyparam)
+        ////    "keyparam" -> mapper.put(R, keyparam)
             "enabled" -> mapper.put(R, enable)
             "json" -> mapper.put(R, json)
         }
