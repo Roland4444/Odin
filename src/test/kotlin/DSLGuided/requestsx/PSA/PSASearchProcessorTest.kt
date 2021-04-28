@@ -15,7 +15,8 @@ import org.json.simple.parser.JSONParser
 //               ::client('ООО Артемий'),
 //               ::typepayment('cash','bank'),
 //               ::platenumber('KAMAZ K582HB30'),
-//               ::passcheckurl(https://passport.avs.com.ru/)
+//               ::passcheckurl(https://passport.avs.com.ru/),
+//               ::limit{200}.
 class PSASearchProcessorTest : TestCase() {
     val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
     val psaconnector = PSAConnector()
