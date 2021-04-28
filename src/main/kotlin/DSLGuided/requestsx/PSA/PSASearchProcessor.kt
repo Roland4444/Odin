@@ -41,17 +41,6 @@ class PSASearchProcessor  : DSLProcessor() {
 
         }
 
-        fun search(input: String, PSASearch: PSASearchProcessor, depsRestricted: String, Limit: String): String {
-            val departname = PSASearch.getdepNameExecutor(depsRestricted);
-            //input = input.replace()
-            var input = PSASearch.parser.removeRolefromStringDSL(input, "department")
-            val appendDep = "},::department{'"+departname+"',''},::limit{${Limit}}"
-            val finishDSL = input.replace("}.", appendDep)
-            print("final string dsl =>$finishDSL")
-            PSASearch.render(finishDSL)
-            return PSASearch.createJSONResponce(PSASearch.getPSA())
-
-        }
     }
 
     lateinit var searchFrom: String
@@ -61,7 +50,7 @@ class PSASearchProcessor  : DSLProcessor() {
     lateinit var platenumber_: String
     lateinit var typepayment_: String
     lateinit var passcheckurl_: String
-    lateinit var limit_: String
+    lateinit var limit_: Integer
     var departments = mutableListOf<String>()
     lateinit var executor: Executor
     var if_present = false
@@ -208,8 +197,7 @@ class PSASearchProcessor  : DSLProcessor() {
     val limit: RoleHandler= {
         mapper.forEach { a ->
             if (a.key.Name == "limit") {
-                limit_ = a.key.Param as String
-                params()
+                limit_ = a.key.Param as Integer
                 val appendix = "LIMIT ${limit_}"
                 initialString.append(appendix)
             }
