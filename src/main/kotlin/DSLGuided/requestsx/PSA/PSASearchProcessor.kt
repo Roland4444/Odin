@@ -32,8 +32,9 @@ class PSASearchProcessor  : DSLProcessor() {
         fun search(input: String, PSASearch: PSASearchProcessor, depsRestricted: String): String {
             val departname = PSASearch.getdepNameExecutor(depsRestricted);
             //input = input.replace()
-            var input = PSASearch.parser.removeRolefromStringDSL(input, "department")
-            val appendDep = "},::department{'"+departname+"',''}."
+            var input1 = PSASearch.parser.removeRolefromStringDSL(input, "department")
+            var input = PSASearch.parser.removeRolefromStringDSL(input1, "limit")
+            val appendDep = "},::department{'"+departname+"',''},::limit{200}."
             val finishDSL = input.replace("}.", appendDep)
             print("final string dsl =>$finishDSL")
             PSASearch.render(finishDSL)
