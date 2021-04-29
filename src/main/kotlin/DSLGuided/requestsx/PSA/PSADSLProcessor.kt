@@ -160,6 +160,7 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
     }
 
     fun processfarg(uuid: String, inputJSON: String){
+        println("inputJSON=> $inputJSON, uuid $uuid")
         val parser = JSONParser()
         clearweignings(uuid)
         val js = parser.parse(inputJSON) as JSONObject
@@ -169,10 +170,12 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
         val vagning = js.get("weighings") as JSONArray
         val checkpsa = checkpsaexist(uuid)
         if ((realdepID != null) &&  !checkpsa) {
+            println("creating draft @$realdepID")
             createdraftfarg(realdepID, uuid)
         }
         vagning.forEach { invagning ->
             if (realdepID != null) {
+                println("process vagning  @JSON::${invagning.toString()}")
                 processinvagning(invagning as JSONObject, uuid)
             } }
 
@@ -210,24 +213,33 @@ NULL,   ?,                  ?,  'Необходимо выбрать',   ?,     
         val prepared = dbConnection?.prepareStatement(
             """
 INSERT INTO `weighing` (
-`id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
+`id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
                                 VALUES
-(NULL,   ?,      ?,    ?,     ?,      ?,        ?,          ?,           ?,            ?,            ?,           ?);
+(NULL,   ?,      ?,    ?,     ?,      ?,        ?,          ?,               ?,           ?,            ?,            ?,         ?);
                                 
                 """  );
+        val Bruttoinput: Float = json.get("brutto").toString().toFloat()
+        val CloggingInput : Int = json.get("tare").toString().toInt()
+        val Tare: Int = json.get("tare").toString().toInt()
 
+        val sub: Float = Bruttoinput - Tare
+        val percentage = (CloggingInput / 100.00 * sub) as Float
+        val Brutto = sub - percentage
         val inspect =  Random().nextFloat()/4
-        prepared?.setFloat(1, json.get("brutto").toString().toFloat() )
+        prepared?.setFloat(1, Brutto)////json.get("brutto").toString().toFloat() )
         prepared?.setInt(2, json.get("tare").toString().toInt())
         prepared?.setFloat(3, json.get("clogging").toString().toFloat())
         prepared?.setFloat(4, (json.get("price").toString().toFloat())*1000)
         prepared?.setInt(5, getPSAID(uuid))
         prepared?.setInt(6, getmetalID(json))
-        prepared?.setInt(7, json.get("tare").toString().toInt())
-        prepared?.setFloat(8, json.get("clogging").toString().toFloat())
-        prepared?.setFloat(9, (json.get("price").toString().toFloat())*1000)
-        prepared?.setString(10, (Math.round(inspect * 100.0) / 100.0).toString())
-        prepared?.setString(11, uuid)
+
+        prepared?.setFloat(7, Brutto)////json.get("brutto").toString().toFloat() )
+
+        prepared?.setInt(8, json.get("tare").toString().toInt())
+        prepared?.setFloat(9, json.get("clogging").toString().toFloat())
+        prepared?.setFloat(10, (json.get("price").toString().toFloat())*1000)
+        prepared?.setString(11, (Math.round(inspect * 100.0) / 100.0).toString())
+        prepared?.setString(12, uuid)
 
         println("prepared=> $prepared")
         if (prepared != null) {
