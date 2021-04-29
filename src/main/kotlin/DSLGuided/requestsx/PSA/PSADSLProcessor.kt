@@ -221,10 +221,10 @@ INSERT INTO `weighing` (
         val Bruttoinput: Float = json.get("brutto").toString().toFloat()
         val CloggingInput : Int = json.get("tare").toString().toInt()
         val Tare: Int = json.get("tare").toString().toInt()
-
         val sub: Float = Bruttoinput - Tare
         val percentage = (CloggingInput / 100.00 * sub) as Float
         val Brutto = sub - percentage
+        println("Calculated Brutto=> $Brutto")
         val inspect =  Random().nextFloat()/4
         prepared?.setFloat(1, Brutto)////json.get("brutto").toString().toFloat() )
         prepared?.setInt(2, json.get("tare").toString().toInt())
