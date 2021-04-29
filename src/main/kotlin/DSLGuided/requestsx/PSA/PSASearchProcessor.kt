@@ -199,7 +199,7 @@ class PSASearchProcessor  : DSLProcessor() {
         mapper.forEach { a ->
             if (a.key.Name == "limit") {
                 limit_ = a.key.Param as Integer
-                val appendix = "LIMIT ${limit_}"
+                val appendix = " LIMIT ${limit_}"
                 initialString.append(appendix)
             }
         }
