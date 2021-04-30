@@ -178,4 +178,31 @@ class PSADSLProcessorTest : TestCase() {
 
     fun testProcessinvagning() {}
 
+    fun testExtractSummary() {
+        val input = String(Files.readAllBytes(File("input.js").toPath()))
+        val etalon = """[{"cost":4736.16,"median":52,"weight":91.08,"psaid":12},{"cost":1767.15,"median":105,"weight":16.83,"psaid":2},{"cost":54934.950000000004,"median":565,"weight":97.23,"psaid":5},{"cost":49829.45,"median":99.75,"weight":499.53,"psaid":6},{"cost":21968.25,"median":345.47,"weight":63.59,"psaid":8},{"cost":1425.95,"median":95,"weight":15.01,"psaid":9}]""";
+        assertNotEquals(null, input)
+      ////  println(input)
+        val psa = PSADSLProcessor()
+        val sum = psa.extractSummary(input)
+        assertNotEquals(null, sum)
+        println("\n\n\n\nsummary $sum")
+        assertEquals(etalon, psa.convertToList(sum))
+        assertNotEquals(null, psa.convertToListJSON(psa.convertToList(sum)))
+    }
+
+    fun testprocessfarg() {
+        val input = """{"id":37115,"waybill":18,"date":"2021-04-27","time":"17:32:06","comment":"\u0441\u043b\u0430\u0432\u0430","exportId":18,"department":{"id":10,"name":"\u041f\u0417\u0423 3 \u0420\u041e\u0416\u0414 \u0426\/\u041c","value":10,"text":"\u041f\u0417\u0423 3 \u0420\u041e\u0416\u0414 \u0426\/\u041c"},"departmentId":10,"totalMass":88.35,"totalPrice":7951.5,"weighings":[{"id":83100,"trash":1,"clogging":5,"tare":0,"brutto":94,"metal":{"id":14,"name":"\u0410\u043b\u044e\u043c\u0438\u043d\u0438\u0439 \u0445\u043b\u0430\u043c","def":false,"psaid":6},"metalId":14,"mass":88.35,"price":"90.00","totalPrice":7951.5,"newPrice":"90.00","calculatedMass":"7951.50"}],"customer":48,"totalPaidAmount":7951.5,"hasBeenPaid":true,"oldCustomer":48,"uuid":"288c6e828f7067d624a4b7a46e2857cd","summary":{"6":{"weight":88.35,"cost":7951.5,"median":90,"psaid":6}}}"""
+        val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+
+        var psa  = PSADSLProcessor()
+        psaconnector.render(initDB)
+        psa.executor=psaconnector.executor
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.executor=psaconnector.executor
+        psa.psearch=PSASearchProcessor
+        PSADSLProcessor.processColorPSA(input, "288c6e828f7067d624a4b7a46e2857cd",copy, psa)
+
+    }
+
 }

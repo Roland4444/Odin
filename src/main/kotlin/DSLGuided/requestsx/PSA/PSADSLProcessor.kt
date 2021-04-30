@@ -59,6 +59,7 @@ class PSADSLProcessor  : DSLProcessor() {
 
         }
     }
+    val jsparser = JSONParser()
 
     val deps__: Department = Department()
 
@@ -161,13 +162,16 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
 
     fun processfarg(uuid: String, inputJSON: String){
         println("inputJSON=> $inputJSON, uuid $uuid")
-        val parser = JSONParser()
         clearweignings(uuid)
-        val js = parser.parse(inputJSON) as JSONObject
+        val js = jsparser.parse(inputJSON) as JSONObject
         val inputdepID = Integer.parseInt(js.get("departmentId").toString() )
         val f = deps__.DepsMap.get(inputdepID)
         val realdepID = deps__.DepsMap.get(inputdepID)
-        val vagning = js.get("weighings") as JSONArray
+        val sum = extractSummary(inputJSON)
+        println("SUMM: $sum")
+        val vagning = convertToListJSON(sum)
+        println("VAGNING: ${vagning.toString()}")
+        /// val vagning = js.get("weighings") as JSONArray
         val checkpsa = checkpsaexist(uuid)
         if ((realdepID != null) &&  !checkpsa) {
             println("creating draft @$realdepID")
@@ -176,7 +180,7 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
         vagning.forEach { invagning ->
             if (realdepID != null) {
                 println("process vagning  @JSON::${invagning.toString()}")
-                processinvagning(invagning as JSONObject, uuid)
+                processinvagning__(invagning as JSONObject, uuid)///processinvagning(invagning as JSONObject, uuid)
             } }
 
     }
@@ -208,6 +212,39 @@ NULL,   ?,                  ?,  'Необходимо выбрать',   ?,     
         }
     }
 
+    fun processinvagning__(json: JSONObject, uuid: String){
+        val prepared = dbConnection?.prepareStatement(
+            """
+INSERT INTO `weighing` (
+`id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
+                                VALUES
+(NULL,   ?,      ?,    ?,     ?,      ?,        ?,          ?,               ?,           ?,            ?,            ?,         ?);
+                                
+                """  );
+        ///   "cost":4736.16,"median":52,"weight":91.08,"psaid":12
+
+        val inspect =  Random().nextFloat()/4
+        prepared?.setFloat(1, json.get("weight").toString().toFloat() ) //Brutto)
+        prepared?.setFloat(2, 0.0f)////json.get("tare").toString().toFloat())
+        prepared?.setFloat(3,  0.0f)///  json.get("clogging").toString().toFloat())
+        prepared?.setFloat(4, json.get("median").toString().toFloat()*1000)
+        prepared?.setInt(5, getPSAID(uuid))
+        prepared?.setInt(6, json.get("psaid").toString().toInt())
+        prepared?.setFloat(7, json.get("weight").toString().toFloat())//json.get("brutto").toString().toFloat() )
+        prepared?.setFloat(8, 0.0f)///json.get("tare").toString().toFloat())
+        prepared?.setFloat(9, 0.0f)////json.get("clogging").toString().toFloat())
+        prepared?.setFloat(10, json.get("median").toString().toFloat()*1000)
+        prepared?.setString(11, (Math.round(inspect * 100.0) / 100.0).toString())
+        prepared?.setString(12, uuid)
+        println("prepared=> $prepared")
+        if (prepared != null) {
+            prepared.execute()
+        }
+
+        // prepared.setString();
+
+    }
+
 
     fun processinvagning(json: JSONObject, uuid: String){
         val prepared = dbConnection?.prepareStatement(
@@ -218,7 +255,7 @@ INSERT INTO `weighing` (
 (NULL,   ?,      ?,    ?,     ?,      ?,        ?,          ?,               ?,           ?,            ?,            ?,         ?);
                                 
                 """  );
-
+     ///   "cost":4736.16,"median":52,"weight":91.08,"psaid":12
         val Bruttoinput: Float = json.get("brutto").toString().toFloat()
         val CloggingInput : Float = json.get("clogging").toString().toFloat()
         val Tare: Float = json.get("tare").toString().toFloat()
@@ -252,6 +289,52 @@ INSERT INTO `weighing` (
     fun getmetalID(json: JSONObject): Int {
         val metal: JSONObject = json.get("metal") as JSONObject
         return metal.get("psaid").toString().toInt()
+
+    }
+
+    fun extractSummary(input: String): String{
+        println("extract in summary $input")
+        val jsObj: JSONObject = jsparser.parse(input) as JSONObject
+        return jsObj.get("summary").toString()
+    }
+
+    fun convertToList(input: String): String{
+        println("INTO CONVERT TO LIST")
+        val startelem = ":{";
+        val finishelem = "},\""
+        var builder = StringBuilder()
+        builder.append("[")
+        var str = input
+        var index = str.indexOf(startelem)
+        while (index>=0){
+            val nextindex = str.indexOf(finishelem)
+
+            if (nextindex >=0) {
+                println("nextindex $nextindex")
+                println("append ${str.substring(index+1, nextindex+2)}")
+                builder.append(str.substring(index + 1, nextindex + 2))
+
+            }
+            else
+            {
+                builder.append(str.substring(index+1))
+                break
+            }
+            str = str.substring(nextindex+2)
+            println("STR=> $str")
+            index = str.indexOf(startelem)
+            println("index $index")
+        }
+        builder.append("]")
+        return builder.toString().replace("}}]", "}]")
+    }
+
+    fun convertToListJSON(input: String): JSONArray{
+        println("input:: $input")
+        return jsparser.parse(convertToList(input)) as JSONArray
+    }
+
+    fun processSummary(input: String){
 
     }
 
