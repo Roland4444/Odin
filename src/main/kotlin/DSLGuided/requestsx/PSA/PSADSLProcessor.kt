@@ -218,29 +218,28 @@ INSERT INTO `weighing` (
 (NULL,   ?,      ?,    ?,     ?,      ?,        ?,          ?,               ?,           ?,            ?,            ?,         ?);
                                 
                 """  );
+
         val Bruttoinput: Float = json.get("brutto").toString().toFloat()
-        val CloggingInput : Int = json.get("tare").toString().toInt()
-        val Tare: Int = json.get("tare").toString().toInt()
-        val sub: Float = Bruttoinput - Tare
-        val percentage = (CloggingInput / 100.00 * sub) as Float
-        val Brutto = sub - percentage
+        val CloggingInput : Float = json.get("clogging").toString().toFloat()
+        val Tare: Float = json.get("tare").toString().toFloat()
+        val Trash = json.get("trash").toString().toFloat()
+        val sub: Float = Bruttoinput - Tare - Trash
+        val percentage: Float = ((CloggingInput / 100.00 * sub).toFloat())
+        val Brutto = (100-CloggingInput)/100*sub
         println("Calculated Brutto=> $Brutto")
         val inspect =  Random().nextFloat()/4
-        prepared?.setFloat(1, Brutto)////json.get("brutto").toString().toFloat() )
-        prepared?.setInt(2, json.get("tare").toString().toInt())
-        prepared?.setFloat(3, json.get("clogging").toString().toFloat())
+        prepared?.setFloat(1, Brutto)/////json.get("brutto").toString().toFloat() ) //Brutto)
+        prepared?.setFloat(2, 0.0f)////json.get("tare").toString().toFloat())
+        prepared?.setFloat(3,  0.0f)///  json.get("clogging").toString().toFloat())
         prepared?.setFloat(4, (json.get("price").toString().toFloat())*1000)
         prepared?.setInt(5, getPSAID(uuid))
         prepared?.setInt(6, getmetalID(json))
-
-        prepared?.setFloat(7, Brutto)////json.get("brutto").toString().toFloat() )
-
-        prepared?.setInt(8, json.get("tare").toString().toInt())
-        prepared?.setFloat(9, json.get("clogging").toString().toFloat())
+        prepared?.setFloat(7, Brutto)//json.get("brutto").toString().toFloat() )
+        prepared?.setFloat(8, 0.0f)///json.get("tare").toString().toFloat())
+        prepared?.setFloat(9, 0.0f)////json.get("clogging").toString().toFloat())
         prepared?.setFloat(10, (json.get("price").toString().toFloat())*1000)
         prepared?.setString(11, (Math.round(inspect * 100.0) / 100.0).toString())
         prepared?.setString(12, uuid)
-
         println("prepared=> $prepared")
         if (prepared != null) {
             prepared.execute()

@@ -1,5 +1,7 @@
 package DSLGuided.requestsx.PSA
 import junit.framework.TestCase
+import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
 import se.roland.abstractions.timeBasedUUID
 import java.nio.file.Files
 import java.nio.file.Path
@@ -57,6 +59,21 @@ class PSADSLProcessorTest : TestCase() {
         hash.put("Type", "black")
         PSADSLProcessor.createdraftPSA(hash as HashMap<String, String>, copy, psa )
 
+    }
+
+    fun testprocessinvagning(){
+        val parser = JSONParser()
+        val inputjs = "{\"brutto\":16,\"calculatedMass\":\"1267.20\",\"metalId\":15,\"totalPrice\":0,\"tare\":0,\"price\":\"80\",\"clogging\":1,\"mass\":15.84,\"metal\":{\"def\":false,\"name\":\"Нержавейка\",\"psaid\":2,\"id\":15},\"id\":83580,\"newPrice\":\"80\",\"trash\":0}"
+        val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
+        val uuid = "48bd68d2834fb341fdc03a92a02dd88a"
+        var hash = mutableMapOf<String, String>()
+        var psa  = PSADSLProcessor()
+        psaconnector.render(initDB)
+        val psearch = PSASearchProcessor()
+        psearch.executor = psaconnector.executor
+        psa.executor=psaconnector.executor
+        psa.psearch=psearch
+        psa.processinvagning(parser.parse(inputjs) as JSONObject, uuid)
     }
 
     fun companioncreatedraftpsafrommypc(){
@@ -158,5 +175,7 @@ class PSADSLProcessorTest : TestCase() {
 
         assertEquals("6", psa.getPSANumberviaDSL("27"))
     }
+
+    fun testProcessinvagning() {}
 
 }
