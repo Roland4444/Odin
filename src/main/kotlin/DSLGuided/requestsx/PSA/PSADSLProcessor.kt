@@ -60,6 +60,7 @@ class PSADSLProcessor  : DSLProcessor() {
         }
     }
     val jsparser = JSONParser()
+    var comment: String = ""
 
     val deps__: Department = Department()
 
@@ -164,6 +165,8 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
         println("inputJSON=> $inputJSON, uuid $uuid")
         clearweignings(uuid)
         val js = jsparser.parse(inputJSON) as JSONObject
+        comment = js.get("comment") as String
+        println("comment:: $comment")
         val inputdepID = Integer.parseInt(js.get("departmentId").toString() )
         val f = deps__.DepsMap.get(inputdepID)
         val realdepID = deps__.DepsMap.get(inputdepID)
@@ -193,8 +196,8 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
 INSERT INTO `psa` (
 `id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,                  ?,  'Необходимо выбрать',   ?,              ?,         ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
-        );
+NULL,   ?,                  ?,  'Не выбран ($comment)',   ?,              ?,         ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+        );                     ////Необходимо выбрать
         val date: String = LocalDate.now().toString()
         println("date => $date")
         prepared?.setString(1, getPSANumberviaDSL(depsId.toString()))//getPSANumber(depsId.toString()))
@@ -364,8 +367,8 @@ INSERT INTO `weighing` (
 INSERT INTO `psa` (
 `id`,`number`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,                   ?,         ?,'Необходимо выбрать',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
-            );
+NULL,   ?,                   ?,         ?,'Не выбран ($PlateNumber)',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+            );                              /////Необходимо выбрать
             val date: String = LocalDate.now().toString()
             prepared?.setString(1, getPSANumberviaDSL(DepId))//getPSANumber(DepId))
            /// getPassportId()?.let { prepared?.setInt(2, it) }
