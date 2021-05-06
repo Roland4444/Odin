@@ -9,15 +9,10 @@ import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import se.roland.util.Department
-import java.io.IOException
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.sql.*
-import java.time.Duration
 import java.time.LocalDate
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
@@ -161,8 +156,83 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
     }
 
     fun splitpsa(uuid : String){
-
+        var param = ArrayList<Any>()
+        param.add(uuid)
+        val datainvagning = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
+        val datapsa = executor.executePreparedSelect("SELECT * FROM `psa` WHERE `uuid`=?;", param)
+        updateDatainvagning(datainvagning, uuid)
+        createPSA(datapsa, "${uuid}_")
+        createinvagning(datainvagning, "${uuid}_")
     }
+
+    fun createinvagning(datainvagning: ResultSet, uuid: String) {
+        val prepared = dbConnection?.prepareStatement(
+            """
+INSERT INTO `weighing` (
+`id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
+                                VALUES
+(NULL,   ?,      ?,    ?,     ?,      ?,        ?,          ?,               ?,           ?,            ?,            ?,         ?);
+                                
+                """  );
+        val inspect =  Random().nextFloat()/4
+        val brutto =  datainvagning.getFloat("brutto")/2 + datainvagning.getFloat("tare") / 2
+        prepared?.setFloat(1,brutto ) //Brutto)
+        prepared?.setFloat(2, datainvagning.getFloat("tare"))////json.get("tare").toString().toFloat())
+        prepared?.setFloat(3,  datainvagning.getFloat("sor"))///  json.get("clogging").toString().toFloat())
+        prepared?.setFloat(4, datainvagning.getFloat("price"))
+        prepared?.setInt(5, getPSAID(uuid))
+        prepared?.setInt(6, datainvagning.getInt("metal_id"))
+        prepared?.setFloat(7, brutto)//json.get("brutto").toString().toFloat() )
+        prepared?.setFloat(8, datainvagning.getFloat("client_tare"))///json.get("tare").toString().toFloat())
+        prepared?.setFloat(9, datainvagning.getFloat("client_sor"))////json.get("clogging").toString().toFloat())
+        prepared?.setFloat(10, datainvagning.getFloat("client_price"))
+        prepared?.setString(11, (Math.round(inspect * 100.0) / 100.0).toString())
+        prepared?.setString(12, uuid)
+        println("prepared=> $prepared")
+        if (prepared != null) {
+            prepared.execute()
+        }
+    }
+
+    fun createPSA(data: ResultSet, uuid: String) {
+        var prepared = dbConnection?.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
+            """
+INSERT INTO `psa` (
+`id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+VALUES (
+NULL,   ?,          ?,       ?,             ?,           ?,           ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',   '0',          '0',       NULL,       ?);"""
+        );                     ////Необходимо выбрать
+        val date: String = LocalDate.now().toString()
+        println("date => $date")
+        prepared?.setString(1, getPSANumberviaDSL(data.getString("department_id")))//getPSANumber(depsId.toString()))
+        /// getPassportId()?.let { prepared?.setInt(2, it) }
+        prepared?.setDate(2, java.sql.Date.valueOf(date));
+        prepared?.setString(3, data.getString("client"));
+
+        prepared?.setInt(4, data.getString("department_id").toInt())
+        prepared?.setString(5, descriptionMap.get(data.getString("type")))////LocalDate getDate
+        prepared?.setString(6, data.getString("type"))
+        prepared?.setString(7, uuid)
+        println("prepared=> $prepared")
+        if (prepared != null) {
+            prepared.execute()
+        }
+    }
+
+    fun updateDatainvagning(data: ResultSet, uuid: String) {
+        var prepared = dbConnection?.prepareStatement(
+            """UPDATE `weighing` SET  `brutto` = ?, `client_brutto` = ? WHERE `uuid` = ?;"""
+        )
+        val brutto =  data.getFloat("brutto")/2 + data.getFloat("tare") / 2
+        prepared?.setFloat(1, brutto)
+        prepared?.setFloat(2, brutto)
+        prepared?.execute()
+    }
+
+    fun getData(uuid: String): Any {
+        TODO("Not yet implemented")
+    }
+
 
     fun processfarg(uuid: String, inputJSON: String){
         println("inputJSON=> $inputJSON, uuid $uuid")
@@ -199,7 +269,7 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
 INSERT INTO `psa` (
 `id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,                  ?,  'Не выбран ($comment)',   ?,              ?,         ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',       NULL,         ?);"""
         );                     ////Необходимо выбрать
         val date: String = LocalDate.now().toString()
         println("date => $date")
@@ -432,31 +502,6 @@ VALUES
         return -1;
     }
 
-
-    var createdraft___:psaDraft=
-    {///,`client`                  'Необходимо выбрать',
-            Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type -> run{
-        val prepared = dbConnection?.prepareStatement(               ////color/black
-                        """
-INSERT INTO `psa`(
-`id`,`number`,`date`,`plate_number`,`department_id`,`description`,  `type`,     `created_at`,    `diamond`,`payment_date` ,`check_printed`,`deferred`,`filename`,`uuid`) 
-VALUES (
-NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,      '0',        '0',        NULL,    ?);""");
-        val date: String = LocalDate.now().toString()
-        println("date => $date")
-        prepared?.setString(1, getPSANumberviaDSL(DepId))//getPSANumber(DepId))
-        prepared?.setDate  (2, java.sql.Date.valueOf(date));
-        prepared?.setString(3, PlateNumber)
-        prepared?.setString(4, DepId)
-        prepared?.setString(5, descriptionMap.get(Type))////LocalDate getDate
-        prepared?.setString(6, Type)
-        prepared?.setString(7, UUID)
-        if (prepared != null) {
-            prepared.execute()
-        }
-    }
-    }
-
     fun processPSASection(input:MutableList<Any>){
         println("into PSA section::")
         input.forEach{
@@ -480,12 +525,6 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
                 urldb = a.key.Param as String
         }
     }
-//    val keyparam: RoleHandler = {
-//        mapper.forEach { a ->
-//            if (a.key.Name == "keyparam")
-//                keyparam_ = a.key.Param as String
-//        }
-//    }
 
     val psa: RoleHandler = {
         mapper.forEach { a ->
@@ -500,12 +539,7 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
         }
     }
 
-//    val getPsaNumberfrom: RoleHandler = {
-//        mapper.forEach { a ->
-//            if (a.key.Name == "getPsaNumberfrom")
-//                urlPsanumberUrl = a.key.Param as String
-//        }
-//    }
+
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
     }
@@ -518,31 +552,10 @@ NULL,    ? ,    ?,       ?,                ?,           ?,            ?,      CU
     fun appendRole(R: Role){
         when (R?.Name){
             "psa" -> mapper.put(R, psa)
-      //      "getPsaNumberfrom" -> mapper.put(R, getPsaNumberfrom)
             "db" -> mapper.put(R, db)
-        ////    "keyparam" -> mapper.put(R, keyparam)
             "enabled" -> mapper.put(R, enable)
             "json" -> mapper.put(R, json)
         }
     }
 
-    @Throws(IOException::class)
-    fun getRequest__(url: String?):String {
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .timeout(Duration.ofSeconds(20))
-            .GET()
-            .build()
-        val client = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_1_1)
-            .connectTimeout(Duration.ofSeconds(20))
-            .build()
-        val response: HttpResponse<String>
-        return try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            response.body().toString()
-        } catch (e: InterruptedException) {
-            "-1"
-        }
-    }
 }

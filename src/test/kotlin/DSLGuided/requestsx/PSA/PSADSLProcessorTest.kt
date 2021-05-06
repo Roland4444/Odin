@@ -205,4 +205,17 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
+    fun testSplitpsa() {
+        val uuid = "e7d49b8c-ae57-11eb-bd3d-3f7269958a5d"
+        val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+
+        var psa  = PSADSLProcessor()
+        psaconnector.render(initDB)
+        psa.executor=psaconnector.executor
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.executor=psaconnector.executor
+        psa.psearch=PSASearchProcessor
+        psa.splitpsa(uuid)
+    }
+
 }
