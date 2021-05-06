@@ -17,8 +17,9 @@ class ParseDSL : Serializable {
         if (input.indexOf("{") == -1) return null
         val rolename: String= input.substring(input.indexOf("::")+2, input.indexOf("{"))
         var params: String
-        if (input.indexOf("{")<input.indexOf("}")-2)
-            params = input.substring(input.indexOf("{")+1, input.indexOf("}"))
+        if (input.indexOf("{")<input.indexOf("}")-1)
+            params = input.substring(input.indexOf("{") + 1, input.indexOf("}"))
+
         else params=""
         if ((rolename.length == 0) || (rolename ==null)) return null;
         return Role(rolename, params, this)

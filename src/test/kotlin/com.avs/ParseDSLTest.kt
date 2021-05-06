@@ -103,6 +103,14 @@ internal class ParseDSLTest {
         val etalonMap = KeyValue("12", arr)
         assertEquals(etalonMap, parser.Atom(initial))
     }
+
+    @Test
+    fun testatomint() {
+        val initial = "1";
+        val etalon =1;
+        assertEquals(etalon,parser.Atom(initial))
+    }
+
     @Test
     fun nestedTUpple(){
         val initial = "'12':[[12,12],12]";
