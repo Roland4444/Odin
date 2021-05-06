@@ -42,6 +42,7 @@ class PSAConnector  : DSLProcessor() {
             }
         }
         watcher.start()
+        println("Starting watcher to reconnect DB!!!")
         return "OK"
     }
 
