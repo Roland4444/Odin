@@ -16,9 +16,7 @@ class PSAConnector  : DSLProcessor() {
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
       //  executor = Executor(urldb, login, pass)
-        if (enabled == "true") {
-            executor = Executor(urldb, login, pass)
-        }
+        recharge()
         return "OK"
     }
 
@@ -52,6 +50,14 @@ class PSAConnector  : DSLProcessor() {
               //  processPSASection(a.key.Param as MutableList<Any>)
         }
     }
+
+
+    fun recharge(){
+        if (enabled == "true") {
+            executor = Executor(urldb, login, pass)
+        }
+    }
+
 
     fun processPSASection(input: MutableList<Any>) {
         input.forEach {

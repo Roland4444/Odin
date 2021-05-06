@@ -158,6 +158,9 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
         var prepared = dbConnection?.prepareStatement(      "DELETE FROM `weighing` WHERE `uuid`=?;");
         prepared?.setString(1, uuid);
         prepared?.executeUpdate();
+    }
+
+    fun splitpsa(uuid : String){
 
     }
 
