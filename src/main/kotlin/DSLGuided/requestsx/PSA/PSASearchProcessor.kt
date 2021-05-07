@@ -79,7 +79,7 @@ class PSASearchProcessor  : DSLProcessor() {
         println("EFFECTIVE STRIUNG \n${initialString.toString()}")
         if (initialString.toString().equals("SELECT * FROM psa ")) {
             initialString.clear()
-            initialString.append("SELECT * FROM psa LIMIT 200")
+            initialString.append("SELECT * FROM psa LIMIT 200 ORDER BY id DESC ")
         }
 
         return "OK"
