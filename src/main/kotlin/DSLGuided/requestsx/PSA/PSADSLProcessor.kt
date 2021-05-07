@@ -158,12 +158,13 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
         var param = ArrayList<Any>()
         param.add(uuid)
         println("uuid = $uuid")
-        var datainvagning = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
+        val datainvagning = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
+        val datainvagning_ = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
+
         updateDatainvagning(datainvagning, uuid)
         val datapsa = executor.executePreparedSelect("SELECT * FROM `psa` WHERE `uuid`=?;", param)
         createPSA(datapsa, "${uuid}_")
-        datainvagning = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
-        createinvagning(datainvagning, "${uuid}_")
+        createinvagning(datainvagning_, "${uuid}_")
     }
 
     fun createinvagning(datainvagning: ResultSet, uuid: String) {
@@ -205,7 +206,7 @@ INSERT INTO `weighing` (
 INSERT INTO `psa` (
 `id`,`number`,   `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,          ?,     ?,                ?,           ?,             ?,           ?,        ?   ,       '0',         ?,        'fromScales',   '0',          '0',       NULL,       ?);"""
+NULL,   ?,          ?,       ?,              ?,           ?,             ?,           ?,        ?   ,       '0',         ?,        'fromScales',   '0',          '0',       NULL,       ?);"""
         );                     ////Необходимо выбрать
         if (!data.next()) {
             println("empty data set in createPSA")
