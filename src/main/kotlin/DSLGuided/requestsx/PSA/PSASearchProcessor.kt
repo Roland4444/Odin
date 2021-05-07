@@ -80,7 +80,7 @@ class PSASearchProcessor  : DSLProcessor() {
         if (initialString.toString().equals("SELECT * FROM psa  LIMIT 200")) {
             println(":::INITIAL REQUEST:::")
             initialString.clear()
-            initialString.append("SELECT * FROM psa LIMIT 200 ORDER BY id DESC ")
+            initialString.append("SELECT * FROM psa  ORDER BY id DESC LIMIT 200")
         }
 
         return "OK"
