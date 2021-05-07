@@ -77,7 +77,8 @@ class PSASearchProcessor  : DSLProcessor() {
         println("\n\n\nCALLING Handlers!\n\n\n")
         mapper.forEach { it.value.invoke(it.key) }
         println("EFFECTIVE STRIUNG \n${initialString.toString()}")
-        if (initialString.toString().equals("SELECT * FROM psa ")) {
+        if (initialString.toString().equals("SELECT * FROM psa  LIMIT 200")) {
+            println(":::INITIAL REQUEST:::")
             initialString.clear()
             initialString.append("SELECT * FROM psa LIMIT 200 ORDER BY id DESC ")
         }
