@@ -65,7 +65,9 @@ class PSADSLProcessor  : DSLProcessor() {
 INSERT INTO `psa`(
 `id`,`number`,`passport_id`,`date`,`plate_number`,`client`,`department_id`,`description`,             `type`,     `created_at`,    `diamond`,`payment_date`, `comment`,`check_printed`,`deferred`,`filename`,`uuid`) 
 VALUES (
-NULL,    ?         , ?,           ?,       ?,    'Необходимо выбрать', ?, 'Лом и отходы черных металлов', 'black',CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,    ?,           '0',        '0',        NULL,    ?);"""
+NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом и отходы черных металлов', 'black',CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,    ?,           '0',        '0',        NULL,    ?);"""
+                                            //////Необходимо выбрать
+
     var login: String=""
     var pass: String=""
     var urldb: String =""
@@ -137,9 +139,9 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
 INSERT INTO `psa` (
 `id`,`number`,`passport_id`, `company_id`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо выбрать',      ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,         ?,           2,             ?,         ?, 'Не выбран',      ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
 
-
+                                             ////Необходимо выбрать
 
     fun checkpsaexist(uuid: String): Boolean{
         var param = ArrayList<Any>()
