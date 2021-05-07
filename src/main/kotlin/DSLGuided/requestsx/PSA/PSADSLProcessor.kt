@@ -72,7 +72,6 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
   /////  var urlPsanumberUrl: String =""   DEPRECATED!
  ////   var keyparam_: String =""  DEPRECATED!
     var dumb: String = ""
-    var dbConnection: Connection? = null
     var json_ = ""
     lateinit var psearch: PSASearchProcessor
     lateinit var executor: Executor
@@ -84,7 +83,7 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
     /////    urlPsanumberUrl += "?"+keyparam_+"="
         if (enabled == "true") {
     ///        dbConnection = DriverManager.getConnection(urldb, login, pass)
-            dbConnection= executor.conn
+        //    dbConnection= executor.conn
         }
 
         return "OK"
@@ -119,7 +118,7 @@ NULL,    ?         , ?,           ?,       ?,    'Необходимо выбр�
 
 
     var completePSA: completePSA = {Tare: String, Sor: String, UUID: String ->run {
-        var prepared = dbConnection?.prepareStatement(
+        var prepared = executor.conn.prepareStatement(
 
             """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ? WHERE `uuid` = ?;"""
         )
@@ -150,7 +149,7 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
     }
 
     fun clearweignings(uuid : String){
-        var prepared = dbConnection?.prepareStatement(      "DELETE FROM `weighing` WHERE `uuid`=?;");
+        var prepared = executor.conn.prepareStatement(      "DELETE FROM `weighing` WHERE `uuid`=?;");
         prepared?.setString(1, uuid);
         prepared?.executeUpdate();
     }
@@ -158,15 +157,17 @@ NULL,   ?,         ?,           2,             ?,       ?, 'Необходимо
     fun splitpsa(uuid : String){
         var param = ArrayList<Any>()
         param.add(uuid)
-        val datainvagning = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
-        val datapsa = executor.executePreparedSelect("SELECT * FROM `psa` WHERE `uuid`=?;", param)
+        println("uuid = $uuid")
+        var datainvagning = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
         updateDatainvagning(datainvagning, uuid)
+        val datapsa = executor.executePreparedSelect("SELECT * FROM `psa` WHERE `uuid`=?;", param)
         createPSA(datapsa, "${uuid}_")
+        datainvagning = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
         createinvagning(datainvagning, "${uuid}_")
     }
 
     fun createinvagning(datainvagning: ResultSet, uuid: String) {
-        val prepared = dbConnection?.prepareStatement(
+        val prepared = executor.conn.prepareStatement(
             """
 INSERT INTO `weighing` (
 `id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
@@ -175,6 +176,10 @@ INSERT INTO `weighing` (
                                 
                 """  );
         val inspect =  Random().nextFloat()/4
+        if (!datainvagning.next()){
+            println("empty datainvagning")
+            return
+        }
         val brutto =  datainvagning.getFloat("brutto")/2 + datainvagning.getFloat("tare") / 2
         prepared?.setFloat(1,brutto ) //Brutto)
         prepared?.setFloat(2, datainvagning.getFloat("tare"))////json.get("tare").toString().toFloat())
@@ -195,37 +200,51 @@ INSERT INTO `weighing` (
     }
 
     fun createPSA(data: ResultSet, uuid: String) {
-        var prepared = dbConnection?.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
+        var prepared = executor.conn.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
             """
 INSERT INTO `psa` (
-`id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+`id`,`number`,   `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,          ?,       ?,             ?,           ?,           ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',   '0',          '0',       NULL,       ?);"""
+NULL,   ?,          ?,     ?,                ?,           ?,             ?,           ?,        ?   ,       '0',         ?,        'fromScales',   '0',          '0',       NULL,       ?);"""
         );                     ////Необходимо выбрать
+        if (!data.next()) {
+            println("empty data set in createPSA")
+            return;
+        }
         val date: String = LocalDate.now().toString()
         println("date => $date")
         prepared?.setString(1, getPSANumberviaDSL(data.getString("department_id")))//getPSANumber(depsId.toString()))
         /// getPassportId()?.let { prepared?.setInt(2, it) }
         prepared?.setDate(2, java.sql.Date.valueOf(date));
-        prepared?.setString(3, data.getString("client"));
+        prepared?.setString(3, data.getString("plate_number"));
 
-        prepared?.setInt(4, data.getString("department_id").toInt())
-        prepared?.setString(5, descriptionMap.get(data.getString("type")))////LocalDate getDate
-        prepared?.setString(6, data.getString("type"))
-        prepared?.setString(7, uuid)
-        println("prepared=> $prepared")
+        prepared?.setString(4, data.getString("client"));
+
+        prepared?.setInt(5, data.getString("department_id").toInt())
+        prepared?.setString(6, descriptionMap.get(data.getString("type")))////LocalDate getDate
+        prepared?.setString(7, data.getString("type"))
+        prepared?.setString(8, data.getString("created_at"))
+        prepared?.setString(9, data.getString("payment_date"))
+        prepared?.setString(10, uuid)
+        println("prepared @createPSA=> $prepared")
         if (prepared != null) {
             prepared.execute()
         }
     }
 
     fun updateDatainvagning(data: ResultSet, uuid: String) {
-        var prepared = dbConnection?.prepareStatement(
+        var prepared = executor.conn.prepareStatement(
             """UPDATE `weighing` SET  `brutto` = ?, `client_brutto` = ? WHERE `uuid` = ?;"""
         )
+        if (!data.next())
+            return;
         val brutto =  data.getFloat("brutto")/2 + data.getFloat("tare") / 2
+        println("Brutto => $brutto")
         prepared?.setFloat(1, brutto)
         prepared?.setFloat(2, brutto)
+        prepared?.setString(3, uuid)
+
+        println("prepared @updateDatainvagning=> $prepared")
         prepared?.execute()
     }
 
@@ -264,7 +283,7 @@ NULL,   ?,          ?,       ?,             ?,           ?,           ?,   CURRE
 
     fun createdraftfarg(depsId: Int, guuid: String) {
         println("\n\n\n\n@@@@\n\n\n\n\nINTO FARG Draft!")
-        var prepared = dbConnection?.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
+        var prepared = executor.conn.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
             """
 INSERT INTO `psa` (
 `id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
@@ -289,7 +308,7 @@ NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?, 
     }
 
     fun processinvagning__(json: JSONObject, uuid: String){
-        val prepared = dbConnection?.prepareStatement(
+        val prepared = executor.conn.prepareStatement(
             """
 INSERT INTO `weighing` (
 `id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
@@ -323,7 +342,7 @@ INSERT INTO `weighing` (
 
 
     fun processinvagning(json: JSONObject, uuid: String){
-        val prepared = dbConnection?.prepareStatement(
+        val prepared = executor.conn.prepareStatement(
             """
 INSERT INTO `weighing` (
 `id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
@@ -415,7 +434,7 @@ INSERT INTO `weighing` (
     }
 
     fun getPSAID(uuid: String): Int{
-        val prepared = dbConnection?.prepareStatement("""SELECT *  FROM `psa` WHERE `uuid`= ?;"""
+        val prepared = executor.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `uuid`= ?;"""
         )
         prepared?.setString(1, uuid)
 
@@ -435,7 +454,7 @@ INSERT INTO `weighing` (
 
     var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->
         run {
-            var prepared = dbConnection?.prepareStatement(               ////color/black
+            var prepared = executor.conn.prepareStatement(               ////color/black
                 """
 INSERT INTO `psa` (
 `id`,`number`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
@@ -456,7 +475,7 @@ NULL,   ?,                   ?,         ?,'Не выбран ($PlateNumber)',   
             if (prepared != null) {
                 prepared.execute()
             }
-            prepared = dbConnection?.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
+            prepared = executor.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
                         AND `department_id` = ? AND `comment`='fromScales' AND `uuid`= ?;"""
             )
             prepared?.setDate(1, java.sql.Date.valueOf(date))
@@ -471,7 +490,7 @@ NULL,   ?,                   ?,         ?,'Не выбран ($PlateNumber)',   
                     PSAId = rs.getInt(1)
             }
 
-            prepared = dbConnection?.prepareStatement(
+            prepared = executor.conn.prepareStatement(
 """INSERT INTO `weighing` 
 (`id`, `brutto`,  `sor`, `tare`,`price`, `psa_id`, `metal_id`,  `client_price`, `inspection`, `uuid`) 
 VALUES 
@@ -494,7 +513,7 @@ VALUES
     }
 
     fun getMetalId(metal: String?): Int {
-        var prepared =dbConnection?.prepareStatement("select * from `psa`.`metal` where title=?;")
+        var prepared =executor.conn.prepareStatement("select * from `psa`.`metal` where title=?;")
         prepared?.setString(1, metal)
         val rs = prepared?.executeQuery()
         if (rs?.next() == true)
