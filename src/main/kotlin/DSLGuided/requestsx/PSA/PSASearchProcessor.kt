@@ -21,14 +21,10 @@ import java.util.*
 class PSASearchProcessor  : DSLProcessor() {
     companion object {
         @Throws(Exception::class)
-
-
         fun search(input: String, PSASearch: PSASearchProcessor): String {
             PSASearch.render(input)
             return PSASearch.createJSONResponce(PSASearch.getPSA())
-
         }
-
         fun search(input: String, PSASearch: PSASearchProcessor, depsRestricted: String): String {
             val departname = PSASearch.getdepNameExecutor(depsRestricted);
             //input = input.replace()
@@ -39,9 +35,7 @@ class PSASearchProcessor  : DSLProcessor() {
             print("final string dsl =>$finishDSL")
             PSASearch.render(finishDSL)
             return PSASearch.createJSONResponce(PSASearch.getPSA())
-
         }
-
     }
 
     lateinit var searchFrom: String
