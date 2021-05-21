@@ -1,15 +1,22 @@
 package DSLGuided.requestsx.WProcessor
 
 import DSLGuided.requestsx.DSLProcessor
-import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.Role
-import util.Saver.Companion.write
+import se.roland.util.HTTPForm
 import java.io.File
 import java.io.FileOutputStream
-import java.nio.file.Files
+import java.net.URI
+import java.net.URLEncoder
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublishers
+import java.net.http.HttpResponse
+import java.net.http.HttpResponse.BodyHandlers
+import java.util.*
 
-/////"'wprocessor'=>::pathtoimgs{/home/romanx/IMG},::enabled{'false'}."
+
+/////"'wprocessor'=>::pathtoimgs{/home/romanx/IMG},::addresstoresend{db2.avs.com.ru/storage/purchase/import},::enabled{'false'}."
 class WProcessor : DSLProcessor()  {
 
     companion object {
@@ -17,8 +24,17 @@ class WProcessor : DSLProcessor()  {
             WProc.render(DSL)
             WProc.saveImages(Arr1, Arr2, Department, Date, WaybillID)
         }
+
+        fun resend(DSL: String, WProc: WProcessor, Params: HashMap<String, String>){
+            WProc.render(DSL)
+            WProc.resenddata(Params)
+        }
+
+
     }
     lateinit var pathtoimgs_ : String
+    lateinit var addresstoresend_: String
+    var client: HttpClient = HttpClient.newHttpClient()
     val i_ ="_"
     val appendix = ".jpg"
 
@@ -42,7 +58,18 @@ class WProcessor : DSLProcessor()  {
         fos1.write(Arr1)
         val fos2 = FileOutputStream(filename2+appendix)
         fos2.write(Arr2)
+    }
 
+    fun resenddata(Params: HashMap<String, String>){
+        val params = HTTPForm.collectParams(Params)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create(addresstoresend_))
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .POST(BodyPublishers.ofString("a=get_account&account=" + URLEncoder.encode(params, "UTF-8")))
+            .build()
+        val response: HttpResponse<*> = client.send(request, BodyHandlers.ofString())
+
+        System.out.println("RESPONCE::"+response.body().toString())
     }
 
     val pathtoimgs: RoleHandler = {
@@ -52,6 +79,15 @@ class WProcessor : DSLProcessor()  {
                 if (!File(pathtoimgs_).exists()){
                     File(pathtoimgs_).mkdirs()
                 }
+            }
+        }
+    }
+
+    val addresstoresend: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "addresstoresend") {
+                addresstoresend_ = a.key.Param as String
+
             }
         }
     }
@@ -71,8 +107,9 @@ class WProcessor : DSLProcessor()  {
         print("Adding role ${R.Name}\n")
         when (R?.Name) {
             "pathtoimgs" -> mapper.put(R, pathtoimgs)
-            "enabled" -> mapper.put(R, enable)
+            "addresstoresend" -> mapper.put(R, addresstoresend)
 
+            "enabled" -> mapper.put(R, enable)
         }
     }
 }

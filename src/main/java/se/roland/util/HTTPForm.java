@@ -1,4 +1,7 @@
 package se.roland.util;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -19,5 +22,12 @@ public class HTTPForm {
 
 
 
-
+    @Nullable
+    public static String collectParams(@NotNull HashMap<String, String> params) {
+        String form = params.keySet().stream()
+                .map(key -> key + "=" + URLEncoder.encode(String.valueOf(params.get(key)), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&"));
+        System.out.println("FORM ENCODED::"+form);
+        return form;
+    }
 }
