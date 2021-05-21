@@ -303,6 +303,8 @@ class PSASearchProcessor  : DSLProcessor() {
             "sql" -> mapper.put(R, sql)
             "passcheckurl" -> mapper.put(R, passcheckurl)
             "limit" -> mapper.put(R, limit)
+            "enabled" -> mapper.put(R, enable)
+
         }
     }
 
