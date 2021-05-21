@@ -1,8 +1,10 @@
 package DSLGuided.requestsx.WProcessor
 
 import junit.framework.TestCase
+import se.roland.util.HTTPClient
 import java.io.File
 import java.nio.file.Files
+import java.util.HashMap
 
 class WProcessorTest : TestCase() {
     val dsl = """'wprocessor'=>::pathtoimgs{./IMG},::addresstoresend{db2.avs.com.ru/storage/purchase/import},::enabled{'true'}."""
@@ -20,5 +22,13 @@ class WProcessorTest : TestCase() {
     fun testAddressToResend(){
         wProcessor.render(dsl)
         assertEquals("db2.avs.com.ru/storage/purchase/import", wProcessor.addresstoresend_)
+    }
+
+    fun testResenddata() {
+        val dsl = """'wprocessor'=>::pathtoimgs{./IMG},::addresstoresend{http://192.168.0.126:4567/testresend},::enabled{'true'}."""
+        wProcessor.render(dsl);
+        val Map = mapOf("t1" to "2", "t2"  to "T222", "t3" to "5.888")
+        HTTPClient.sendPOST(Map as HashMap<String, String>, wProcessor.addresstoresend_)
+
     }
 }

@@ -3,6 +3,7 @@ package DSLGuided.requestsx.WProcessor
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.Role
+import se.roland.util.HTTPClient
 import se.roland.util.HTTPForm
 import java.io.File
 import java.io.FileOutputStream
@@ -13,6 +14,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
+import java.time.Duration
 import java.util.*
 
 
@@ -61,15 +63,7 @@ class WProcessor : DSLProcessor()  {
     }
 
     fun resenddata(Params: HashMap<String, String>){
-        val params = HTTPForm.collectParams(Params)
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(addresstoresend_))
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .POST(BodyPublishers.ofString("a=get_account&account=" + URLEncoder.encode(params, "UTF-8")))
-            .build()
-        val response: HttpResponse<*> = client.send(request, BodyHandlers.ofString())
-
-        System.out.println("RESPONCE::"+response.body().toString())
+        HTTPClient.sendPOST(Params as HashMap<String, String>, addresstoresend_)
     }
 
     val pathtoimgs: RoleHandler = {
@@ -108,7 +102,6 @@ class WProcessor : DSLProcessor()  {
         when (R?.Name) {
             "pathtoimgs" -> mapper.put(R, pathtoimgs)
             "addresstoresend" -> mapper.put(R, addresstoresend)
-
             "enabled" -> mapper.put(R, enable)
         }
     }
