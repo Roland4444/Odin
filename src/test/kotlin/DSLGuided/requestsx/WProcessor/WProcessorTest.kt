@@ -26,7 +26,7 @@ class WProcessorTest : TestCase() {
     }
 
     fun testResenddata() {
-        val dsl = """'wprocessor'=>::pathtoimgs{./IMG},::addresstoresend{http://192.168.0.126:4567/testresend},::enabled{'true'}."""
+        val dsl = """'wprocessor'=>::pathtoimgs{./IMG},::addresstoresend{https://db2.avs.com.ru/storage/purchase/import},::enabled{'true'}."""
         wProcessor.render(dsl);
         val Map = mapOf("t1" to "2", "t2"  to "T222", "t3" to "5.888")
         HTTPClient.sendPOST(Map as HashMap<String, String>, wProcessor.addresstoresend_)
