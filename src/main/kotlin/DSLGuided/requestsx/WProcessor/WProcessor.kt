@@ -63,7 +63,7 @@ class WProcessor : DSLProcessor()  {
     }
 
     fun resenddata(Params: HashMap<String, String>){
-        HTTPClient.sendPOST(Params as HashMap<String, String>, addresstoresend_)
+        HTTPClient.sendPOST(HTTPForm.MapParams(Params) as HashMap<String, String>, addresstoresend_)
     }
 
     val pathtoimgs: RoleHandler = {
