@@ -2,9 +2,10 @@ package DSLGuided.requestsx.WProcessor
 
 import junit.framework.TestCase
 import se.roland.util.HTTPClient
+import se.roland.util.HTTPForm
 import java.io.File
 import java.nio.file.Files
-import java.util.HashMap
+import java.util.*
 
 class WProcessorTest : TestCase() {
     val dsl = """'wprocessor'=>::pathtoimgs{./IMG},::addresstoresend{db2.avs.com.ru/storage/purchase/import},::enabled{'true'}."""
@@ -29,6 +30,29 @@ class WProcessorTest : TestCase() {
         wProcessor.render(dsl);
         val Map = mapOf("t1" to "2", "t2"  to "T222", "t3" to "5.888")
         HTTPClient.sendPOST(Map as HashMap<String, String>, wProcessor.addresstoresend_)
+
+
+        val hashMap = HashMap<String, String>()
+        hashMap["BRUTTO::"] = "90"
+        hashMap["TARE::"] = "90"
+        hashMap["TRASH::"] = "90"
+        hashMap["WAYBILL::"] = "90"
+        hashMap["TRANSFER::"] = "90"
+        hashMap["RECPLATE::"] = "90"
+        hashMap["DATE::"] = "90"
+        hashMap["TIME::"] = "90"
+        hashMap["CAR::"] = "90"
+        hashMap["METALL::"] = "90"
+        hashMap["DEPARTMENT::"] = "90"
+        hashMap["PLATE NUMBER::"] = "90"
+        hashMap["CUSTOMER::"] = "90"
+        hashMap["PRICEPER KG::"] = "90"
+        hashMap["UUID::"] = "90"
+        hashMap["DEPART ID::"] = "90"
+        hashMap["WEIGNHING ID::"] = "90"
+
+        HTTPClient.sendPOST(HTTPForm.MapParams(hashMap) as HashMap<String, String>, wProcessor.addresstoresend_)
+
 
     }
 }

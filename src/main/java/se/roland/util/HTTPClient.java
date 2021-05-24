@@ -18,8 +18,8 @@ public class HTTPClient {
     public static void sendPOST(HashMap<String, String> params, String url) throws IOException {
        CloseableHttpClient httpclient = HttpClients.createDefault();
        HttpPost httppost = new HttpPost(url);
-       List<NameValuePair> params__ = new ArrayList<NameValuePair>(params.size());
-       params.entrySet().stream().map(a->a.getKey().replace("::","").replace(" ","_")).forEach(b->params__.add(new BasicNameValuePair(b.getKey(), String.valueOf(b.getValue()))));
+       List<NameValuePair> params__ = new ArrayList<NameValuePair>(params.size());  //map(a->a.getKey().replace("::","").replace(" ","_")).
+       params.entrySet().stream().forEach(b->params__.add(new BasicNameValuePair(b.getKey(), String.valueOf(b.getValue()))));
        httppost.setEntity(new UrlEncodedFormEntity(params__, "UTF-8"));
        HttpResponse response = httpclient.execute(httppost);
             System.out.println("EXECUTED REQUEST TO draft url:"+httppost);

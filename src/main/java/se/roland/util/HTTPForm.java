@@ -21,13 +21,15 @@ public class HTTPForm {
 
 
 
-
     @Nullable
-    public static String collectParams(@NotNull HashMap<String, String> params) {
-        String form = params.keySet().stream()
-                .map(key -> key + "=" + URLEncoder.encode(String.valueOf(params.get(key)), StandardCharsets.UTF_8))
-                .collect(Collectors.joining("&"));
-        System.out.println("FORM ENCODED::"+form);
-        return form;
+    public static Map<String, String> MapParams(@NotNull HashMap<String, String> params) {
+        var map2 = params.entrySet().stream()
+                .filter(a-> a.getKey().toString().length()>0)
+                .collect(Collectors.toMap(
+                        e -> e.getKey().toString().replace("::","").replace(" ", "_"),
+                        e -> e.getValue()
+                ));
+        return map2;
+
     }
 }
