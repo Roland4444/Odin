@@ -33,25 +33,13 @@ class WProcessorTest : TestCase() {
 
 
         val hashMap = HashMap<String, String>()
-        hashMap["BRUTTO::"] = "90"
-        hashMap["TARE::"] = "90"
-        hashMap["TRASH::"] = "90"
-        hashMap["WAYBILL::"] = "90"
-        hashMap["TRANSFER::"] = "90"
-        hashMap["RECPLATE::"] = "90"
-        hashMap["DATE::"] = "90"
-        hashMap["TIME::"] = "90"
-        hashMap["CAR::"] = "90"
-        hashMap["METALL::"] = "90"
-        hashMap["DEPARTMENT::"] = "90"
-        hashMap["PLATE NUMBER::"] = "90"
-        hashMap["CUSTOMER::"] = "90"
-        hashMap["PRICEPER KG::"] = "90"
-        hashMap["UUID::"] = "90"
-        hashMap["DEPART ID::"] = "90"
-        hashMap["WEIGNHING ID::"] = "90"
+        hashMap["BRUTTO"] = "90"
+        hashMap["TARE"] = "90"
+        hashMap["TRASH"] = "90"
+        hashMap["WAYBILL"] = "90"
 
-        HTTPClient.sendPOST(HTTPForm.MapParams(hashMap) as HashMap<String, String>, wProcessor.addresstoresend_)
+
+        HTTPClient.sendPOST(hashMap, wProcessor.addresstoresend_)
 
 
     }

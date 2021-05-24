@@ -16,6 +16,7 @@ import java.util.List;
 
 public class HTTPClient {
     public static void sendPOST(HashMap<String, String> params, String url) throws IOException {
+       System.out.println("\n\n\nSENDING POST TO::"+url);
        CloseableHttpClient httpclient = HttpClients.createDefault();
        HttpPost httppost = new HttpPost(url);
        List<NameValuePair> params__ = new ArrayList<NameValuePair>(params.size());  //map(a->a.getKey().replace("::","").replace(" ","_")).
