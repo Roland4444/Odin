@@ -2,7 +2,6 @@ package DSLGuided.requestsx.WProcessor
 
 import junit.framework.TestCase
 import se.roland.util.HTTPClient
-import se.roland.util.HTTPForm
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -37,7 +36,6 @@ class WProcessorTest : TestCase() {
         hashMap["TARE"] = "90"
         hashMap["TRASH"] = "90"
         hashMap["WAYBILL"] = "90"
-
 
         HTTPClient.sendPOST(hashMap, wProcessor.addresstoresend_)
 

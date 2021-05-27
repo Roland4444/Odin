@@ -17,7 +17,7 @@ class PSADSLProcessorTest : TestCase() {
         val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
-        psa.executor=psaconnector.executor
+        psa.executor= psaconnector.executor!!
         psa.render(copy)
         assertEquals("jdbc:mysql://192.168.0.121:3306/psa", psa.urldb)
       //  assertEquals("http://192.168.0.121:8080/psa/psa/num", psa.dumb)
@@ -45,8 +45,8 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
         val psearch = PSASearchProcessor()
-        psearch.executor = psaconnector.executor
-        psa.executor=psaconnector.executor
+        psearch.executor = psaconnector.executor!!
+        psa.executor= psaconnector.executor!!
         psa.psearch=psearch
         psa.render(copy)
         hash.put("Brutto", "12000")
@@ -69,8 +69,8 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
         val psearch = PSASearchProcessor()
-        psearch.executor = psaconnector.executor
-        psa.executor=psaconnector.executor
+        psearch.executor = psaconnector.executor!!
+        psa.executor= psaconnector.executor!!
         psa.psearch=psearch
         psa.processinvagning(parser.parse(inputjs) as JSONObject, uuid)
     }
@@ -98,7 +98,7 @@ class PSADSLProcessorTest : TestCase() {
         val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
-        psa.executor=psaconnector.executor
+        psa.executor= psaconnector.executor!!
         psa.render(copy)
         assertEquals(5, psa.getMetalId("Медь"))
         assertEquals(14, psa.getMetalId("3A"))
@@ -124,7 +124,7 @@ class PSADSLProcessorTest : TestCase() {
         val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
-        psa.executor=psaconnector.executor
+        psa.executor= psaconnector.executor!!
         psa.render(copy)
         println("rendred succes!")
        //// psa.processfarg(String(File("example.json").readBytes()))
@@ -134,7 +134,7 @@ class PSADSLProcessorTest : TestCase() {
         val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
-        psa.executor=psaconnector.executor
+        psa.executor= psaconnector.executor!!
         psa.render(copy)
         println("rendred succes!")
     ////    psa.processfarg(String(File("example2.json").readBytes()))
@@ -144,7 +144,7 @@ class PSADSLProcessorTest : TestCase() {
         val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
-        psa.executor=psaconnector.executor
+        psa.executor= psaconnector.executor!!
         psa.render(copy)
         println("rendred succes!")
      /////   psa.processfarg(String(File("example3.json").readBytes()))
@@ -164,8 +164,8 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         val PSASearchProcessor = PSASearchProcessor()
         psaconnector.render(initDB)
-        psa.executor = psaconnector.executor
-        PSASearchProcessor.executor = psaconnector.executor
+        psa.executor = psaconnector.executor!!
+        PSASearchProcessor.executor = psaconnector.executor!!
         psa.psearch = PSASearchProcessor
       //  assertEquals("2942", psa.getPSANumberviaDSL("1"))
     //    assertEquals("3323", psa.getPSANumberviaDSL("2"))
@@ -197,9 +197,9 @@ class PSADSLProcessorTest : TestCase() {
 
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
-        psa.executor=psaconnector.executor
+        psa.executor= psaconnector.executor!!
         val PSASearchProcessor = PSASearchProcessor()
-        PSASearchProcessor.executor=psaconnector.executor
+        PSASearchProcessor.executor= psaconnector.executor!!
         psa.psearch=PSASearchProcessor
         PSADSLProcessor.processColorPSA(input, "44af4d94b8d5eb7b2837b75ed12286ed",copy, psa)
 
@@ -209,8 +209,8 @@ class PSADSLProcessorTest : TestCase() {
         var psa  = PSADSLProcessor()
         val PSASearchProcessor = PSASearchProcessor()
         psaconnector.render(initDB)
-        psa.executor = psaconnector.executor
-        PSASearchProcessor.executor = psaconnector.executor
+        psa.executor = psaconnector.executor!!
+        PSASearchProcessor.executor = psaconnector.executor!!
         psa.psearch = PSASearchProcessor
         val number = psa.getPSANumberviaDSL("2")
         println("\n\n\n$number")
@@ -222,9 +222,9 @@ class PSADSLProcessorTest : TestCase() {
 
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
-        psa.executor=psaconnector.executor
+        psa.executor= psaconnector.executor!!
         val PSASearchProcessor = PSASearchProcessor()
-        PSASearchProcessor.executor=psaconnector.executor
+        PSASearchProcessor.executor= psaconnector.executor!!
         psa.psearch=PSASearchProcessor
         psa.splitpsa(uuid)
     }

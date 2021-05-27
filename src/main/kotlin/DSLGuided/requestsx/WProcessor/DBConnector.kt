@@ -1,22 +1,22 @@
-package DSLGuided.requestsx.PSA
+package DSLGuided.requestsx.WProcessor
 
 import DSLGuided.requestsx.DSLProcessor
+import DSLGuided.requestsx.PSA.PSAConnector
 import DSLGuided.requestsx.RoleHandler
-import abstractions.KeyValue
 import abstractions.Role
 import fr.roland.DB.Executor
 import se.roland.abstractions.Call
 import se.roland.util.Watcher
-/////"'psaconnector'=>::psalogin{root},::psapass{'Pf,dtybt010203'},::db{jdbc:mysql://localhost/psa},::enabled{'false'},::timedbreconnect{1}."
-class PSAConnector  : DSLProcessor() {
+
+/////"'dbconnector'=>::dblogin{root},::dbpass{'Pf,dtybt010203'},::db{jdbc:mysql://localhost/psa},::enabled{'false'},::timedbreconnect{1}."
+
+class DBConnector : DSLProcessor() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val dsl =        "'psaconnector'=>::psalogin{root},::psapass{'Pf,dtybt010203'},::db{jdbc:mysql://localhost/psa},::enabled{'false'},::timedbreconnect{1}."
+            val dsl =        "'dbconnector'=>::dblogin{root},::dbpass{'123'},::db{jdbc:mysql://192.126.0.121/psa},::enabled{'false'},::timedbreconnect{1}."
             val psaConnector = PSAConnector()
             psaConnector.render(dsl)
-
-////        Thread.sleep(10)
         }
 
     }
@@ -31,7 +31,6 @@ class PSAConnector  : DSLProcessor() {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
-      //  executor = Executor(urldb, login, pass)
         recharge()
         val watcher = Watcher(delay)
         watcher.callback = object : Call {
@@ -54,28 +53,22 @@ class PSAConnector  : DSLProcessor() {
                 urldb = a.key.Param as String
         }
     }
-    val psa: RoleHandler = {
-        mapper.forEach { a ->
-            if (a.key.Name == "psa")
-                processPSASection(a.key.Param as MutableList<Any>)
-        }
-    }
 
-    val psalogin: RoleHandler = {
+    val dblogin: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "psalogin"){
+            if (a.key.Name == "dblogin"){
                 login = a.key.Param as String
             }
-             //   processPSASection(a.key.Param as MutableList<Any>)
+            //   processPSASection(a.key.Param as MutableList<Any>)
         }
     }
 
-    val psapass: RoleHandler = {
+    val dbpass: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "psapass"){
+            if (a.key.Name == "dbpass"){
                 pass = a.key.Param as String
             }
-              //  processPSASection(a.key.Param as MutableList<Any>)
+            //  processPSASection(a.key.Param as MutableList<Any>)
         }
     }
 
@@ -97,17 +90,7 @@ class PSAConnector  : DSLProcessor() {
     }
 
 
-    fun processPSASection(input: MutableList<Any>) {
-        input.forEach {
-            val f: KeyValue = it as KeyValue
-            println("""KEY VALUE ${f.Key}::${f.Value}""")
-            when ((it as KeyValue).Key) {
-                "login" -> login = it.Value as String;
-                "pass" -> pass = it.Value as String;
 
-            }
-        }
-    }
 
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
@@ -120,11 +103,10 @@ class PSAConnector  : DSLProcessor() {
 
     fun appendRole(R: Role){
         when (R?.Name){
-            "psa" -> mapper.put(R, psa)
             "db" -> mapper.put(R, db)
             "enabled" -> mapper.put(R, enable)
-            "psapass" -> mapper.put(R, psapass)
-            "psalogin" -> mapper.put(R, psalogin)
+            "dbpass" -> mapper.put(R, dbpass)
+            "dblogin" -> mapper.put(R, dblogin)
             "timedbreconnect" -> mapper.put(R, timedbreconnect)
         }
     }

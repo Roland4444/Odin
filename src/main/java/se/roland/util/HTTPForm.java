@@ -1,6 +1,4 @@
 package se.roland.util;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
