@@ -41,6 +41,8 @@ class WProcessor : DSLProcessor()  {
     }
 
 
+
+
     fun saveImages(Arr1: ByteArray, Arr2: ByteArray, Department: String, Date: String, WaybillID: String): Unit{
         val targetDir = pathtoimgs_+File.separator+Date
         println("TARGET DIR::$targetDir")
