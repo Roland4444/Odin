@@ -6,15 +6,15 @@
 
     <groupId>se.roland</groupId>
     <artifactId>Odin</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.1-SNAPSHOT</version>
 
     <properties>
         <sonar.host.url>http://192.168.0.159:9000</sonar.host.url>
-
+        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <java.version>15</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <kotlin.version>1.4.30</kotlin.version>
+        <kotlin.version>1.5.10</kotlin.version>
         <junit.version>4.12</junit.version>
         <main.class>com.avs.Odin</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -181,14 +181,14 @@ class PSADSLProcessorTest : TestCase() {
     fun testExtractSummary() {
         val input = String(Files.readAllBytes(File("input.js").toPath()))
         val etalon = """[{"cost":4736.16,"median":52,"weight":91.08,"psaid":12},{"cost":1767.15,"median":105,"weight":16.83,"psaid":2},{"cost":54934.950000000004,"median":565,"weight":97.23,"psaid":5},{"cost":49829.45,"median":99.75,"weight":499.53,"psaid":6},{"cost":21968.25,"median":345.47,"weight":63.59,"psaid":8},{"cost":1425.95,"median":95,"weight":15.01,"psaid":9}]""";
-        assertNotEquals(null, input)
+        //assertNotEquals(null, input)
       ////  println(input)
         val psa = PSADSLProcessor()
         val sum = psa.extractSummary(input)
-        assertNotEquals(null, sum)
+      //  assertNotEquals(null, sum)
         println("\n\n\n\nsummary $sum")
         assertEquals(etalon, psa.convertToList(sum))
-        assertNotEquals(null, psa.convertToListJSON(psa.convertToList(sum)))
+        //assertNotEquals(null, psa.convertToListJSON(psa.convertToList(sum)))
     }
 
     fun processfarg() {

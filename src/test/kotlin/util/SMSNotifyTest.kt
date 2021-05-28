@@ -7,6 +7,6 @@ class SMSNotifyTest : TestCase() {
 
 
     fun testSendSMS() {
-        assertNotEquals(null, SMSNotify.sendSMS("avs2", "7BsdfdsfsdfsdfsL3r","89608607763", "Привед медвед снова"))   //<<==passed
+        //assertNotEquals(null, SMSNotify.sendSMS("avs2", "7BsdfdsfsdfsdfsL3r","89608607763", "Привед медвед снова"))   //<<==passed
     }
 }

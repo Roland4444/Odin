@@ -24,7 +24,7 @@ class DBConnector : DSLProcessor() {
     var pass: String=""
     var urldb: String =""
     var delay = 3600
-    var executor: Executor? = null
+    public var executor: Executor? = null
     lateinit var watcher: Watcher
     ///var ExecutorFree: Boolean = true
     override fun render(DSL: String): Any {
