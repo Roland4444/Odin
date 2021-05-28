@@ -1,8 +1,6 @@
 package se.roland.util;
 
-import DSLGuided.requestsx.WProcessor.DBConnector;
 import junit.framework.TestCase;
-import sc.com.SC;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
