@@ -4,10 +4,14 @@ import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.Role
 import se.roland.util.HTTPClient
-import se.roland.util.HTTPForm
 import java.io.File
 import java.io.FileOutputStream
 import java.net.http.HttpClient
+import java.sql.ResultSet
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 
@@ -32,7 +36,7 @@ class WProcessor : DSLProcessor()  {
     var client: HttpClient = HttpClient.newHttpClient()
     val i_ ="_"
     val appendix = ".jpg"
-
+    lateinit var dbconnector: DBConnector
     override fun render(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
@@ -40,7 +44,26 @@ class WProcessor : DSLProcessor()  {
         return "OK"
     }
 
+    fun getW(DepId: String): ResultSet? {
+        var param = ArrayList<Any?>()
+        param.add(DepId)
+        val cal   = Calendar.getInstance();
+        val D_now = cal.getTime();
+        cal.add(Calendar.DATE, -3);
+        val D_3 = cal.getTime();
+        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val D_3Date =  dateFormat.format(D_3)
+        val D_nowDate =  dateFormat.format(D_now)
+        println(D_nowDate)
+        println(D_3Date)
+        println("PREPARED::\n"+"SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=${DepId}) AND (`date` between '${D_3Date}' and '${D_nowDate}')")
 
+        val res: ResultSet? =dbconnector.executor?.executePreparedSelect("SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=?) AND (`date` between '${D_3Date}' and '${D_nowDate}')", param)
+        while (res?.next() == true){
+            println(res.getInt("id"))
+        }
+        return res
+    }
 
 
     fun saveImages(Arr1: ByteArray, Arr2: ByteArray, Department: String, Date: String, WaybillID: String): Unit{
