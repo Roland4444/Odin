@@ -1,6 +1,8 @@
 package se.roland.util;
 
+import DSLGuided.requestsx.WProcessor.DBConnector;
 import junit.framework.TestCase;
+import sc.com.SC;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -21,6 +23,10 @@ public class HTTPClientTest extends TestCase {
         map2.entrySet().stream().forEach(System.out::println);
         assertEquals(map2.get("a"), "12");
         assertEquals(map2.get("c_f"), "14");
+    }
+
+    public void testAcess(){
+
 
     }
 }
