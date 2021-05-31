@@ -10,8 +10,6 @@ import java.net.http.HttpClient
 import java.sql.ResultSet
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.*
 
 
@@ -62,7 +60,19 @@ class WProcessor : DSLProcessor()  {
         while (res?.next() == true){
             println(res.getInt("id"))
         }
+        val res2: ResultSet? =dbconnector.executor?.executePreparedSelect("SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=?) AND (`date` between '${D_3Date}' and '${D_nowDate}')", param)
+
+        return res2
+    }
+
+    fun getResultinLinkedList(input: ResultSet): LinkedList<Any>{
+        var res = LinkedList<Any>()
+        while (input.next()){
+            val Map = mapOf("source_department_id" to input.getString("source_department_id"), "smetal_id" to input.getString("metal_id"), "weight" to input.getString("weight"), "uuid" to input.getString("uuid"))
+            res.add(Map)
+        }
         return res
+
     }
 
 
