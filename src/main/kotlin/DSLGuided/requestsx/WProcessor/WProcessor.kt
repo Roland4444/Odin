@@ -65,14 +65,53 @@ class WProcessor : DSLProcessor()  {
         return res2
     }
 
+    fun getdepNameExecutor(input: String): String {
+        var param = ArrayList<Any?>()
+        param.add(input)
+        val res: ResultSet =
+            dbconnector.executor!!.executePreparedSelect("SELECT * FROM `department` WHERE `id` = ?;", param)
+        if (res.next()) {
+            return res.getString("name")
+        };
+        return ""
+    }
+
+    fun getmetalName(metal_id: String): String {
+        var param = ArrayList<Any?>()
+
+        param.add(metal_id)
+        val res: ResultSet =
+            dbconnector.executor!!.executePreparedSelect("SELECT * FROM `metal` WHERE `id` = ?;", param)
+        if (res.next())
+            return res.getString("name");
+        return ""
+    }
+
     fun getResultinLinkedList(input: ResultSet): LinkedList<Any>{
         var res = LinkedList<Any>()
         while (input.next()){
-            val Map = mapOf("source_department_id" to input.getString("source_department_id"), "smetal_id" to input.getString("metal_id"), "weight" to input.getString("weight"), "uuid" to input.getString("uuid"))
-            res.add(Map)
+            val uuid = input.getString("uuid")
+            val info = getInfo(uuid)
+            if (info?.next() == true){
+                val Map = mapOf("source_department_id" to input.getString("source_department_id"),
+                    "depDescription" to getdepNameExecutor(input.getString("source_department_id")),
+                    "metalname" to getmetalName(input.getString("metal_id")),
+                    "metal_id" to input.getString("metal_id"),
+                    "weight" to input.getString("weight"),
+                    "uuid" to input.getString("uuid"),
+                    "naklnumb" to info.getString("naklnumb"),
+                    "transnumb" to info.getString("transnumb"),
+                    "transport" to info.getString("transport"))
+                res.add(Map)
+            }
         }
         return res
+    }
 
+    fun getInfo(uuid: String): ResultSet? {
+        var param = ArrayList<Any?>()
+        param.add(uuid)
+        return dbconnector.executor?.executePreparedSelect("SELECT * FROM `remote_sklad` WHERE `uuid`=?;", param)
     }
 
 

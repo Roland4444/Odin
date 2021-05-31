@@ -48,6 +48,10 @@ class WProcessorTest : TestCase() {
         Connector.render(dsl)
         val WProc = WProcessor()
         WProc.dbconnector = Connector
-        WProc.getW("7")
+        val f = WProc.getW("7")?.let { WProc.getResultinLinkedList(it) }
+        Saver.Saver.write(Saver.Saver.savedToBLOB(f), "linked.bin")
+        println("RES $f")
     }
+
+    fun testGetResultinLinkedList() {}
 }
