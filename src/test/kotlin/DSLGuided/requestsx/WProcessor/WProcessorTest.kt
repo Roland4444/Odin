@@ -54,4 +54,12 @@ class WProcessorTest : TestCase() {
     }
 
     fun testGetResultinLinkedList() {}
+    fun testGetDepIdViaName() {
+        val dsl = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val Connector = DBConnector()
+        Connector.render(dsl)
+        val WProc = WProcessor()
+        WProc.dbconnector = Connector
+        assertEquals("8", WProc.getDepIdViaName("Кутум"))
+    }
 }

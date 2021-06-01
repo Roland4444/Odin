@@ -42,9 +42,22 @@ class WProcessor : DSLProcessor()  {
         return "OK"
     }
 
-    fun getW(DepId: String): ResultSet? {
+    fun getDepIdViaName(input: String): String{
         var param = ArrayList<Any?>()
-        param.add(DepId)
+        param.add(input)
+        val res: ResultSet = dbconnector.executor!!.executePreparedSelect("SELECT * FROM `department` WHERE `name` = ?;", param)
+            if (res.next()) {
+                return res.getString("id")
+            };
+            return ""
+    }
+
+    fun getW(DepId: String): ResultSet? {
+        var dep = DepId
+        if (dep.length>2)
+            dep = getDepIdViaName(DepId)
+        var param = ArrayList<Any?>()
+        param.add(dep)
         val cal   = Calendar.getInstance();
         val D_now = cal.getTime();
         cal.add(Calendar.DATE, -3);
@@ -54,7 +67,7 @@ class WProcessor : DSLProcessor()  {
         val D_nowDate =  dateFormat.format(D_now)
         println(D_nowDate)
         println(D_3Date)
-        println("PREPARED::\n"+"SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=${DepId}) AND (`date` between '${D_3Date}' and '${D_nowDate}')")
+        println("PREPARED::\n"+"SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=${dep}) AND (`date` between '${D_3Date}' and '${D_nowDate}')")
 
         val res: ResultSet? =dbconnector.executor?.executePreparedSelect("SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=?) AND (`date` between '${D_3Date}' and '${D_nowDate}')", param)
         while (res?.next() == true){
