@@ -60,9 +60,10 @@ class WProcessorTest : TestCase() {
         val WProc = WProcessor()
         WProc.render(dsl)
         assertFalse(WProc.testmode_)
-        val dsl2 = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600},::testmode{true}."
+        val dsl2 = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600},::testmode{true},::example{88.bin}."
         WProc.render(dsl2)
         assertTrue(WProc.testmode_)
+        assertEquals("88.bin", WProc.exampleListFile)
     }
     fun testGetDepIdViaName() {
         val dsl = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."

@@ -36,7 +36,7 @@ class WProcessor : DSLProcessor()  {
     lateinit var pathtoimgs_ : String
     lateinit var addresstoresend_: String
     var testmode_: Boolean = false
-    val exampleListFile = "linked.bin"
+    var exampleListFile = "linked.bin"
 
     var client: HttpClient = HttpClient.newHttpClient()
     val i_ ="_"
@@ -165,7 +165,13 @@ class WProcessor : DSLProcessor()  {
                 if (param.equals("true"))
                     testmode_=true
             }
+        }
+    }
 
+    val example: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "example")
+                exampleListFile= a.key.Param as String
         }
     }
 
@@ -184,7 +190,6 @@ class WProcessor : DSLProcessor()  {
         mapper.forEach { a ->
             if (a.key.Name == "addresstoresend") {
                 addresstoresend_ = a.key.Param as String
-
             }
         }
     }
@@ -207,6 +212,7 @@ class WProcessor : DSLProcessor()  {
             "addresstoresend" -> mapper.put(R, addresstoresend)
             "enabled" -> mapper.put(R, enable)
             "testmode" -> mapper.put(R, testmode)
+            "example" -> mapper.put(R, example)
         }
     }
 }
