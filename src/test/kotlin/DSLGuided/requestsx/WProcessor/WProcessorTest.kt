@@ -48,12 +48,22 @@ class WProcessorTest : TestCase() {
         Connector.render(dsl)
         val WProc = WProcessor()
         WProc.dbconnector = Connector
-        val f = WProc.getW("7")?.let { WProc.getResultinLinkedList(it) }
+        val f =  WProc.getResultinLinkedList("8")
         Saver.Saver.write(Saver.Saver.savedToBLOB(f), "linked.bin")
         println("RES $f")
     }
 
     fun testGetResultinLinkedList() {}
+
+    fun testtestmode(){
+        val dsl = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val WProc = WProcessor()
+        WProc.render(dsl)
+        assertFalse(WProc.testmode_)
+        val dsl2 = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600},::testmode{true}."
+        WProc.render(dsl2)
+        assertTrue(WProc.testmode_)
+    }
     fun testGetDepIdViaName() {
         val dsl = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         val Connector = DBConnector()

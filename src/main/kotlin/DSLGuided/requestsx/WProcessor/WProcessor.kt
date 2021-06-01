@@ -27,10 +27,17 @@ class WProcessor : DSLProcessor()  {
             WProc.resenddata(Params)
         }
 
+        fun getTransfers(DSL: String, WProc: WProcessor, DepId: String): LinkedList<Any>? {
+            WProc.render(DSL)
+            return WProc.getResultinLinkedList(DepId)
+        }
 
     }
     lateinit var pathtoimgs_ : String
     lateinit var addresstoresend_: String
+    var testmode_: Boolean = false
+    val exampleListFile = "linked.bin"
+
     var client: HttpClient = HttpClient.newHttpClient()
     val i_ ="_"
     val appendix = ".jpg"
@@ -100,9 +107,13 @@ class WProcessor : DSLProcessor()  {
         return ""
     }
 
-    fun getResultinLinkedList(input: ResultSet): LinkedList<Any>{
+    fun getResultinLinkedList(dep: String): LinkedList<Any>{
+        if (testmode_) {
+            return Saver.Saver.restored(Saver.Saver.readBytes(exampleListFile)) as LinkedList<Any>
+        }
+        val input = getW(dep)
         var res = LinkedList<Any>()
-        while (input.next()){
+        while (input!!.next()){
             val uuid = input.getString("uuid")
             val info = getInfo(uuid)
             if (info?.next() == true){
@@ -147,6 +158,17 @@ class WProcessor : DSLProcessor()  {
         HTTPClient.sendPOST(Params, addresstoresend_)
     }
 
+    val testmode: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "testmode"){
+                val param= a.key.Param as String
+                if (param.equals("true"))
+                    testmode_=true
+            }
+
+        }
+    }
+
     val pathtoimgs: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "pathtoimgs") {
@@ -184,6 +206,7 @@ class WProcessor : DSLProcessor()  {
             "pathtoimgs" -> mapper.put(R, pathtoimgs)
             "addresstoresend" -> mapper.put(R, addresstoresend)
             "enabled" -> mapper.put(R, enable)
+            "testmode" -> mapper.put(R, testmode)
         }
     }
 }
