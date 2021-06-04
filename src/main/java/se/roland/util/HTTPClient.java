@@ -21,6 +21,9 @@ public class HTTPClient {
        HttpPost httppost = new HttpPost(url);
        List<NameValuePair> params__ = new ArrayList<NameValuePair>(params.size());  //map(a->a.getKey().replace("::","").replace(" ","_")).
        params.entrySet().stream().forEach(b->params__.add(new BasicNameValuePair(b.getKey(), String.valueOf(b.getValue()))));
+       params.entrySet().stream().forEach(b -> {
+           System.out.println("KEY::"+b.getKey()+" VALUE::"+String.valueOf( b.getValue()));
+       });
        httppost.setEntity(new UrlEncodedFormEntity(params__, "UTF-8"));
        HttpResponse response = httpclient.execute(httppost);
             System.out.println("EXECUTED REQUEST TO draft url:"+httppost);
