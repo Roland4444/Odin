@@ -23,6 +23,10 @@ class PaymentProcessor:  DSLProcessor() {
     val lisstattus = "/liststatus"
     val checkpay = "/checkpay/"
 
+    fun lisstatuses(User: String, Pass: String){
+
+    }
+
     val rooturl: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "rooturl")
@@ -58,7 +62,6 @@ class PaymentProcessor:  DSLProcessor() {
             "key" -> mapper.put(R, key)
             "basiclicenceid" -> mapper.put(R, basiclicenceid)
             "enabled" -> mapper.put(R, enable)
-
         }
     }
 
