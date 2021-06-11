@@ -10,7 +10,7 @@ class WProcessorTest : TestCase() {
     val dsl = """'wprocessor'=>::pathtoimgs{./IMG},::addresstoresend{db2.avs.com.ru/storage/purchase/import},::enabled{'true'}."""
     val wProcessor = WProcessor()
 
-    fun testSaveImages() {
+    fun SaveImages() {
         wProcessor.render(dsl)
         val Arr1 =  Files.readAllBytes(File("1.jpg").toPath())
         val Arr2 =  Files.readAllBytes(File("2.jpg").toPath())
