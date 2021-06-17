@@ -18,7 +18,6 @@ class DBConnector : DSLProcessor() {
             val psaConnector = PSAConnector()
             psaConnector.render(dsl)
         }
-
     }
     var login: String=""
     var pass: String=""
@@ -37,60 +36,44 @@ class DBConnector : DSLProcessor() {
             override fun doIt() {
                 println("Reconnecting to db")
                 recharge()
-
             }
         }
         watcher.start()
         println("Starting watcher to reconnect DB!!!")
         return "OK"
     }
-
-
-
     val db: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "db")
                 urldb = a.key.Param as String
         }
     }
-
     val dblogin: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "dblogin"){
+            if (a.key.Name == "dblogin")
                 login = a.key.Param as String
-            }
             //   processPSASection(a.key.Param as MutableList<Any>)
         }
     }
-
     val dbpass: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "dbpass"){
+            if (a.key.Name == "dbpass")
                 pass = a.key.Param as String
-            }
             //  processPSASection(a.key.Param as MutableList<Any>)
         }
     }
-
     val timedbreconnect: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "timedbreconnect"){
+            if (a.key.Name == "timedbreconnect")
                 delay = a.key.Param as Int
-            }
             //  processPSASection(a.key.Param as MutableList<Any>)
         }
     }
 
-
-
     fun recharge(){
-        if (enabled == "true") {
+        if (enabled == "true")
             executor = Executor(urldb, login, pass)
-        }
     }
-
-
-
 
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
@@ -110,5 +93,4 @@ class DBConnector : DSLProcessor() {
             "timedbreconnect" -> mapper.put(R, timedbreconnect)
         }
     }
-
 }

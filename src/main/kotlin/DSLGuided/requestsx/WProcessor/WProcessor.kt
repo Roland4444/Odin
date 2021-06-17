@@ -12,32 +12,26 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 /////"'wprocessor'=>::pathtoimgs{/home/romanx/IMG},::addresstoresend{db2.avs.com.ru/storage/purchase/import},::enabled{'false'}."
 class WProcessor : DSLProcessor()  {
-
     companion object {
         fun saveImages(DSL: String, WProc: WProcessor, Arr1: ByteArray, Arr2: ByteArray,Department: String, Date: String, WaybillID: String){
             WProc.render(DSL)
             WProc.saveImages(Arr1, Arr2, Department, Date, WaybillID)
         }
-
         fun resend(DSL: String, WProc: WProcessor, Params: HashMap<String, String>){
             WProc.render(DSL)
             WProc.resenddata(Params)
         }
-
         fun getTransfers(DSL: String, WProc: WProcessor, DepId: String): LinkedList<Any>? {
             WProc.render(DSL)
             return WProc.getResultinLinkedList(DepId)
         }
-
     }
     lateinit var pathtoimgs_ : String
     lateinit var addresstoresend_: String
     var testmode_: Boolean = false
     var exampleListFile = "linked.bin"
-
     var client: HttpClient = HttpClient.newHttpClient()
     val i_ ="_"
     val appendix = ".jpg"
@@ -75,13 +69,11 @@ class WProcessor : DSLProcessor()  {
         println(D_nowDate)
         println(D_3Date)
         println("PREPARED::\n"+"SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=${dep}) AND (`date` between '${D_3Date}' and '${D_nowDate}')")
-
         val res: ResultSet? =dbconnector.executor?.executePreparedSelect("SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=?) AND (`date` between '${D_3Date}' and '${D_nowDate}')", param)
         while (res?.next() == true){
             println(res.getInt("id"))
         }
         val res2: ResultSet? =dbconnector.executor?.executePreparedSelect("SELECT * FROM `transfer` WHERE (`actual_weight`= '0.00') AND (`dest_department_id`=?) AND (`date` between '${D_3Date}' and '${D_nowDate}')", param)
-
         return res2
     }
 
@@ -98,7 +90,6 @@ class WProcessor : DSLProcessor()  {
 
     fun getmetalName(metal_id: String): String {
         var param = ArrayList<Any?>()
-
         param.add(metal_id)
         val res: ResultSet =
             dbconnector.executor!!.executePreparedSelect("SELECT * FROM `metal` WHERE `id` = ?;", param)
@@ -108,9 +99,8 @@ class WProcessor : DSLProcessor()  {
     }
 
     fun getResultinLinkedList(dep: String): LinkedList<Any>{
-        if (testmode_) {
+        if (testmode_)
             return Saver.Saver.restored(Saver.Saver.readBytes(exampleListFile)) as LinkedList<Any>
-        }
         val input = getW(dep)
         var res = LinkedList<Any>()
         while (input!!.next()){
@@ -137,7 +127,6 @@ class WProcessor : DSLProcessor()  {
         param.add(uuid)
         return dbconnector.executor?.executePreparedSelect("SELECT * FROM `remote_sklad` WHERE `uuid`=?;", param)
     }
-
 
     fun saveImages(Arr1: ByteArray, Arr2: ByteArray, Department: String, Date: String, WaybillID: String): Unit{
         val targetDir = pathtoimgs_+File.separator+Date
@@ -179,18 +168,16 @@ class WProcessor : DSLProcessor()  {
         mapper.forEach { a ->
             if (a.key.Name == "pathtoimgs") {
                 pathtoimgs_ = a.key.Param as String
-                if (!File(pathtoimgs_).exists()){
+                if (!File(pathtoimgs_).exists())
                     File(pathtoimgs_).mkdirs()
-                }
             }
         }
     }
 
     val addresstoresend: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "addresstoresend") {
+            if (a.key.Name == "addresstoresend")
                 addresstoresend_ = a.key.Param as String
-            }
         }
     }
 
@@ -202,8 +189,6 @@ class WProcessor : DSLProcessor()  {
         mapper.clear()
         D.forEach { appendRole(it) }
     }
-
-
 
     fun appendRole(R: Role) {
         print("Adding role ${R.Name}\n")
