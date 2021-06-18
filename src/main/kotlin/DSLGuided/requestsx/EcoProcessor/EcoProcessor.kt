@@ -48,36 +48,39 @@ class EcoProcessor:  DSLProcessor() {
 //    fun createRows()
 
     fun writeToDocumentPSA(Data: String, Position: Int, Sheet: Sheet, Arr: List<KeyValue> ): Int{
-//        val row: Row = Sheet.(Position)
-//        sheet.autoSizeColumn(1)
-//        val firstRow = 0
-//        val lastRow = 255
-//        val firstCol = 0
-//        val lastCol = 255
-//        sheet.addMergedRegion(CellRangeAddress(firstRow, lastRow, firstCol, lastCol))
-//
-//        val name = row.createCell(0)
-//        name.setCellValue("John")
-//
-//        val birthdate = row.createCell(1)
-//
-//        val format: DataFormat = book.createDataFormat()
-//        val dateStyle: CellStyle = book.createCellStyle()
-//        dateStyle.dataFormat = format.getFormat("dd.mm.yyyy")
-//        birthdate.cellStyle = dateStyle
-//        // Нумерация лет начинается с 1900-го
-//        // Нумерация лет начинается с 1900-го
-//        birthdate.setCellValue(Date(110, 10, 10))
-//
-//        // Меняем размер столбца
-//
-//        // Записываем всё в файл
-//
-//        // Меняем размер столбца
-//
-//        // Записываем всё в файл
-//        book.write(FileOutputStream(file))
-//        book.close()
+        for (i in Position..Position+Arr.size){
+
+        }
+        val row: Row = Sheet.crea(Position)
+        sheet.autoSizeColumn(1)
+        val firstRow = 0
+        val lastRow = 255
+        val firstCol = 0
+        val lastCol = 255
+        sheet.addMergedRegion(CellRangeAddress(firstRow, lastRow, firstCol, lastCol))
+
+        val name = row.createCell(0)
+        name.setCellValue("John")
+
+        val birthdate = row.createCell(1)
+
+        val format: DataFormat = book.createDataFormat()
+        val dateStyle: CellStyle = book.createCellStyle()
+        dateStyle.dataFormat = format.getFormat("dd.mm.yyyy")
+        birthdate.cellStyle = dateStyle
+        // Нумерация лет начинается с 1900-го
+        // Нумерация лет начинается с 1900-го
+        birthdate.setCellValue(Date(110, 10, 10))
+
+        // Меняем размер столбца
+
+        // Записываем всё в файл
+
+        // Меняем размер столбца
+
+        // Записываем всё в файл
+        book.write(FileOutputStream(file))
+        book.close()
         return 0;
     }
 
