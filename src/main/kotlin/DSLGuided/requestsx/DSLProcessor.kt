@@ -1,13 +1,10 @@
 package DSLGuided.requestsx
-
 import abstractions.Role
 import com.avs.ParseDSL
-
 typealias RoleHandler = (Role: Role) -> Unit
 typealias DumbHandler = (Param:Int) -> Int
 typealias StringHandler = (Param:String) -> String
 typealias DumbHandler2 = (Param:Int, Param2: Int) -> Int
-
 abstract class DSLProcessor() {
     var enabled: String = "false"
     var parser = ParseDSL()
