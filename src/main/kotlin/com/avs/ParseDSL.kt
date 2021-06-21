@@ -254,7 +254,6 @@ class ParseDSL : Serializable {
     fun getRawDSLForRole(inputDSL : String, RoleName: String): String{
         val index = inputDSL.prepare().indexOf("::$RoleName{")+3+RoleName.length
         val str = inputDSL.prepare().substring(index)
-        println("STR:: $str")
         var index2 = str.indexOf("},::")
         if (index2<0)
             index2  = str.indexOf("}.")

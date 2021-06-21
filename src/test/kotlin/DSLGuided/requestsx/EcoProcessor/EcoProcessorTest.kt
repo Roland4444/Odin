@@ -60,13 +60,18 @@ class EcoProcessorTest : TestCase() {
     }
 
     fun testGetQuarterMap() {
+        val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
+        val psaconnector = PSAConnector()
+        psaconnector.render(initDB)
+        var psasearch = PSASearchProcessor()
+        psasearch.executor= psaconnector.executor!!
         val dsl = "'eco'=>::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::enabled{'false'}."
         val PSAConnector = PSAConnector()
         val EcoProc = EcoProcessor()
-        var psasearch = PSASearchProcessor()
         EcoProc.PSASearchProcessor = psasearch
         EcoProc.render(dsl)
         assertNotNull(EcoProc.DateRange)
         println(EcoProc.DateRange)
+        EcoProc.process()
     }
 }

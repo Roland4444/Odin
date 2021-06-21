@@ -289,6 +289,14 @@ class PSASearchProcessor  : DSLProcessor() {
     }
 
 
+    fun getWViaPSAId(PsaId: String): ResultSet {
+        var param = ArrayList<Any?>()
+        param.add(PsaId)
+        val res: ResultSet =
+            executor.executePreparedSelect("SELECT * FROM `psa`.`weighing` WHERE `psa_id` = ?;", param)
+        return res
+    }
+
 
     fun appendRole(R: Role) {
         print("Adding role ${R.Name}\n")

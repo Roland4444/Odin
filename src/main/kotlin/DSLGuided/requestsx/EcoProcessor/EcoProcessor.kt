@@ -12,6 +12,7 @@ import org.apache.poi.ss.util.CellUtil
 import java.io.FileOutputStream
 import java.sql.ResultSet
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 /////"'eco'=>::generatefor{'quarter':4,'year':2019,'department':6},::enabled{'false'}."
@@ -58,9 +59,17 @@ class EcoProcessor:  DSLProcessor() {
 //    fun createRows()
 
     fun process(){
-        var departMatch = ""
+        var departMatch = StringBuilder()
+        val department = department as ArrayList<*>
+        department.forEach { departMatch.append("'$it',") }
+        departMatch.append("''")
         val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::department{$departMatch},::datarange{$DateRange}."
-
+        PSASearchProcessor.render(search6)
+        val res = PSASearchProcessor.getPSA()
+        while (res!!.next()){
+            val id = res.getString("id")
+            println("FOUND ID::$id")
+        }
     }
 
     fun writeW(Cells: LinkedList<Cell>, Rows: LinkedList<Row>, Arr: List<KeyValue>){
