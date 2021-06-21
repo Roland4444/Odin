@@ -105,20 +105,19 @@ class EcoProcessor:  DSLProcessor() {
 
     }
 
-    fun writeW(Cells: ArrayList<Cell>, Rows: ArrayList<Row>, Arr: List<KeyValue>){
+    fun writeW(Rows: ArrayList<Row>, Arr: List<KeyValue>){
         var counter = 0
         Rows.forEach {
             val metalId = Arr.get(counter).Key
-            it.getCell(1).setCellValue(Arr.get(counter).Value as String)
-            it.getCell(2).setCellValue(Arr.get(counter).Value as String)
-            it.getCell(3).setCellValue(Arr.get(counter).Value as String)
+            for (i in 0..2)
+                it.getCell(i+1).setCellValue(CacheMetalInfo.get(metalId)?.get(i))
             it.getCell(4).setCellValue(Arr.get(counter).Value as String)
             counter++
         }
     }
 
 
-    fun writeData(Data: String, Cells: ArrayList<Cell>, Rows: ArrayList<Row>, Arr: List<KeyValue>){
+    fun writeData(Data: String, Rows: ArrayList<Row>, ){
         val Row_ = Rows.get(0)
         val cell = Row_.getCell(0)
         cell.setCellValue(Data)
@@ -166,9 +165,9 @@ class EcoProcessor:  DSLProcessor() {
             Rows.add(row)
         }
     ///    println("ROWS SIZE:: ${Rows.size}")
-        writeW(Cells, Rows, Arr)
+        writeW(Rows, Arr)
         writeClient(Client, Rows)
-        writeData(Data, Cells, Rows, Arr)
+        writeData(Data,  Rows)
         mergingAreas(Position, Sheet, Arr)
 
         Sheet.autoSizeColumn(1)
