@@ -60,7 +60,7 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
-    fun testprocessinvagning(){
+    fun processinvagning(){
         val parser = JSONParser()
         val inputjs = "{\"brutto\":16,\"calculatedMass\":\"1267.20\",\"metalId\":15,\"totalPrice\":0,\"tare\":0,\"price\":\"80\",\"clogging\":1,\"mass\":15.84,\"metal\":{\"def\":false,\"name\":\"Нержавейка\",\"psaid\":2,\"id\":15},\"id\":83580,\"newPrice\":\"80\",\"trash\":0}"
         val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
