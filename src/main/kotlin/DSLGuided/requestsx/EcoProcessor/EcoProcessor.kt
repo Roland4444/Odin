@@ -22,6 +22,7 @@ class EcoProcessor:  DSLProcessor() {
                            3 to "'year-07-01':'year-9-30'",
                            4 to "'year-10-01':'year-12-31'")
     var Book: Workbook = HSSFWorkbook()
+    var Sheet = Book.createSheet()
     var Filename: String = "temp.xlsx"
     var quarter = 0
     var year = 0
@@ -34,6 +35,8 @@ class EcoProcessor:  DSLProcessor() {
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         DateRange = QuarterMap.get(quarter)!!.replace("year", year.toString(), true)
+        Book = HSSFWorkbook()
+        Sheet = Book.createSheet()
         return "OK"
     }
 
@@ -58,6 +61,18 @@ class EcoProcessor:  DSLProcessor() {
 
 //    fun createRows()
 
+    fun genKeyValue(input: ResultSet): MutableList<KeyValue> {
+        var out = mutableListOf<KeyValue>()
+        while (input.next()){
+            var keyValue = KeyValue(input.getString("metal_id"), input.getString("brutto"))
+            out.add(keyValue)
+        }
+        return out
+
+    }
+
+
+
     fun process(){
         var departMatch = StringBuilder()
         val department = department as ArrayList<*>
@@ -66,10 +81,17 @@ class EcoProcessor:  DSLProcessor() {
         val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::department{$departMatch},::datarange{$DateRange}."
         PSASearchProcessor.render(search6)
         val res = PSASearchProcessor.getPSA()
+        var position = 0
         while (res!!.next()){
             val id = res.getString("id")
+            val date = res.getString("date")
             println("FOUND ID::$id")
+            val res = PSASearchProcessor.getWViaPSAId(id)
+            val WBlock = genKeyValue(res)
+            ////Data: String, Position: Int, Sheet: Sheet, Arr: List<KeyValue>
+            position = writeToDocumentPSA(date, position, Sheet, WBlock)
         }
+
     }
 
     fun writeW(Cells: LinkedList<Cell>, Rows: LinkedList<Row>, Arr: List<KeyValue>){
