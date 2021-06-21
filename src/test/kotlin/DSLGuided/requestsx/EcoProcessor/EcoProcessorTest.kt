@@ -53,9 +53,9 @@ class EcoProcessorTest : TestCase() {
         Arr.add(KeyValue2)
         Arr.add(KeyValue3)
         val Sheet = EcoProc.Book.createSheet("sheet")
-        val pos = EcoProc.writeToDocumentPSA("20-06-2021", 0, Sheet, Arr)
+        val pos = EcoProc.writeToDocumentPSA("20-06-2021", "bugaga", 0, Sheet, Arr)
         assertEquals(3, pos)
-        EcoProc.writeToDocumentPSA("20-06-2021", pos, Sheet, Arr)
+        EcoProc.writeToDocumentPSA("20-06-2021", "CLIENT", pos, Sheet, Arr)
         EcoProc.finalizeBook()
     }
 
@@ -65,7 +65,7 @@ class EcoProcessorTest : TestCase() {
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
         psasearch.executor= psaconnector.executor!!
-        val dsl = "'eco'=>::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::enabled{'false'}."
+        val dsl = "'eco'=>::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', '']},::enabled{'false'}."
         val PSAConnector = PSAConnector()
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch

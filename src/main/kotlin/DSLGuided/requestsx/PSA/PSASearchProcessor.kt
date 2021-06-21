@@ -297,6 +297,13 @@ class PSASearchProcessor  : DSLProcessor() {
         return res
     }
 
+    fun getMetalInfo(): ResultSet{
+        var param = ArrayList<Any?>()
+        val res: ResultSet =
+            executor.executePreparedSelect("SELECT * FROM `psa`.`metal`", param)
+        return res
+    }
+
 
     fun appendRole(R: Role) {
         print("Adding role ${R.Name}\n")

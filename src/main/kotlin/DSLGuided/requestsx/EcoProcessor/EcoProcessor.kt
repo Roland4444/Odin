@@ -68,12 +68,21 @@ class EcoProcessor:  DSLProcessor() {
             out.add(keyValue)
         }
         return out
-
     }
 
-
+    fun loadCacheMetalInfo() {
+        val res = PSASearchProcessor.getMetalInfo()
+        while (res.next()) {
+            var Lst = LinkedList<String>()
+            Lst.add(res.getString("waste"))
+            Lst.add(res.getString("fkko"))
+            Lst.add(res.getString("dangerclass"))
+            CacheMetalInfo.putIfAbsent(res.getString("id"), Lst)
+        }
+    }
 
     fun process(){
+        loadCacheMetalInfo()
         var departMatch = StringBuilder()
         val department = department as ArrayList<*>
         department.forEach { departMatch.append("'$it',") }
@@ -86,35 +95,40 @@ class EcoProcessor:  DSLProcessor() {
             val id = res.getString("id")
             val date = res.getString("date")
             println("FOUND ID::$id")
-            val res = PSASearchProcessor.getWViaPSAId(id)
-            val WBlock = genKeyValue(res)
+            val WBlock = genKeyValue(PSASearchProcessor.getWViaPSAId(id))
+            val Client = res.getString("client")
+            println("CLIENT::$Client")
             ////Data: String, Position: Int, Sheet: Sheet, Arr: List<KeyValue>
-            position = writeToDocumentPSA(date, position, Sheet, WBlock)
+            position = writeToDocumentPSA(date, Client, position, Sheet, WBlock)
         }
+        finalizeBook()
 
     }
 
-    fun writeW(Cells: LinkedList<Cell>, Rows: LinkedList<Row>, Arr: List<KeyValue>){
+    fun writeW(Cells: ArrayList<Cell>, Rows: ArrayList<Row>, Arr: List<KeyValue>){
         var counter = 0
         Rows.forEach {
-            for (i in 1..4){
-                val cell = it.getCell(i)
-                println("writing in $counter::$i")
-                cell.setCellValue("Boom")
-            }
+            val metalId = Arr.get(counter).Key
+            it.getCell(1).setCellValue(Arr.get(counter).Value as String)
+            it.getCell(2).setCellValue(Arr.get(counter).Value as String)
+            it.getCell(3).setCellValue(Arr.get(counter).Value as String)
+            it.getCell(4).setCellValue(Arr.get(counter).Value as String)
+            counter++
         }
     }
 
-    fun writeData(Data: String, Cells: LinkedList<Cell>, Rows: LinkedList<Row>, Arr: List<KeyValue>){
+
+    fun writeData(Data: String, Cells: ArrayList<Cell>, Rows: ArrayList<Row>, Arr: List<KeyValue>){
         val Row_ = Rows.get(0)
         val cell = Row_.getCell(0)
         cell.setCellValue(Data)
     }
 
-    fun writeClient(Cells: LinkedList<Cell>, Rows: LinkedList<Row>, Arr: List<KeyValue>){
+    fun writeClient(Client: String, Rows: ArrayList<Row>){
         val Row_ = Rows.get(0)
         val cell = Row_.getCell(5)
-        cell.setCellValue("CLIENT")
+        println("WRITING CLIENT==>$Client")
+        cell.setCellValue(Client)
     }
 
     fun mergingAreas(Position: Int, sheet: Sheet, Arr: List<KeyValue>){
@@ -138,9 +152,9 @@ class EcoProcessor:  DSLProcessor() {
         return Res
     }
 
-    fun writeToDocumentPSA(Data: String, Position: Int, Sheet: Sheet, Arr: List<KeyValue> ): Int{   //KeyValue: MetalName: Weigth
-        var Rows = LinkedList<Row>()
-        var Cells = LinkedList<Cell>()
+    fun writeToDocumentPSA(Data: String, Client: String, Position: Int, Sheet: Sheet, Arr: List<KeyValue> ): Int{   //KeyValue: MetalName: Weigth
+        var Rows = ArrayList<Row>()
+        var Cells = ArrayList<Cell>()
         for (i in 1..Arr.size){
             val row: Row = Sheet.createRow(i+Position-1)
             for (j in 0..6){
@@ -151,9 +165,9 @@ class EcoProcessor:  DSLProcessor() {
             }
             Rows.add(row)
         }
-        println("ROWS SIZE:: ${Rows.size}")
+    ///    println("ROWS SIZE:: ${Rows.size}")
         writeW(Cells, Rows, Arr)
-        writeClient(Cells, Rows, Arr)
+        writeClient(Client, Rows)
         writeData(Data, Cells, Rows, Arr)
         mergingAreas(Position, Sheet, Arr)
 
