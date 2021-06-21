@@ -1,12 +1,10 @@
 package DSLGuided.requestsx.EcoProcessor
 
 import DSLGuided.requestsx.DSLProcessor
-import DSLGuided.requestsx.PSA.PSAConnector
 import DSLGuided.requestsx.PSA.PSASearchProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
-import com.mysql.cj.x.protobuf.MysqlxExpr
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
@@ -18,17 +16,23 @@ import kotlin.collections.HashMap
 
 /////"'eco'=>::generatefor{'quarter':4,'year':2019,'department':6},::enabled{'false'}."
 class EcoProcessor:  DSLProcessor() {
+    val QuarterMap = mapOf(1 to "'year-01-01':'year-03-31'",
+                           2 to "'year-04-01':'year-06-30'",
+                           3 to "'year-07-01':'year-9-30'",
+                           4 to "'year-10-01':'year-12-31'")
     var Book: Workbook = HSSFWorkbook()
     var Filename: String = "temp.xlsx"
     var quarter = 0
     var year = 0
     var department: Any = ""
+    var DateRange: String = ""
     var CacheMetalInfo: HashMap<String, LinkedList<String>> = HashMap()
     lateinit var PSASearchProcessor: PSASearchProcessor
     override fun render(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
+        DateRange = QuarterMap.get(quarter)!!.replace("year", year.toString(), true)
         return "OK"
     }
 
@@ -53,6 +57,12 @@ class EcoProcessor:  DSLProcessor() {
 
 //    fun createRows()
 
+    fun process(){
+        var departMatch = ""
+        val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::department{$departMatch},::datarange{$DateRange}."
+
+    }
+
     fun writeW(Cells: LinkedList<Cell>, Rows: LinkedList<Row>, Arr: List<KeyValue>){
         var counter = 0
         Rows.forEach {
@@ -62,23 +72,6 @@ class EcoProcessor:  DSLProcessor() {
                 cell.setCellValue("Boom")
             }
         }
-//        Arr.forEach {
-//            println("COUNTER::$counter")
-//            var Row_ = Rows.get(counter)
-//            for (i in 1..4){
-//                val cell = Row_.getCell(i)
-//                println("writing in $counter::$i")
-//                cell.setCellValue("Boom")
-//            }
-//            counter++
-//        }
-//        var countercell = 0
-//        Cells.forEach {
-//            println("Cell counter $countercell")
-//            it.setCellValue("BOOKAKA")
-//            countercell++
-//        }
-
     }
 
     fun writeData(Data: String, Cells: LinkedList<Cell>, Rows: LinkedList<Row>, Arr: List<KeyValue>){

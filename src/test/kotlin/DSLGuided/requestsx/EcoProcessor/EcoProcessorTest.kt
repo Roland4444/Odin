@@ -58,4 +58,15 @@ class EcoProcessorTest : TestCase() {
         EcoProc.writeToDocumentPSA("20-06-2021", pos, Sheet, Arr)
         EcoProc.finalizeBook()
     }
+
+    fun testGetQuarterMap() {
+        val dsl = "'eco'=>::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::enabled{'false'}."
+        val PSAConnector = PSAConnector()
+        val EcoProc = EcoProcessor()
+        var psasearch = PSASearchProcessor()
+        EcoProc.PSASearchProcessor = psasearch
+        EcoProc.render(dsl)
+        assertNotNull(EcoProc.DateRange)
+        println(EcoProc.DateRange)
+    }
 }

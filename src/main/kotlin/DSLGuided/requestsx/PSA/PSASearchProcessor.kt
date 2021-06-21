@@ -124,7 +124,6 @@ class PSASearchProcessor  : DSLProcessor() {
 
     fun getmetalName(metal_id: String): String {
         var param = ArrayList<Any?>()
-
         param.add(metal_id)
         val res: ResultSet =
             executor.executePreparedSelect("SELECT * FROM `psa`.`metal` WHERE `id` = ?;", param)
