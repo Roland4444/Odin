@@ -239,7 +239,6 @@ class ParseDSL : Serializable {
     }
 
     fun removeRolefromStringDSL(inputDSL : String, RoleName: String): String{
-
         val Template = "::"+RoleName+"{"
         var Index = inputDSL.indexOf(Template)
         if (Index<0)
@@ -250,5 +249,15 @@ class ParseDSL : Serializable {
         val Index2 = RemainingString.indexOf("}")
         OutPut.append(RemainingString.substring(Index2))
         return OutPut.toString().replace("=>},","=>").replace(",}.","." ).replace("},},::", "},::")
+    }
+
+    fun getRawDSLForRole(inputDSL : String, RoleName: String): String{
+        val index = inputDSL.prepare().indexOf("::$RoleName{")+3+RoleName.length
+        val str = inputDSL.prepare().substring(index)
+        println("STR:: $str")
+        var index2 = str.indexOf("},::")
+        if (index2<0)
+            index2  = str.indexOf("}.")
+        return str.substring(0,index2)
     }
 }

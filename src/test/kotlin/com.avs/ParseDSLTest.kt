@@ -230,6 +230,14 @@ internal class ParseDSLTest {
 
     }
 
+    @Test
+    fun testGetRawDSLForRole() {
+        val str =  """'requests' => ::read{'tupple':["a","b","c"]}, ::write{<"load":12,"pay":40>}, ::create{<"number":""$90"","metal":["алюминий","сталь","никель"]>}."""
+        val rawdsl = parser.getRawDSLForRole(str, "read")
+        assertEquals("""'tupple':["a","b","c"]""", rawdsl)
+
+    }
+
 
 }
 
