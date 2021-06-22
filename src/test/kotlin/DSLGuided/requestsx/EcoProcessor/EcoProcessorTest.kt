@@ -65,7 +65,7 @@ class EcoProcessorTest : TestCase() {
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
         psasearch.executor= psaconnector.executor!!
-        val dsl = "'eco'=>::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', '']},::enabled{'false'}."
+        val dsl = "'eco'=>::generatefor{'quarter':1,'year':2021,'department':[ 'ПЗУ №2','']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
         val PSAConnector = PSAConnector()
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch

@@ -13,7 +13,6 @@ public class XLSX {
     public static void writeIntoExcel(String file) throws IOException, IOException, FileNotFoundException {
         Workbook book = new HSSFWorkbook();
         Sheet sheet = book.createSheet("Birthdays");
-
         // Нумерация начинается с нуля
         Row row = sheet.createRow(0);
         Row row2 = sheet.createRow(1700);
@@ -46,7 +45,32 @@ public class XLSX {
         // Записываем всё в файл
         book.write(new FileOutputStream(file));
         book.close();
+    }
+
+    public static void writeToXLSX(int numberrow, int numbercolumns,  String templte, String FileName) throws IOException {
+        Workbook book = new HSSFWorkbook();
+        Sheet sheet = book.createSheet("TEST");
+        Row[] Arr = new Row[numberrow];
+        Cell[] CellArr = new Cell[numbercolumns*numberrow];
+        int counter=0;
+        for (int i=0; i<numberrow; i++) {
+            Arr[i] = sheet.createRow(i);
+            for (int j=0; j<numbercolumns; j++) {
+                Cell cell = Arr[i].createCell(j);
+                CellArr[counter] =cell;
+                counter++;
+                //cell.setCellValue(templte);
+            }
+        }
+
+        for (int i=0; i<counter; i++) {
+            for (int j=0; j<numbercolumns; j++) {
+                CellArr[i].setCellValue(templte);
+            }
+        }
 
 
+        book.write(new FileOutputStream(FileName));
+        book.close();
     }
 }

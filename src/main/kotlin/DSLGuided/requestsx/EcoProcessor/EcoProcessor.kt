@@ -91,44 +91,21 @@ class EcoProcessor:  DSLProcessor() {
         PSASearchProcessor.render(search6)
         val res = PSASearchProcessor.getPSA()
         var position = 0
+        var psacounter = 0
         while (res!!.next()){
             val id = res.getString("id")
             val date = res.getString("date")
-            println("FOUND ID::$id")
             val WBlock = genKeyValue(PSASearchProcessor.getWViaPSAId(id))
             val Client = res.getString("client")
-            println("CLIENT::$Client")
-            ////Data: String, Position: Int, Sheet: Sheet, Arr: List<KeyValue>
+            println("PROCESS PSA#${psacounter++}")
             position = writeToDocumentPSA(date, Client, position, Sheet, WBlock)
         }
         finalizeBook()
-
-    }
-
-    fun writeW(Rows: ArrayList<Row>, Arr: List<KeyValue>){
-        var counter = 0
-        Rows.forEach {
-            val metalId = Arr.get(counter).Key
-            for (i in 0..2)
-                it.getCell(i+1).setCellValue(CacheMetalInfo.get(metalId)?.get(i))
-            it.getCell(4).setCellValue(Arr.get(counter).Value as String)
-            counter++
-        }
     }
 
 
-    fun writeData(Data: String, Rows: ArrayList<Row>, ){
-        val Row_ = Rows.get(0)
-        val cell = Row_.getCell(0)
-        cell.setCellValue(Data)
-    }
 
-    fun writeClient(Client: String, Rows: ArrayList<Row>){
-        val Row_ = Rows.get(0)
-        val cell = Row_.getCell(5)
-        println("WRITING CLIENT==>$Client")
-        cell.setCellValue(Client)
-    }
+
 
     fun mergingAreas(Position: Int, sheet: Sheet, Arr: List<KeyValue>){
         sheet.addMergedRegion(CellRangeAddress(Position, Position+Arr.size-1, 0, 0))
@@ -152,24 +129,27 @@ class EcoProcessor:  DSLProcessor() {
     }
 
     fun writeToDocumentPSA(Data: String, Client: String, Position: Int, Sheet: Sheet, Arr: List<KeyValue> ): Int{   //KeyValue: MetalName: Weigth
-        var Rows = ArrayList<Row>()
-        var Cells = ArrayList<Cell>()
-        for (i in 1..Arr.size){
-            val row: Row = Sheet.createRow(i+Position-1)
-            for (j in 0..6){
-                val cell = row.createCell(j)
-                if ((j == 0) or (j==5))
-                    CellUtil.setAlignment(cell, Book, CellStyle.ALIGN_CENTER_SELECTION)
-                Cells.add(cell)
-            }
-            Rows.add(row)
-        }
-    ///    println("ROWS SIZE:: ${Rows.size}")
-        writeW(Rows, Arr)
-        writeClient(Client, Rows)
-        writeData(Data,  Rows)
-        mergingAreas(Position, Sheet, Arr)
+        var i = 0
 
+//        val r = Sheet.createRow(Position)
+//        r.createCell(2).setCellValue("test")
+
+
+        Arr.forEach {
+            val metalId = it.Key
+            val row: Row = Sheet.createRow(i+Position)
+            val cell0 =  row.createCell(0)
+            cell0.setCellValue(Data)
+            CellUtil.setAlignment(cell0, Book, CellStyle.ALIGN_CENTER_SELECTION)
+            row.createCell(1).setCellValue(CacheMetalInfo.get(metalId)?.get(0))
+            row.createCell(2).setCellValue(CacheMetalInfo.get(metalId)?.get(1))
+            row.createCell(3).setCellValue(CacheMetalInfo.get(metalId)?.get(2))
+            row.createCell(4).setCellValue(it.Value as String)
+            val cell5 =  row.createCell(5)
+            CellUtil.setAlignment(cell5, Book, CellStyle.ALIGN_CENTER_SELECTION)
+            cell5.setCellValue(Client)
+            i++
+        }
         Sheet.autoSizeColumn(1)
         return Position+Arr.size;
     }
