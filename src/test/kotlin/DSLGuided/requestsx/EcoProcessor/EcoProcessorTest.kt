@@ -17,7 +17,6 @@ class EcoProcessorTest : TestCase() {
 
     fun testRender() {
         val dsl = "'eco'=>::generatefor{'quarter':4,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::enabled{'false'}."
-        val PSAConnector = PSAConnector()
         val EcoProc = EcoProcessor()
         var psasearch = PSASearchProcessor()
         EcoProc.PSASearchProcessor = psasearch
@@ -35,7 +34,6 @@ class EcoProcessorTest : TestCase() {
 
     fun testRender2() {
         val dsl = "'eco'=>::generatefor{'quarter':4,'year':2019,'department':'ПЗУ №3'},::enabled{'false'}."
-        val PSAConnector = PSAConnector()
         val EcoProc = EcoProcessor()
         var psasearch = PSASearchProcessor()
         EcoProc.PSASearchProcessor = psasearch
@@ -48,7 +46,6 @@ class EcoProcessorTest : TestCase() {
     }
     fun testWriteToDocumentPSA() {
         val dsl = "'eco'=>::generatefor{'quarter':4,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::enabled{'false'}."
-        val PSAConnector = PSAConnector()
         val EcoProc = EcoProcessor()
         var psasearch = PSASearchProcessor()
         EcoProc.PSASearchProcessor = psasearch
