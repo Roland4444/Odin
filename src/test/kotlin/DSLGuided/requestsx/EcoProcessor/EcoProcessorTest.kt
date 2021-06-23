@@ -6,15 +6,6 @@ import abstractions.KeyValue
 import junit.framework.TestCase
 
 class EcoProcessorTest : TestCase() {
-/*
-
-::quartermap{
-    '1' : ''year-01-01':'year-03-31'',
-    '2':  ''year-04-01':'year-06-30'',
-    '3':  ''year-07-01':'year-9-30'',
-    '4':  ''year-10-01':'year-12-31''}
- */
-
     fun testRender() {
         val dsl = "'eco'=>::generatefor{'quarter':4,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::enabled{'false'}."
         val EcoProc = EcoProcessor()
@@ -71,7 +62,6 @@ class EcoProcessorTest : TestCase() {
         var psasearch = PSASearchProcessor()
         psasearch.executor= psaconnector.executor!!
         val dsl = "'eco'=>::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №2','ПЗУ №3', 'ПЗУ №12']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
-        val PSAConnector = PSAConnector()
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch
         EcoProc.render(dsl)
