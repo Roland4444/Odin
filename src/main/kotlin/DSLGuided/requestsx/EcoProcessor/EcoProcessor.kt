@@ -17,7 +17,7 @@ import kotlin.collections.HashMap
 
 /////"'eco'=>::generatefor{'quarter':4,'year':2019,'department':6},::enabled{'false'}."
 class EcoProcessor:  DSLProcessor() {
-    val QuarterMap = mapOf(1 to "'year-01-01':'year-03-31'",
+    val QuarterMap = mutableMapOf<Int, String>(1 to "'year-01-01':'year-03-31'",
                            2 to "'year-04-01':'year-06-30'",
                            3 to "'year-07-01':'year-9-30'",
                            4 to "'year-10-01':'year-12-31'")
@@ -42,6 +42,18 @@ class EcoProcessor:  DSLProcessor() {
 
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
+    }
+
+    val quartermap: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "quartermap") {
+                val Lst = a.key.Param as MutableList<KeyValue>
+                QuarterMap.clear()
+                Lst.forEach {
+                    QuarterMap.put(it.Key.toInt(), it.Value.toString().replace("/",":"))
+                }
+            }
+        }
     }
 
     val generatefor: RoleHandler = {
@@ -130,11 +142,8 @@ class EcoProcessor:  DSLProcessor() {
 
     fun writeToDocumentPSA(Data: String, Client: String, Position: Int, Sheet: Sheet, Arr: List<KeyValue> ): Int{   //KeyValue: MetalName: Weigth
         var i = 0
-
 //        val r = Sheet.createRow(Position)
 //        r.createCell(2).setCellValue("test")
-
-
         Arr.forEach {
             val metalId = it.Key
             val row: Row = Sheet.createRow(i+Position)
@@ -149,7 +158,9 @@ class EcoProcessor:  DSLProcessor() {
             CellUtil.setAlignment(cell5, Book, CellStyle.ALIGN_CENTER_SELECTION)
             cell5.setCellValue(Client)
             i++
+
         }
+        mergingAreas(Position, Sheet, Arr)
         Sheet.autoSizeColumn(1)
         return Position+Arr.size;
     }
@@ -168,6 +179,9 @@ class EcoProcessor:  DSLProcessor() {
         when (R?.Name){
             "generatefor" -> mapper.put(R, generatefor)
             "enabled" -> mapper.put(R, enable)
+            "quartermap" -> mapper.put(R, quartermap)
+
+
         }
     }
 }
