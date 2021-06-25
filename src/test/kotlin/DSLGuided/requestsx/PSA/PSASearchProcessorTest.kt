@@ -163,6 +163,31 @@ fun testsearchplatenumber(){
         println("time execution:: " + duration / 1000000000)
     }
 
+
+    fun testCounterBlack() {
+        val startTime = System.nanoTime()
+        val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::datarange{'2021-01-01':'2021-01-31'}."
+        psaconnector.render(initDB)
+        var psasearch = PSASearchProcessor()
+        psasearch.executor= psaconnector.executor!!
+        psasearch.render(search3)
+        val R  = psasearch.getPSA()
+        var counter = 0
+        while (R?.next() == true) {
+            val psaId = R.getString("id")
+            val RR = psasearch.getWViaPSAId(psaId)
+            while (RR?.next()==true)
+                println("COUNTER ${counter++}")
+        }
+        ///var r = psasearch.createJSONResponce(psasearch.getPSA())
+        // println(r)
+        val endTime = System.nanoTime()
+        val duration = endTime - startTime
+        ////     val fos = FileOutputStream("result.json")
+        ////    fos.write(r.encodeToByteArray())
+        ////     fos.close()
+        println("time execution:: " + duration / 1000000000)
+    }
     fun countMaxNuberPSA(){
         val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::department{'Test',''},::datarange{'2021-01-01':'2021-04-26'}."
         val search6_ = "'search'=>::sql{'SELECT * FROM psa '},::department{'ПЗУ №12',''},::datarange{'2021-01-01':'2021-04-26'}."

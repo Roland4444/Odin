@@ -61,7 +61,7 @@ class EcoProcessorTest : TestCase() {
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
         psasearch.executor= psaconnector.executor!!
-        val dsl = "'eco'=>::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №2','ПЗУ №3', 'ПЗУ №12']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
+        val dsl = "'eco'=>::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №1','ПЗУ №2','ПЗУ №3', 'ПЗУ №12']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch
         EcoProc.render(dsl)
@@ -89,13 +89,32 @@ class EcoProcessorTest : TestCase() {
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
         psasearch.executor= psaconnector.executor!!
-        val dsl = "'eco'=>::quartermap{'1':'year-01-01'/'year-01-04','2':''year-04-01'/'year-04-04'','3':''year-07-01'/'year-07-04'','4':''year-10-01'/'year-10-04''}," +
-                "::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №2','ПЗУ №3','ПЗУ №12']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
+        val dsl = "'eco'=>::quartermap{'1':'year-01-01'/'year-01-31','2':''year-04-01'/'year-04-04'','3':''year-07-01'/'year-07-04'','4':''year-10-01'/'year-10-04''}," +
+                  "::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №2','ПЗУ №3','ПЗУ №12','ПЗУ №1']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch
         EcoProc.render(dsl)
         assertNotNull(EcoProc.DateRange)
         println(EcoProc.DateRange)
         EcoProc.process()
+    }
+
+    fun testMap() {
+        var map = mutableMapOf("1" to 2,  "2" to 2 )
+        val key = "1"
+        val value = map.get(key)
+        val value2 = value?.plus(1)
+        if (value2 != null) {
+            map.put(key, value2)
+        }
+        assertEquals(3, map.get(key))
+        var v0 = map.get("3")
+        if (v0 == null){
+            map.put("3",0)
+        }
+        v0 = map.get("3")
+//        val v = map.getOrDefault("3", 0)
+//        println("V=$v")
+        println("V0=$v0")
     }
 }
