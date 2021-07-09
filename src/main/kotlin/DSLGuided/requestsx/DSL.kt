@@ -1,5 +1,6 @@
 package DSLGuided.requestsx
 
+import DSLGuided.requestsx.HelperDBUpdate.HelperDBUpdate
 import DSLGuided.requestsx.PSA.PSAConnector
 import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.PSA.PSASearchProcessor
@@ -18,6 +19,7 @@ class DSL {
         initDSL()
     }
     var RequestsDSLProcessor: RequestsDSLProcessor? = null
+    var HelperDBUpdate: HelperDBUpdate? = null
     var PSADSLProcessor: PSADSLProcessor? = null
     var SMSDSLProcessor: SMSDSLProcessor? = null
     var PSASearchProcessor: PSASearchProcessor? = null
@@ -27,6 +29,7 @@ class DSL {
     var WProcessor: WProcessor? = null
     var DBConnector: DBConnector? = null
     fun prepareDSLProcessors() {
+        HelperDBUpdate = HelperDBUpdate()
         RequestsDSLProcessor = RequestsDSLProcessor()
         SMSDSLProcessor = SMSDSLProcessor()
         PSADSLProcessor = PSADSLProcessor()
@@ -35,6 +38,7 @@ class DSL {
         WProcessor = WProcessor()
         DBConnector = DBConnector()
         dslProcessors = HashMap()
+        dslProcessors!!["helperdbupdate"] = HelperDBUpdate!!
         dslProcessors!!["requests"] = RequestsDSLProcessor!!
         dslProcessors!!["sms"] = SMSDSLProcessor!!
         dslProcessors!!["psa"] = PSADSLProcessor!!
@@ -54,6 +58,7 @@ class DSL {
         PSADSLProcessor!!.psearch  = PSASearchProcessor!!
         dslProcessors?.get("dbconnector")?.render(getDSLforObject("dbconnector", "server"))
         WProcessor!!.dbconnector=DBConnector!!
+        HelperDBUpdate!!.dbconnector=DBConnector!!
     }
 
     fun prepareMap() {

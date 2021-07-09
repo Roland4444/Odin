@@ -48,7 +48,6 @@ class EcoProcessor:  DSLProcessor() {
     var CacheMetalInfo: HashMap<String, LinkedList<String>> = HashMap()
     lateinit var PSASearchProcessor: PSASearchProcessor
     override fun render(DSL: String): Any {
-        parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         DateRange = QuarterMap.get(quarter)!!.replace("year", year.toString(), true)

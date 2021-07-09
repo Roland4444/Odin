@@ -23,7 +23,7 @@ class EcoProcessorTest : TestCase() {
     }
 
 
-    fun testRender2() {
+    fun Render2() {
         val dsl = "'eco'=>::generatefor{'quarter':4,'year':2019,'department':'ПЗУ №3'},::enabled{'false'}."
         val EcoProc = EcoProcessor()
         var psasearch = PSASearchProcessor()
@@ -35,7 +35,7 @@ class EcoProcessorTest : TestCase() {
             print("THERE LIST!")
         assertEquals("ПЗУ №3", EcoProc.department)
     }
-    fun testWriteToDocumentPSA() {
+    fun WriteToDocumentPSA() {
         val dsl = "'eco'=>::generatefor{'quarter':4,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::enabled{'false'}."
         val EcoProc = EcoProcessor()
         var psasearch = PSASearchProcessor()
@@ -55,7 +55,7 @@ class EcoProcessorTest : TestCase() {
         EcoProc.finalizeBook()
     }
 
-    fun testGetQuarterMap() {
+    fun GetQuarterMap() {
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()
         psaconnector.render(initDB)
@@ -70,7 +70,7 @@ class EcoProcessorTest : TestCase() {
         EcoProc.process()
     }
 
-    fun testquatermap(){
+    fun quatermap(){
         val dsl = "'eco'=>::generatefor{'quarter':4,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::quartermap{'1':'year-01-01'/'year-05-31','2':''year-04-01'/'year-06-30'','3':''year-07-01'/'year-9-30'','4':''year-10-01'/'year-12-31''},::enabled{'false'}."
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()
@@ -83,7 +83,7 @@ class EcoProcessorTest : TestCase() {
         assertEquals("'year-01-01':'year-05-31'", EcoProc.QuarterMap.get(1) )
     }
 
-    fun testprocesspatchedmapap() {
+    fun processpatchedmapap() {
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()
         psaconnector.render(initDB)
