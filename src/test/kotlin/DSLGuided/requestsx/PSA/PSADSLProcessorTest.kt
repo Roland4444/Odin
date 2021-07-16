@@ -12,6 +12,16 @@ import java.io.File as File
 class PSADSLProcessorTest : TestCase() {
     val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
     val psaconnector = PSAConnector()
+    fun testjs(){
+        val js = "{\"a\":12, \"b\":22}"
+        val obj = JSONParser().parse(js) as JSONObject
+        assertNull(obj.get("dd"))
+        val some = obj.get("kkk")
+        if (some == null)
+            print("test passed")
+        assertNull(some)
+    }
+
     fun testRender() {
       //  val initialdsl = "'psa2'=>::psa{'urldb':'jdbc:mysql://192.168.0.121:3306/psa','login':user123,'pass':password },::psagetNumberfrom('url':http://192.168.0.121:8080/psa/psa/num,'keyparam':department_id),::stupid{http://192.168.0.121:8080/psa/psa/num}"
         val copy= "'psa2'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}"
@@ -228,5 +238,7 @@ class PSADSLProcessorTest : TestCase() {
         psa.psearch=PSASearchProcessor
         psa.splitpsa(uuid)
     }
+
+    fun testGetNONE() {}
 
 }

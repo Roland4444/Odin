@@ -15,7 +15,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
+typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String, Section: String) -> Unit
 typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
 
 ////////////Пример DSL для PSADSLProcessor'a
@@ -40,7 +40,8 @@ class PSADSLProcessor  : DSLProcessor() {
             val PlateNumber = params.get("PlateNumber")
             val UUID = params.get("UUID")
             val Type = params.get("Type")
-            f(Brutto as String, Sor as String , Metal as String , DepId as String , PlateNumber as String , UUID as String, Type as String)
+            val Section = params.get("Section")
+            f(Brutto as String, Sor as String , Metal as String , DepId as String , PlateNumber as String , UUID as String, Type as String, Section as String)
         }
 
 
@@ -56,6 +57,7 @@ class PSADSLProcessor  : DSLProcessor() {
     }
     val jsparser = JSONParser()
     var comment: String = ""
+    val NONE = "NONE"
 
     val deps__: Department = Department()
 
@@ -108,12 +110,27 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         var numberpsa = 0;
         if (res?.next()==false)
             return "1";
-        while (res?.next() == true){
-            //println(counter++)
+        while (res?.next() == true)
             numberpsa = res.getInt("number")
-        }
-      //  counter++
-      //  return counter.toString()
+        numberpsa++
+        return numberpsa.toString()
+    }
+
+    fun getPSANumberviaDSL(DepsId: String, Section: String): String{
+        println("in DSL psa getnumber")
+        val name = psearch.getdepNameExecutor(DepsId)
+        val year = Calendar.getInstance()[Calendar.YEAR]
+        val date: String = LocalDate.now().toString()
+        println("date => $date")
+        val buildSearchDSL = "'search'=>::sql{'SELECT * FROM psa '},::section{'${Section}'},::department{'${name}',''},::datarange{'${year}-01-01':'${java.sql.Date.valueOf(date)}'}."
+        println("PREPARED DSL=> $buildSearchDSL")
+        psearch.render(buildSearchDSL)
+        val res = psearch.getPSA()
+        var numberpsa = 0;
+        if (res?.next()==false)
+            return "1";
+        while (res?.next() == true)
+            numberpsa = res.getInt("number")
         numberpsa++
         return numberpsa.toString()
     }
@@ -268,12 +285,15 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         val sum = extractSummary(inputJSON)
         println("SUMM: $sum")
         val vagning = convertToListJSON(sum)
+        var section = NONE
+        if (js.get("section")!= null)
+            section = js.get("section") as String
         println("VAGNING: ${vagning.toString()}")
         /// val vagning = js.get("weighings") as JSONArray
         val checkpsa = checkpsaexist(uuid)
         if ((realdepID != null) &&  !checkpsa) {
             println("creating draft @$realdepID")
-            createdraftfarg(realdepID, uuid)
+            createdraftfarg(realdepID, uuid, section)
         }
         vagning.forEach { invagning ->
             if (realdepID != null) {
@@ -284,25 +304,31 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
     }
 
 
-    fun createdraftfarg(depsId: Int, guuid: String) {
+    fun createdraftfarg(depsId: Int, guuid: String, section: String) {
         println("\n\n\n\n@@@@\n\n\n\n\nINTO FARG Draft!")
-        var prepared = executor.conn.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
-            """
+        var initial = """
 INSERT INTO `psa` (
 `id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',       NULL,         ?);"""
-        );                     ////Необходимо выбрать
+NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',       NULL,      ?);"""
+                         ////Необходимо выбрать
+
         val date: String = LocalDate.now().toString()
         println("date => $date")
-        prepared?.setString(1, getPSANumberviaDSL(depsId.toString()))//getPSANumber(depsId.toString()))
-        /// getPassportId()?.let { prepared?.setInt(2, it) }
-        prepared?.setDate(2, java.sql.Date.valueOf(date));
-
-        prepared?.setInt(3, depsId.toString().toInt())
-        prepared?.setString(4, descriptionMap.get("color"))////LocalDate getDate
-        prepared?.setString(5, "color")
-        prepared?.setString(6, guuid)
+        var Lst = java.util.ArrayList<Any>()
+        Lst.add(getPSANumberviaDSL(depsId.toString()))
+        Lst.add(java.sql.Date.valueOf(date))
+        Lst.add(depsId.toString().toInt())
+        Lst.add(descriptionMap.get("color")!!)
+        Lst.add("color")
+        Lst.add(guuid)
+        if (section != NONE) {
+            Lst.add(section)
+            Lst[0]=getPSANumberviaDSL(depsId.toString(),section)
+            initial = initial.replace(", `uuid`)", ", `uuid`,`section`) ")
+            initial = initial.replace(" NULL,      ?);", " NULL,      ?, ?); ")
+        }
+        var prepared = executor.conn.prepareStatement(initial);
         println("UUID= $guuid")
         println("prepared=> $prepared")
         if (prepared != null) {
@@ -455,14 +481,14 @@ INSERT INTO `weighing` (
 
 
 
-    var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->
+    var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type, Section ->
         run {
             var prepared = executor.conn.prepareStatement(               ////color/black
                 """
 INSERT INTO `psa` (
-`id`,`number`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+`id`,`number`,`date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`, `section`) 
 VALUES (
-NULL,   ?,                   ?,         ?,'Не выбран ($PlateNumber)',         ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?,     ?);"""
             );                              /////Необходимо выбрать
             val date: String = LocalDate.now().toString()
             prepared?.setString(1, getPSANumberviaDSL(DepId))//getPSANumber(DepId))
@@ -474,6 +500,7 @@ NULL,   ?,                   ?,         ?,'Не выбран ($PlateNumber)',   
             prepared?.setString(5, descriptionMap.get(Type))////LocalDate getDate
             prepared?.setString(6, Type)
             prepared?.setString(7, UUID)
+            prepared?.setString(8, Section)
             println("prepared=> $prepared")
             if (prepared != null) {
                 prepared.execute()

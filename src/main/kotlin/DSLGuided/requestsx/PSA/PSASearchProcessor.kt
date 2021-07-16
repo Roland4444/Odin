@@ -45,6 +45,8 @@ class PSASearchProcessor  : DSLProcessor() {
     lateinit var platenumber_: String
     lateinit var typepayment_: String
     lateinit var passcheckurl_: String
+    lateinit var section_: String
+
     lateinit var limit_: Integer
     var departments = mutableListOf<String>()
     lateinit var executor: Executor
@@ -200,6 +202,17 @@ class PSASearchProcessor  : DSLProcessor() {
 
     }
 
+    val section: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "section") {
+                section_ = a.key.Param as String
+                params()
+                val appendix = "( section='$section_')"
+                initialString.append(appendix)
+            }
+        }
+    }
+
     val department: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "department") {
@@ -318,6 +331,7 @@ class PSASearchProcessor  : DSLProcessor() {
             "sql" -> mapper.put(R, sql)
             "passcheckurl" -> mapper.put(R, passcheckurl)
             "limit" -> mapper.put(R, limit)
+            "section" -> mapper.put(R, section)
             "enabled" -> mapper.put(R, enable)
 
         }
