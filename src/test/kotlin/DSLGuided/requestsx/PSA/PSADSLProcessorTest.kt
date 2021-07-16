@@ -66,6 +66,7 @@ class PSADSLProcessorTest : TestCase() {
         hash.put("PlateNumber", "VTB100")
         hash.put("UUID",  timeBasedUUID.generate())
         hash.put("Type", "black")
+        hash.put("Section", "1")
         PSADSLProcessor.createdraftPSA(hash as HashMap<String, String>, copy, psa )
 
     }

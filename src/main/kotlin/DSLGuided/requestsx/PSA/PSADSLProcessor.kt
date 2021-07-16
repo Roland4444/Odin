@@ -14,8 +14,8 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 
-
-typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String, Section: String) -> Unit
+typealias psaDraftSection = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String, Section: String) -> Unit
+typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
 typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
 
 ////////////Пример DSL для PSADSLProcessor'a
@@ -32,7 +32,7 @@ class PSADSLProcessor  : DSLProcessor() {
         fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit{
             println("into create draft psa")
             PSAProc.render(DSL)
-            val f: psaDraft = PSAProc.createdraft
+            val f: psaDraftSection = PSAProc.createdraftsection
             val Brutto = params.get("Brutto")
             val Sor = params.get("Sor")
             val Metal = params.get("Metal")
@@ -478,10 +478,68 @@ INSERT INTO `weighing` (
         }
         return PSAId
     }
+    var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->
+        run {
+            var prepared = executor.conn.prepareStatement(               ////color/black
+                """
+INSERT INTO `psa` (
+`id`,`number`,`date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+VALUES (
+NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+            );                              /////Необходимо выбрать
+            val date: String = LocalDate.now().toString()
+            prepared?.setString(1, getPSANumberviaDSL(DepId))//getPSANumber(DepId))
+            /// getPassportId()?.let { prepared?.setInt(2, it) }
+            ///  prepared?.setInt(2, 2)
+            prepared?.setDate(2, java.sql.Date.valueOf(date));
+            prepared?.setString(3, PlateNumber)
+            prepared?.setString(4, DepId)
+            prepared?.setString(5, descriptionMap.get(Type))////LocalDate getDate
+            prepared?.setString(6, Type)
+            prepared?.setString(7, UUID)
+            println("prepared=> $prepared")
+            if (prepared != null) {
+                prepared.execute()
+            }
+            prepared = executor.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
+                        AND `department_id` = ? AND `comment`='fromScales' AND `uuid`= ?;"""
+            )
+            prepared?.setDate(1, java.sql.Date.valueOf(date))
+            prepared?.setString(2, PlateNumber)
+            prepared?.setString(3, DepId)
+            prepared?.setString(4, UUID)
+            System.out.println(prepared)
+            val rs: ResultSet? = prepared?.executeQuery()
+            var PSAId = 0
+            if (rs != null) {
+                if (rs.next())
+                    PSAId = rs.getInt(1)
+            }
+
+            prepared = executor.conn.prepareStatement(
+                """INSERT INTO `weighing` 
+(`id`, `brutto`,  `sor`, `tare`,`price`, `psa_id`, `metal_id`,  `client_price`, `inspection`, `uuid`) 
+VALUES 
+(NULL,     ?,       ?,    0.0,   0.0,          ?,        ?,             0.0,           ?,            ?);""")
+
+            prepared?.setInt(1,Brutto.toInt())
+            prepared?.setFloat(2, Sor.toFloat())
+            prepared?.setInt(3, PSAId)
+            val rnd = Random()
+            var inspect =  Random().nextFloat()/4
+            prepared?.setInt(4, getMetalId(Metal))
+            val m = getMetalId(Metal)
+            prepared?.setString(5, (Math.round(inspect * 100.0) / 100.0).toString())
+            prepared?.setString(6, UUID)
+            println(prepared)
+            if (PSAId == 0)
+                println("Wrong psaId")
+            prepared?.execute()
+        }
+    }
 
 
-
-    var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type, Section ->
+    var createdraftsection: psaDraftSection= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type, Section ->
         run {
             var prepared = executor.conn.prepareStatement(               ////color/black
                 """
