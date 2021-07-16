@@ -63,10 +63,8 @@ class ParseDSL : Serializable {
             return Atom.Sequence
         if ((input[0]=='[') && (input[input.length-1]==']'))
             return Atom.Tupple
-
-        if ((input.indexOf("'")>=0) && (input.indexOf(":")>0) && (input.Tail__()=="")) {
+        if ((input.indexOf("'")>=0) && (input.indexOf(":")>0) && (input.Tail__()==""))
             return Atom.KeyValue
-        }
         if  (checker.isnumber(input))
             return Atom.Number
         return Atom.None
