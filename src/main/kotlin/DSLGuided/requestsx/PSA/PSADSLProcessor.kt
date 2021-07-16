@@ -132,6 +132,7 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         while (res?.next() == true)
             numberpsa = res.getInt("number")
         numberpsa++
+        println("PSA NUMBER==>$numberpsa")
         return numberpsa.toString()
     }
 
@@ -308,27 +309,23 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         println("\n\n\n\n@@@@\n\n\n\n\nINTO FARG Draft!")
         var initial = """
 INSERT INTO `psa` (
-`id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
+`id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`, `section`) 
 VALUES (
-NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',       NULL,      ?);"""
+NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',       NULL,      ?,     ?);"""
                          ////Необходимо выбрать
-
+        var prepared = executor.conn.prepareStatement(initial);
         val date: String = LocalDate.now().toString()
         println("date => $date")
-        var Lst = java.util.ArrayList<Any>()
-        Lst.add(getPSANumberviaDSL(depsId.toString()))
-        Lst.add(java.sql.Date.valueOf(date))
-        Lst.add(depsId.toString().toInt())
-        Lst.add(descriptionMap.get("color")!!)
-        Lst.add("color")
-        Lst.add(guuid)
-        if (section != NONE) {
-            Lst.add(section)
-            Lst[0]=getPSANumberviaDSL(depsId.toString(),section)
-            initial = initial.replace(", `uuid`)", ", `uuid`,`section`) ")
-            initial = initial.replace(" NULL,      ?);", " NULL,      ?, ?); ")
-        }
-        var prepared = executor.conn.prepareStatement(initial);
+        prepared?.setString(1, getPSANumberviaDSL(depsId.toString(), section))//getPSANumber(DepId))
+        /// getPassportId()?.let { prepared?.setInt(2, it) }
+        ///  prepared?.setInt(2, 2)
+        prepared?.setDate(2, java.sql.Date.valueOf(date));
+        prepared?.setInt(3, depsId.toString().toInt())
+        prepared?.setString(4, descriptionMap.get("color")!!)
+        prepared?.setString(5, "color")////LocalDate getDate
+        prepared?.setString(6, guuid)
+        prepared?.setString(7, section)
+
         println("UUID= $guuid")
         println("prepared=> $prepared")
         if (prepared != null) {
@@ -549,7 +546,7 @@ VALUES (
 NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?,     ?);"""
             );                              /////Необходимо выбрать
             val date: String = LocalDate.now().toString()
-            prepared?.setString(1, getPSANumberviaDSL(DepId))//getPSANumber(DepId))
+            prepared?.setString(1, getPSANumberviaDSL(DepId, Section))//getPSANumber(DepId))
            /// getPassportId()?.let { prepared?.setInt(2, it) }
           ///  prepared?.setInt(2, 2)
             prepared?.setDate(2, java.sql.Date.valueOf(date));
