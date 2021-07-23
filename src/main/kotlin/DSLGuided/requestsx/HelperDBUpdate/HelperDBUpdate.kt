@@ -113,6 +113,7 @@ class HelperDBUpdate:  DSLProcessor() {
 
     @Throws(SQLException::class)
     fun productiondelete(json: ParcedJSON?, initial: ParcedJSON) {
+        println("PROD DEL!")
         val stmt: PreparedStatement = dbconnector.executor!!.getConn()
             .prepareStatement("DELETE from weighing_items  WHERE weighing_id=? AND trash = ? AND clogging=? AND tare =? AND brutto =? AND metal_id=?") // metal_id =
         println("DELETING ITEM USING SQL::>>")
@@ -179,9 +180,12 @@ class HelperDBUpdate:  DSLProcessor() {
 
     @Throws(SQLException::class)
     fun fullupdate(json: ParcedJSON, initial: ParcedJSON) {
+        println("INTO FULLUPDATE!!!")
         if (!ProductionMode_)
             return
         if (json.Brutto.equals("0.00")) {
+            println("INTO PROD DEL!!!")
+            println("JSON::$json\ninitial::$initial\n")
             productiondelete(json, initial)
             return
         }
