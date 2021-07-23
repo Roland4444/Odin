@@ -7,7 +7,7 @@ class HelperDBUpdateTest : TestCase() {
 
     fun testParseRoles() {
         val dsl = "'dbhelper'=>::hockDeleting{true},::ProductionMode{true},::enabled{'true'}."
-        val initDB = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}. ////\n"
+        val initDB = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://192.168.0.173:3306/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}. ////\n"
         val dbconnector = DBConnector()
         dbconnector.render(initDB)
         val HelperDBUpdate = HelperDBUpdate()

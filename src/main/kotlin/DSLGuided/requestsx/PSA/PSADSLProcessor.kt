@@ -291,6 +291,8 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         if (js.get("section")!= null)
             section = js.get("section") as String
         println("VAGNING: ${vagning.toString()}")
+        println("\n\nSECTION::$section\n\n")
+
         /// val vagning = js.get("weighings") as JSONArray
         val checkpsa = checkpsaexist(uuid)
         if ((realdepID != null) &&  !checkpsa) {
@@ -308,6 +310,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
 
     fun createdraftfarg(depsId: Int, guuid: String, section: String) {
         println("\n\n\n\n@@@@\n\n\n\n\nINTO FARG Draft!")
+
         var initial = """
 INSERT INTO `psa` (
 `id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`, `section`) 
@@ -558,6 +561,7 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
             prepared?.setString(7, UUID)
             prepared?.setString(8, Section)
             println("prepared=> $prepared")
+            println("\n\nSECTION::$Section\n\n")
             if (prepared != null) {
                 prepared.execute()
             }
