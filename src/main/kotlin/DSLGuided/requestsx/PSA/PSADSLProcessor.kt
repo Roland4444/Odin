@@ -24,7 +24,7 @@ typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
 ///////'psa2'=>::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
 class PSADSLProcessor  : DSLProcessor() {
     companion object {
-        fun processColorPSA(inputJSON: String, uuid: String,  DSL: String,PSAProc: PSADSLProcessor ){
+        fun processColorPSA(inputJSON: String, uuid: String,DSL: String,PSAProc: PSADSLProcessor ){
             PSAProc.render(DSL)
             PSAProc.processfarg(uuid, inputJSON)
         }
@@ -59,6 +59,7 @@ class PSADSLProcessor  : DSLProcessor() {
     var comment: String = ""
     val NONE = "NONE"
 
+
     val deps__: Department = Department()
 
     val DepsMap = mapOf(6 to 1, 16 to 1, 10 to 2, 9 to 25)
@@ -77,16 +78,20 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
  ////   var keyparam_: String =""  DEPRECATED!
     var dumb: String = ""
     var json_ = ""
+    var HOOKUUID = ""
+    var HOOKSECTION = ""
+    var HOOKED_FARG = FALSE_ATOM
     lateinit var psearch: PSASearchProcessor
     lateinit var executor: Executor
     override fun render(DSL: String): Any {
         parseRoles(DSL)
+        clearhooked()
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
     //    executor = Executor(urldb, login, pass)
     /////    urlPsanumberUrl += "?"+keyparam_+"="
         if (enabled == "true") {
-    ///        dbConnection = DriverManager.getConnection(urldb, login, pass)
+        ///        dbConnection = DriverManager.getConnection(urldb, login, pass)
         //    dbConnection= executor.conn
         }
 
@@ -118,12 +123,13 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
 
     fun getPSANumberviaDSL(DepsId: String, Section: String): String{
         println("in DSL psa getnumber")
+        println("DEP_ID::$DepsId, SECTION::$Section")
         val name = psearch.getdepNameExecutor(DepsId)
         val year = Calendar.getInstance()[Calendar.YEAR]
         val date: String = LocalDate.now().toString()
         println("date => $date")
         val buildSearchDSL = "'search'=>::sql{'SELECT * FROM psa '},::section{'${Section}'},::department{'${name}',''},::datarange{'${year}-01-01':'${java.sql.Date.valueOf(date)}'}."
-        println("PREPARED DSL=> $buildSearchDSL")
+        println("PREPARED DSL for search=> $buildSearchDSL")
         psearch.render(buildSearchDSL)
         val res = psearch.getPSA()
         var numberpsa = 0;
@@ -275,7 +281,11 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
     }
 
 
-    fun processfarg(uuid: String, inputJSON: String){
+    fun processfarg(uuid_: String, inputJSON: String){
+        var uuid = uuid_
+        if (HOOKED_FARG.equals(TRUE_ATOM))
+            if (HOOKUUID.length > 0)
+                uuid = HOOKUUID
         println("inputJSON=> $inputJSON, uuid $uuid")
         clearweignings(uuid)
         val js = jsparser.parse(inputJSON) as JSONObject
@@ -290,6 +300,9 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         var section = NONE
         if (js.get("section")!= null)
             section = js.get("section") as String
+        if (HOOKED_FARG.equals(TRUE_ATOM))
+            if (HOOKSECTION.length > 0)
+                uuid = HOOKUUID
         println("VAGNING: ${vagning.toString()}")
         println("\n\nSECTION::$section\n\n")
 
@@ -526,7 +539,6 @@ VALUES
             prepared?.setInt(1,Brutto.toInt())
             prepared?.setFloat(2, Sor.toFloat())
             prepared?.setInt(3, PSAId)
-            val rnd = Random()
             var inspect =  Random().nextFloat()/4
             prepared?.setInt(4, getMetalId(Metal))
             val m = getMetalId(Metal)
@@ -615,12 +627,39 @@ VALUES
         println("into PSA section::")
         input.forEach{
             val f: KeyValue = it as KeyValue
-            when ((it as KeyValue).Key){
+            when (it.Key){
                 "login" -> login = it.Value as String;
                 "pass"  -> pass  = it.Value as String;
             }
         }
     }
+
+    fun clearhooked(){
+        HOOKSECTION = ""
+        HOOKUUID = ""
+        HOOKED_FARG=FALSE_ATOM
+    }
+
+    val HOOK: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "HOOK"){
+                clearhooked()
+                var Arr = a.key.Param as MutableList<Any>
+                Arr.forEach { a ->
+                    when (a) {
+                        is KeyValue -> {
+                            if (a.Key.equals("section"))
+                                HOOKSECTION = a.Value as String
+                            if (a.Key.equals("uuid"))
+                                HOOKUUID = a.Value as String
+                            };
+                        is String -> HOOKED_FARG = a;
+                    }
+                }
+            }
+        }
+    }
+
     val stupid: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "stupid")
@@ -664,6 +703,7 @@ VALUES
             "db" -> mapper.put(R, db)
             "enabled" -> mapper.put(R, enable)
             "json" -> mapper.put(R, json)
+            "HOOK" -> mapper.put(R, HOOK)
         }
     }
 
