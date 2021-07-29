@@ -240,7 +240,7 @@ class PSADSLProcessorTest : TestCase() {
         psa.splitpsa(uuid)
     }
 
-    fun testhookSplitpsa() {
+    fun hookSplitpsa() {
         val uuid = "47faa886-af17-11eb-a1d4-ef392b41b763"
         val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
         var psa  = PSADSLProcessor()
