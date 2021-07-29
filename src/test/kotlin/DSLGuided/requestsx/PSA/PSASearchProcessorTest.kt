@@ -215,6 +215,8 @@ fun testsearchplatenumber(){
 
 
 
+
+
   //  ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ!
 
 

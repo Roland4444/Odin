@@ -242,7 +242,7 @@ class PSADSLProcessorTest : TestCase() {
 
     fun testhookSplitpsa() {
         val uuid = "47faa886-af17-11eb-a1d4-ef392b41b763"
-        val copy= "'psa'=>::HOOK{'true','section':'12','uuid':'555'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        val copy= "'psa'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
         var psa  = PSADSLProcessor()
         psaconnector.render(initDB)
         psa.executor= psaconnector.executor!!
@@ -255,6 +255,27 @@ class PSADSLProcessorTest : TestCase() {
     }
 
 
-    fun testGetNONE() {}
+    fun testGetNONE() {
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::HOOK{'true','section':'20007'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        var psa  = PSADSLProcessor()
+        val filename = "dsl.dump"
+        psaconnector.render(psaconnstr)
+        psa.executor= psaconnector.executor!!
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.executor= psaconnector.executor!!
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        var JSON = String(Files.readAllBytes(File("color-psa-with-secton.js").toPath()))
+        PSADSLProcessor.processColorPSA(JSON, timeBasedUUID.generate(), psastr, psa)
+        if (!File(filename).exists())
+            Saver.Saver.write(psa.external_searchdsl.toByteArray(), filename)
+        PSASearchProcessor.render(String(Files.readAllBytes(File(filename).toPath())))
+        val res = PSASearchProcessor.getPSA()
+        var counter = 0
+        while (res!!.next())
+            counter++
+     ///   assertEquals(1, counter)
+    }
 
 }

@@ -80,7 +80,8 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
     var json_ = ""
     var HOOKUUID = ""
     var HOOKSECTION = ""
-    var HOOKED_FARG = FALSE_ATOM
+    var HOOKED = FALSE_ATOM
+    var external_searchdsl =""
     lateinit var psearch: PSASearchProcessor
     lateinit var executor: Executor
     override fun render(DSL: String): Any {
@@ -111,12 +112,10 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         println("PREPARED DSL=> $buildSearchDSL")
         psearch.render(buildSearchDSL)
         val res = psearch.getPSA()
-        var counter = 1
         var numberpsa = 0;
-        if (res?.next()==false)
-            return "1";
-        while (res?.next() == true)
+        while (res?.next() == true) {
             numberpsa = res.getInt("number")
+        }
         numberpsa++
         return numberpsa.toString()
     }
@@ -131,12 +130,13 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         val buildSearchDSL = "'search'=>::sql{'SELECT * FROM psa '},::section{'${Section}'},::department{'${name}',''},::datarange{'${year}-01-01':'${java.sql.Date.valueOf(date)}'}."
         println("PREPARED DSL for search=> $buildSearchDSL")
         psearch.render(buildSearchDSL)
+        external_searchdsl = buildSearchDSL
         val res = psearch.getPSA()
         var numberpsa = 0;
-        if (res?.next()==false)
-            return "1";
-        while (res?.next() == true)
+        while (res?.next() == true) {
             numberpsa = res.getInt("number")
+            println("number PSA at currentRow::$numberpsa")
+        }
         numberpsa++
         println("PSA NUMBER==>$numberpsa")
         return numberpsa.toString()
@@ -283,7 +283,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
 
     fun processfarg(uuid_: String, inputJSON: String){
         var uuid = uuid_
-        if (HOOKED_FARG.equals(TRUE_ATOM))
+        if (HOOKED.equals(TRUE_ATOM))
             if (HOOKUUID.length > 0)
                 uuid = HOOKUUID
         println("inputJSON=> $inputJSON, uuid $uuid")
@@ -300,9 +300,9 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         var section = NONE
         if (js.get("section")!= null)
             section = js.get("section") as String
-        if (HOOKED_FARG.equals(TRUE_ATOM))
+        if (HOOKED.equals(TRUE_ATOM))
             if (HOOKSECTION.length > 0)
-                uuid = HOOKUUID
+                section = HOOKSECTION
         println("VAGNING: ${vagning.toString()}")
         println("\n\nSECTION::$section\n\n")
 
@@ -637,7 +637,7 @@ VALUES
     fun clearhooked(){
         HOOKSECTION = ""
         HOOKUUID = ""
-        HOOKED_FARG=FALSE_ATOM
+        HOOKED=FALSE_ATOM
     }
 
     val HOOK: RoleHandler = {
@@ -648,12 +648,16 @@ VALUES
                 Arr.forEach { a ->
                     when (a) {
                         is KeyValue -> {
-                            if (a.Key.equals("section"))
+                            if (a.Key.equals("section")) {
                                 HOOKSECTION = a.Value as String
-                            if (a.Key.equals("uuid"))
+                                println("HOOK SECTION to=>$HOOKSECTION")
+                            }
+                            if (a.Key.equals("uuid")) {
                                 HOOKUUID = a.Value as String
+                                println("HOOK UUID to=>$HOOKUUID")
+                            }
                             };
-                        is String -> HOOKED_FARG = a;
+                        is String -> HOOKED = a;
                     }
                 }
             }
