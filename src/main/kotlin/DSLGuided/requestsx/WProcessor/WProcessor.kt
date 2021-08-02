@@ -2,6 +2,7 @@ package DSLGuided.requestsx.WProcessor
 
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
+import abstractions.KeyValue
 import abstractions.Role
 import se.roland.util.HTTPClient
 import java.io.File
@@ -30,6 +31,8 @@ class WProcessor : DSLProcessor()  {
     }
     lateinit var pathtoimgs_ : String
     lateinit var addresstoresend_: String
+    var UseDepsMap = FALSE_ATOM
+    var DepsMap = mutableMapOf<String, String>()
     var testmode_: Boolean = false
     var exampleListFile = "linked.bin"
     var client: HttpClient = HttpClient.newHttpClient()
@@ -128,11 +131,14 @@ class WProcessor : DSLProcessor()  {
         return dbconnector.executor?.executePreparedSelect("SELECT * FROM `remote_sklad` WHERE `uuid`=?;", param)
     }
 
-    fun saveImages(Arr1: ByteArray, Arr2: ByteArray, Department: String, Date: String, WaybillID: String): Unit{
+    fun saveImages(Arr1: ByteArray, Arr2: ByteArray, Department__: String, Date: String, WaybillID: String): Unit{
         val targetDir = pathtoimgs_+File.separator+Date
         println("TARGET DIR::$targetDir")
         if (!File(targetDir).exists())
             File(targetDir).mkdirs()
+        var Department = Department__
+        if (UseDepsMap.equals(TRUE_ATOM))
+            Department = DepsMap.get(Department).toString()
         val filename = targetDir+File.separator+Department+i_+WaybillID+i_
         val filename1 = filename+1
         val filename2 = filename+2
@@ -181,6 +187,23 @@ class WProcessor : DSLProcessor()  {
         }
     }
 
+    val usedepsmap: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "usedepsmap") {
+                DepsMap.clear()
+                UseDepsMap = FALSE_ATOM
+                var Arr = a.key.Param as MutableList<Any>
+                Arr.forEach { a ->
+                    when (a) {
+                        is KeyValue -> DepsMap.put(a.Key, a.Value.toString())
+                        is String -> UseDepsMap = a;
+                    }
+                }
+            }
+
+        }
+    }
+
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
     }
@@ -198,6 +221,7 @@ class WProcessor : DSLProcessor()  {
             "enabled" -> mapper.put(R, enable)
             "testmode" -> mapper.put(R, testmode)
             "example" -> mapper.put(R, example)
+            "usedepsmap" -> mapper.put(R, usedepsmap)
         }
     }
 }

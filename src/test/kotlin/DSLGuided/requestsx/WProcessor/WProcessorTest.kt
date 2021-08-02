@@ -73,4 +73,16 @@ class WProcessorTest : TestCase() {
         WProc.dbconnector = Connector
         assertEquals("8", WProc.getDepIdViaName("Кутум"))
     }
+
+    fun testGetTestmode_() {
+        val dsl = """'wprocessor'=>::usedepsmap{'true','1':'ACKK','2':'Kutum','24':'Babaevskogo'},::pathtoimgs{./IMG},::addresstoresend{db2.avs.com.ru/storage/purchase/import},::enabled{'true'}."""
+        val wProcessor = WProcessor()
+        wProcessor.render(dsl)
+        assertEquals(wProcessor.TRUE_ATOM, wProcessor.UseDepsMap)
+        assertEquals(wProcessor.DepsMap.size,3)
+        assertEquals(wProcessor.DepsMap.get("1"),"ACKK")
+        assertEquals(wProcessor.DepsMap.get("2"),"Kutum")
+        assertEquals(wProcessor.DepsMap.get("24"),"Babaevskogo")
+
+    }
 }
