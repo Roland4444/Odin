@@ -139,7 +139,7 @@ class WProcessor : DSLProcessor()  {
         var Department = Department__
         if (UseDepsMap.equals(TRUE_ATOM))
             Department = DepsMap.get(Department).toString()
-        val filename = targetDir+File.separator+Department+i_+WaybillID+i_
+        val filename = targetDir+File.separator+Department+WaybillID+i_
         val filename1 = filename+1
         val filename2 = filename+2
         val fos1 = FileOutputStream(filename1+appendix)
