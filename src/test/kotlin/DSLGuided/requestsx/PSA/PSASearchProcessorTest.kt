@@ -24,7 +24,7 @@ class PSASearchProcessorTest : TestCase() {
         val search_dsl = "'search'=>::sql{'SELECT * FROM psa '},::numberpsa{'1900'},::department{'ПЗУ №3',''},::datarange{'12.06.1940':'12.07.1940'},::client{'ООО Артемий'},::platenumber{'KAMAZ K582HB30'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         psasearch.render(search_dsl)
 
         assertNotNull(psasearch.getPSA())
@@ -38,7 +38,7 @@ class PSASearchProcessorTest : TestCase() {
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::client{'ШАПУРИН АНАТОЛИЙ ВИКТОРОВИЧ'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         psasearch.render(search3)
         assertNotNull(psasearch.getPSA())
         val f = psasearch.getPSA()
@@ -53,9 +53,9 @@ class PSASearchProcessorTest : TestCase() {
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::department{'ПЗУ №3',''}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         psasearch.render(search3)
-        assertNotNull(psasearch.executor )
+        assertNotNull(psasearch.psaconnector.executor )
         assertNotNull(psasearch.getPSA())
         val f = psasearch.getPSA()
         var counter = 0
@@ -70,7 +70,7 @@ class PSASearchProcessorTest : TestCase() {
         val search_dsl = "'search'=>::sql{'SELECT * FROM psa '},::numberpsa{'4926'}."
         var psasearch = PSASearchProcessor()
         psaconnector.render(initDB)
-        psasearch.executor = psaconnector.executor!!
+        psasearch.psaconnector = psaconnector
         val Res = PSASearchProcessor.search(search_dsl, psasearch, "24" )
         val JSON: JSONArray = JSONParser().parse(Res) as JSONArray
         println(JSON.size)
@@ -93,7 +93,7 @@ class PSASearchProcessorTest : TestCase() {
     fun testGetdepIdExecutor() {
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         assertEquals("2", psasearch.getdepIdExecutor("ПЗУ №3"))
     }
 
@@ -102,9 +102,9 @@ fun testsearchplatenumber(){
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::platenumber{'VAZ P890BE30'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         psasearch.render(search3)
-        assertNotNull(psasearch.executor )
+        assertNotNull(psasearch.psaconnector.executor )
         assertNotNull(psasearch.getPSA())
         val f = psasearch.getPSA()
         var counter = 0
@@ -120,9 +120,9 @@ fun testsearchplatenumber(){
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::platenumber{'VAZ P890BE30 and`client`=4352'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         psasearch.render(search3)
-        assertNotNull(psasearch.executor )
+        assertNotNull(psasearch.psaconnector.executor )
         assertNotNull(psasearch.getPSA())
         val f = psasearch.getPSA()
         var counter = 0
@@ -137,9 +137,9 @@ fun testsearchplatenumber(){
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::platenumber{'VAZ P890BE30'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         psasearch.render(search3)
-        assertNotNull(psasearch.executor )
+        assertNotNull(psasearch.psaconnector.executor )
         assertNotNull(psasearch.getPSA())
         assertNotNull(psasearch.createJSONResponce(psasearch.getPSA()))
         println(psasearch.createJSONResponce(psasearch.getPSA()))
@@ -150,7 +150,7 @@ fun testsearchplatenumber(){
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::datarange{'2020-01-01':'2021-08-04'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch. psaconnector=psaconnector
         psasearch.render(search3)
         psasearch.getPSA()
         ///var r = psasearch.createJSONResponce(psasearch.getPSA())
@@ -169,7 +169,7 @@ fun testsearchplatenumber(){
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::datarange{'2021-01-01':'2021-01-31'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch. psaconnector=psaconnector
         psasearch.render(search3)
         val R  = psasearch.getPSA()
         var counter = 0
@@ -194,7 +194,7 @@ fun testsearchplatenumber(){
 
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch. psaconnector=psaconnector
         psasearch.render(search6)
         val res = psasearch.getPSA()
         var counter = 0

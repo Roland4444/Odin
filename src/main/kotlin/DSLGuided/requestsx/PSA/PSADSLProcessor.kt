@@ -83,7 +83,6 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
     var HOOKED = FALSE_ATOM
     var external_searchdsl =""
     lateinit var psearch: PSASearchProcessor
-    lateinit var executor: Executor
     override fun render(DSL: String): Any {
         parseRoles(DSL)
         clearhooked()
@@ -145,7 +144,7 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
 
 
     var completePSA: completePSA = {Tare: String, Sor: String, UUID: String ->run {
-        var prepared = executor.conn.prepareStatement(
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
 
             """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ? WHERE `uuid` = ?;"""
         )
@@ -171,12 +170,12 @@ NULL,   ?,         ?,           2,             ?,         ?, 'Не выбран'
     fun checkpsaexist(uuid: String): Boolean{
         var param = ArrayList<Any>()
         param.add(uuid)
-        var prepared = executor.executePreparedSelect(" SELECT * from `psa` where  `uuid` = ?;", param)
+        var prepared = psearch.psaconnector.executor!!.executePreparedSelect(" SELECT * from `psa` where  `uuid` = ?;", param)
         return (prepared.next())
     }
 
     fun clearweignings(uuid : String){
-        var prepared = executor.conn.prepareStatement(      "DELETE FROM `weighing` WHERE `uuid`=?;");
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(      "DELETE FROM `weighing` WHERE `uuid`=?;");
         prepared?.setString(1, uuid);
         prepared?.executeUpdate();
     }
@@ -185,17 +184,17 @@ NULL,   ?,         ?,           2,             ?,         ?, 'Не выбран'
         var param = ArrayList<Any>()
         param.add(uuid)
         println("uuid = $uuid")
-        val datainvagning = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
-        val datainvagning_ = executor.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
+        val datainvagning = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
+        val datainvagning_ = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `weighing` WHERE `uuid`=?;", param)
 
         updateDatainvagning(datainvagning, uuid)
-        val datapsa = executor.executePreparedSelect("SELECT * FROM `psa` WHERE `uuid`=?;", param)
+        val datapsa = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa` WHERE `uuid`=?;", param)
         createPSA(datapsa, "${uuid}_")
         createinvagning(datainvagning_, "${uuid}_")
     }
 
     fun createinvagning(datainvagning: ResultSet, uuid: String) {
-        val prepared = executor.conn.prepareStatement(
+        val prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
             """
 INSERT INTO `weighing` (
 `id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
@@ -228,7 +227,7 @@ INSERT INTO `weighing` (
     }
 
     fun createPSA(data: ResultSet, uuid: String) {
-        var prepared = executor.conn.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(               ////color/black////`created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`,
             """
 INSERT INTO `psa` (
 `id`,`number`,   `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
@@ -261,7 +260,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
     }
 
     fun updateDatainvagning(data: ResultSet, uuid: String) {
-        var prepared = executor.conn.prepareStatement(
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
             """UPDATE `weighing` SET  `brutto` = ?, `client_brutto` = ? WHERE `uuid` = ?;"""
         )
         if (!data.next())
@@ -330,7 +329,7 @@ INSERT INTO `psa` (
 VALUES (
 NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',       NULL,      ?,     ?);"""
                          ////Необходимо выбрать
-        var prepared = executor.conn.prepareStatement(initial);
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(initial);
         val date: String = LocalDate.now().toString()
         println("date => $date")
         prepared?.setString(1, getPSANumberviaDSL(depsId.toString(), section))//getPSANumber(DepId))
@@ -351,7 +350,7 @@ NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?, 
     }
 
     fun processinvagning__(json: JSONObject, uuid: String){
-        val prepared = executor.conn.prepareStatement(
+        val prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
             """
 INSERT INTO `weighing` (
 `id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
@@ -385,7 +384,7 @@ INSERT INTO `weighing` (
 
 
     fun processinvagning(json: JSONObject, uuid: String){
-        val prepared = executor.conn.prepareStatement(
+        val prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
             """
 INSERT INTO `weighing` (
 `id`,`brutto`,`tare`,`sor`,`price`,`psa_id`,`metal_id`,`client_brutto`,`client_tare`,`client_sor`,`client_price`,`inspection`, `uuid`)
@@ -477,11 +476,9 @@ INSERT INTO `weighing` (
     }
 
     fun getPSAID(uuid: String): Int{
-        val prepared = executor.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `uuid`= ?;"""
-        )
+        val prepared = psearch.psaconnector.executor!!.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `uuid`= ?;""")
         prepared?.setString(1, uuid)
-
-        System.out.println(prepared)
+        println(prepared)
         val rs: ResultSet? = prepared?.executeQuery()
         var PSAId = 0
         if (rs != null) {
@@ -494,7 +491,7 @@ INSERT INTO `weighing` (
     }
     var createdraft: psaDraft= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type ->
         run {
-            var prepared = executor.conn.prepareStatement(               ////color/black
+            var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(               ////color/black
                 """
 INSERT INTO `psa` (
 `id`,`number`,`date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
@@ -515,7 +512,7 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
             if (prepared != null) {
                 prepared.execute()
             }
-            prepared = executor.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
+            prepared = psearch.psaconnector.executor!!.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
                         AND `department_id` = ? AND `comment`='fromScales' AND `uuid`= ?;"""
             )
             prepared?.setDate(1, java.sql.Date.valueOf(date))
@@ -530,7 +527,7 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
                     PSAId = rs.getInt(1)
             }
 
-            prepared = executor.conn.prepareStatement(
+            prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
                 """INSERT INTO `weighing` 
 (`id`, `brutto`,  `sor`, `tare`,`price`, `psa_id`, `metal_id`,  `client_price`, `inspection`, `uuid`) 
 VALUES 
@@ -554,7 +551,7 @@ VALUES
 
     var createdraftsection: psaDraftSection= { Brutto, Sor, Metal, DepId, PlateNumber, UUID, Type, Section ->
         run {
-            var prepared = executor.conn.prepareStatement(               ////color/black
+            var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(               ////color/black
                 """
 INSERT INTO `psa` (
 `id`,`number`,`date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`, `section`) 
@@ -577,7 +574,7 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
             if (prepared != null) {
                 prepared.execute()
             }
-            prepared = executor.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
+            prepared = psearch.psaconnector.executor!!.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
                         AND `department_id` = ? AND `comment`='fromScales' AND `uuid`= ?;"""
             )
             prepared?.setDate(1, java.sql.Date.valueOf(date))
@@ -592,7 +589,7 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
                     PSAId = rs.getInt(1)
             }
 
-            prepared = executor.conn.prepareStatement(
+            prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
 """INSERT INTO `weighing` 
 (`id`, `brutto`,  `sor`, `tare`,`price`, `psa_id`, `metal_id`,  `client_price`, `inspection`, `uuid`) 
 VALUES 
@@ -615,7 +612,7 @@ VALUES
     }
 
     fun getMetalId(metal: String?): Int {
-        var prepared =executor.conn.prepareStatement("select * from `psa`.`metal` where title=?;")
+        var prepared =psearch.psaconnector.executor!!.conn.prepareStatement("select * from `psa`.`metal` where title=?;")
         prepared?.setString(1, metal)
         val rs = prepared?.executeQuery()
         if (rs?.next() == true)

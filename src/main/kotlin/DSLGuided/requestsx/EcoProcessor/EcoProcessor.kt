@@ -183,7 +183,7 @@ class EcoProcessor:  DSLProcessor() {
     //desc, fkko, dangerclass
     fun getMetalInfo(Name: String): LinkedList<String> {
         var Res = LinkedList<String>()
-        var prepared =  PSASearchProcessor.executor!!.conn.prepareStatement("SELECT * FROM `psa`.`metal` WHERE `title` = ?;")
+        var prepared =  PSASearchProcessor.psaconnector.executor!!.conn.prepareStatement("SELECT * FROM `psa`.`metal` WHERE `title` = ?;")
         prepared.setString(1, Name)
         val rs: ResultSet? = prepared?.executeQuery()
         if (rs!!.next()) {

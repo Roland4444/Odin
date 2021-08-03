@@ -53,8 +53,7 @@ class DSL {
         dslProcessors?.get("psaconnector")?.render(getDSLforObject("psaconnector", "server"))
         val psearch = dslProcessors?.get("psasearch") as PSASearchProcessor
         val pconnector = dslProcessors!!.get("psaconnector") as PSAConnector
-        psearch.executor = pconnector.executor!!
-        PSADSLProcessor!!.executor  = pconnector.executor!!
+        psearch.psaconnector= pconnector
         PSADSLProcessor!!.psearch  = PSASearchProcessor!!
         dslProcessors?.get("dbconnector")?.render(getDSLforObject("dbconnector", "server"))
         WProcessor!!.dbconnector=DBConnector!!

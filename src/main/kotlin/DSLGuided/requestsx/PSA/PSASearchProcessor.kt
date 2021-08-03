@@ -49,7 +49,7 @@ class PSASearchProcessor  : DSLProcessor() {
 
     lateinit var limit_: Integer
     var departments = mutableListOf<String>()
-    lateinit var executor: Executor
+    lateinit var psaconnector: PSAConnector
     var if_present = false
     var initialString: StringBuilder = StringBuilder()
     var first = true
@@ -97,7 +97,7 @@ class PSASearchProcessor  : DSLProcessor() {
     }
 
     fun getPSA(): ResultSet? {
-        val stmt = executor.conn.createStatement()
+        val stmt = psaconnector.executor!!.conn.createStatement()
         val res = stmt?.executeQuery(initialString.toString())
         return res
     }
@@ -106,7 +106,7 @@ class PSASearchProcessor  : DSLProcessor() {
         var param = ArrayList<Any?>()
         param.add(input)
         val res: ResultSet =
-            executor.executePreparedSelect("SELECT * FROM `psa`.`department` WHERE `name` = ?;", param)
+            psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`department` WHERE `name` = ?;", param)
         if (res.next()) {
             return res.getString("id")
         };
@@ -117,7 +117,7 @@ class PSASearchProcessor  : DSLProcessor() {
         var param = ArrayList<Any?>()
         param.add(input)
         val res: ResultSet =
-            executor.executePreparedSelect("SELECT * FROM `psa`.`department` WHERE `id` = ?;", param)
+            psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`department` WHERE `id` = ?;", param)
         if (res.next()) {
             return res.getString("name")
         };
@@ -128,7 +128,7 @@ class PSASearchProcessor  : DSLProcessor() {
         var param = ArrayList<Any?>()
         param.add(metal_id)
         val res: ResultSet =
-            executor.executePreparedSelect("SELECT * FROM `psa`.`metal` WHERE `id` = ?;", param)
+            psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`metal` WHERE `id` = ?;", param)
         if (res.next())
             return res.getString("title");
         return ""
@@ -139,7 +139,7 @@ class PSASearchProcessor  : DSLProcessor() {
         param.add(id)
         var result = mutableListOf<String>()
         val res: ResultSet =
-            executor.executePreparedSelect("SELECT * FROM `psa`.`weighing` WHERE `psa_id` = ?;", param)
+            psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`weighing` WHERE `psa_id` = ?;", param)
         while (res.next()) {
             var metalname = getmetalName(res.getString("metal_id"))
             result.add(metalname)
@@ -306,14 +306,14 @@ class PSASearchProcessor  : DSLProcessor() {
         var param = ArrayList<Any?>()
         param.add(PsaId)
         val res: ResultSet =
-            executor.executePreparedSelect("SELECT * FROM `psa`.`weighing` WHERE `psa_id` = ?;", param)
+            psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`weighing` WHERE `psa_id` = ?;", param)
         return res
     }
 
     fun getMetalInfo(): ResultSet{
         var param = ArrayList<Any?>()
         val res: ResultSet =
-            executor.executePreparedSelect("SELECT * FROM `psa`.`metal`", param)
+            psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`metal`", param)
         return res
     }
 

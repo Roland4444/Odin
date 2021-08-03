@@ -60,7 +60,7 @@ class EcoProcessorTest : TestCase() {
         val psaconnector = PSAConnector()
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         val dsl = "'eco'=>::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №1','ПЗУ №2','ПЗУ №3', 'ПЗУ №12']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch
@@ -76,7 +76,7 @@ class EcoProcessorTest : TestCase() {
         val psaconnector = PSAConnector()
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch
         EcoProc.render(dsl)
@@ -88,7 +88,7 @@ class EcoProcessorTest : TestCase() {
         val psaconnector = PSAConnector()
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch.executor= psaconnector.executor!!
+        psasearch.psaconnector= psaconnector
         val dsl = "'eco'=>::quartermap{'1':'year-01-01'/'year-01-31','2':''year-04-01'/'year-04-04'','3':''year-07-01'/'year-07-04'','4':''year-10-01'/'year-10-04''}," +
                   "::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №2','ПЗУ №3','ПЗУ №12','ПЗУ №1']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
         val EcoProc = EcoProcessor()
