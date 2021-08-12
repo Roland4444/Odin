@@ -4,7 +4,6 @@ import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
-import fr.roland.DB.Executor
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
@@ -21,7 +20,9 @@ typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
-///////'psa2'=>::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
+///////'psa2'=>::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
+/////psaId => metal in PSA   , table metal, db PSA
+
 class PSADSLProcessor  : DSLProcessor() {
     companion object {
         fun processColorPSA(inputJSON: String, uuid: String,DSL: String,PSAProc: PSADSLProcessor ){
@@ -81,6 +82,13 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
     var HOOKUUID = ""
     var HOOKSECTION = ""
     var HOOKED = FALSE_ATOM
+
+    var PSAID = ""
+    var SECTION = ""
+    var PSAIDHOOK = FALSE_ATOM
+
+    var section = NONE
+
     var external_searchdsl =""
     lateinit var psearch: PSASearchProcessor
     override fun render(DSL: String): Any {
@@ -275,11 +283,6 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         prepared?.execute()
     }
 
-    fun getData(uuid: String): Any {
-        TODO("Not yet implemented")
-    }
-
-
     fun processfarg(uuid_: String, inputJSON: String){
         var uuid = uuid_
         if (HOOKED.equals(TRUE_ATOM))
@@ -296,29 +299,27 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         val sum = extractSummary(inputJSON)
         println("SUMM: $sum")
         val vagning = convertToListJSON(sum)
-        var section = NONE
+        section = NONE
         if (js.get("section")!= null)
             section = js.get("section") as String
         if (HOOKED.equals(TRUE_ATOM))
             if (HOOKSECTION.length > 0)
                 section = HOOKSECTION
-        println("VAGNING: ${vagning.toString()}")
+        println("VAGNING: ${vagning}")
         println("\n\nSECTION::$section\n\n")
-
-        /// val vagning = js.get("weighings") as JSONArray
         val checkpsa = checkpsaexist(uuid)
-        if ((realdepID != null) &&  !checkpsa) {
-            println("creating draft @$realdepID")
-            createdraftfarg(realdepID, uuid, section)
-        }
+
         vagning.forEach { invagning ->
             if (realdepID != null) {
                 println("process vagning  @JSON::${invagning.toString()}")
                 processinvagning__(invagning as JSONObject, uuid)///processinvagning(invagning as JSONObject, uuid)
             } }
+        if ((realdepID != null) &&  !checkpsa) {
+            println("creating draft @$realdepID")
+            createdraftfarg(realdepID, uuid, section)
+        }
 
     }
-
 
     fun createdraftfarg(depsId: Int, guuid: String, section: String) {
         println("\n\n\n\n@@@@\n\n\n\n\nINTO FARG Draft!")
@@ -377,6 +378,15 @@ INSERT INTO `weighing` (
         if (prepared != null) {
             prepared.execute()
         }
+        when (PSAIDHOOK){
+            TRUE_ATOM->{
+                if (json.get("psaid").toString().equals(PSAID)) {
+                    println("HOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
+                    section = SECTION
+                }
+            }
+        }
+
 
         // prepared.setString();
 
@@ -445,12 +455,10 @@ INSERT INTO `weighing` (
         var index = str.indexOf(startelem)
         while (index>=0){
             val nextindex = str.indexOf(finishelem)
-
             if (nextindex >=0) {
                 println("nextindex $nextindex")
                 println("append ${str.substring(index+1, nextindex+2)}")
                 builder.append(str.substring(index + 1, nextindex + 2))
-
             }
             else
             {
@@ -469,10 +477,6 @@ INSERT INTO `weighing` (
     fun convertToListJSON(input: String): JSONArray{
         println("input:: $input")
         return jsparser.parse(convertToList(input)) as JSONArray
-    }
-
-    fun processSummary(input: String){
-
     }
 
     fun getPSAID(uuid: String): Int{
@@ -598,7 +602,6 @@ VALUES
             prepared?.setInt(1,Brutto.toInt())
             prepared?.setFloat(2, Sor.toFloat())
             prepared?.setInt(3, PSAId)
-            val rnd = Random()
             var inspect =  Random().nextFloat()/4
             prepared?.setInt(4, getMetalId(Metal))
             val m = getMetalId(Metal)
@@ -681,6 +684,29 @@ VALUES
                 processPSASection(a.key.Param as MutableList<Any>)
         }
     }
+
+    val psaIDtoSEhooK: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "psaIDtoSEhooK") {
+                PSAID=EMPTY_ATOM
+                SECTION=EMPTY_ATOM
+                PSAIDHOOK=FALSE_ATOM
+                var Arr = a.key.Param as MutableList<Any>
+                Arr.forEach { a ->
+                    when (a) {
+                        is KeyValue -> {
+                            PSAID = a.Key
+                            SECTION = a.Value as String
+                        }
+                        is String -> {
+                            println("A::$a")
+                            PSAIDHOOK = a
+                        }
+                    }
+                }
+            }
+        }
+    }
     val json: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "json")
@@ -705,6 +731,7 @@ VALUES
             "enabled" -> mapper.put(R, enable)
             "json" -> mapper.put(R, json)
             "HOOK" -> mapper.put(R, HOOK)
+            "psaIDtoSEhooK" -> mapper.put(R, psaIDtoSEhooK)
         }
     }
 
