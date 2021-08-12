@@ -141,9 +141,10 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         external_searchdsl = buildSearchDSL
         val res = psearch.getPSA()
         var numberpsa = 0;
+        var counter = 0
         while (res?.next() == true) {
             numberpsa = res.getInt("number")
-            println("number PSA at currentRow::$numberpsa")
+            println("${counter++} number PSA at currentRow::${res.getInt("number")}")
         }
         numberpsa++
         println("PSA NUMBER==>$numberpsa")
@@ -310,6 +311,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         println("SUMM: $sum")
         val vagning = convertToListJSON(sum)
         var section = NONE
+        var isBLACK=false
         if (js.get("section")!= null)
             section = js.get("section") as String
         if (HOOKED.equals(TRUE_ATOM))
@@ -317,6 +319,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
                 section = HOOKSECTION
         if (PSAIDHOOK.equals(TRUE_ATOM)){
             if (isBlack(vagning, PSAID)) {
+                isBLACK = true
                 println("\n\n\n\n\n\nHOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
                 section=SECTION
             }
@@ -334,6 +337,8 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
                 processinvagning__(invagning as JSONObject, uuid)///processinvagning(invagning as JSONObject, uuid)
             }
         }
+        if (isBLACK)
+            updateDescriptionToBlack(uuid)
     }
 
     fun isBlack(Arr: JSONArray, PatternBlack: String): Boolean {
