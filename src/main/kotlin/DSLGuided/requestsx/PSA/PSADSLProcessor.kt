@@ -87,8 +87,6 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
     var SECTION = ""
     var PSAIDHOOK = FALSE_ATOM
 
-    var section = NONE
-
     var external_searchdsl =""
     lateinit var psearch: PSASearchProcessor
     override fun render(DSL: String): Any {
@@ -149,6 +147,16 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         return numberpsa.toString()
     }
     //
+    fun updateSection(Section :String, UUID: String){
+
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
+            """UPDATE `psa` SET  `section` = ? WHERE `uuid` = ?;""")
+
+        prepared?.setString(1, Section)
+        prepared?.setString(2, UUID)
+        println("UPDATING SECTION SET SECTION=$Section WHERE PSA UUID=$UUID")
+        prepared?.execute()
+    }
 
 
     var completePSA: completePSA = {Tare: String, Sor: String, UUID: String ->run {
@@ -299,7 +307,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         val sum = extractSummary(inputJSON)
         println("SUMM: $sum")
         val vagning = convertToListJSON(sum)
-        section = NONE
+        var section = NONE
         if (js.get("section")!= null)
             section = js.get("section") as String
         if (HOOKED.equals(TRUE_ATOM))
@@ -308,16 +316,17 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         println("VAGNING: ${vagning}")
         println("\n\nSECTION::$section\n\n")
         val checkpsa = checkpsaexist(uuid)
-
-        vagning.forEach { invagning ->
-            if (realdepID != null) {
-                println("process vagning  @JSON::${invagning.toString()}")
-                processinvagning__(invagning as JSONObject, uuid)///processinvagning(invagning as JSONObject, uuid)
-            } }
         if ((realdepID != null) &&  !checkpsa) {
             println("creating draft @$realdepID")
             createdraftfarg(realdepID, uuid, section)
         }
+        vagning.forEach { invagning ->
+            if (realdepID != null) {
+                println("process vagning  @JSON::${invagning.toString()}")
+                processinvagning__(invagning as JSONObject, uuid)///processinvagning(invagning as JSONObject, uuid)
+            }
+        }
+
 
     }
 
@@ -382,14 +391,11 @@ INSERT INTO `weighing` (
             TRUE_ATOM->{
                 if (json.get("psaid").toString().equals(PSAID)) {
                     println("HOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
-                    section = SECTION
+                    updateSection(SECTION, uuid)
                 }
             }
         }
-
-
         // prepared.setString();
-
     }
 
 
