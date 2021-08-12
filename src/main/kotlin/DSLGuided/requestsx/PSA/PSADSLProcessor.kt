@@ -103,7 +103,10 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
 
         return "OK"
     }
-    val descriptionMap = mapOf("black" to "Лом и отходы черных металлов", "color" to "Лом и отходы цветных металлов")
+
+    val BLACK_ATOM = "black"
+    val COLOR_ATOM = "color"
+    val descriptionMap = mapOf(BLACK_ATOM to "Лом и отходы черных металлов", COLOR_ATOM to "Лом и отходы цветных металлов")
 
 
 
@@ -147,6 +150,16 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         return numberpsa.toString()
     }
     //
+    fun updateDescriptionToBlack(UUID: String){
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
+            """UPDATE `psa`  SET   `description`=?, `type`=? WHERE `uuid` = ?;""")
+        prepared?.setString(1, descriptionMap.get(BLACK_ATOM))////LocalDate getDate
+        prepared?.setString(2, BLACK_ATOM)
+        prepared?.setString(3, UUID)
+        println("UPDATING SECTION SET TYPE=$BLACK_ATOM WHERE PSA UUID=$UUID")
+        prepared?.execute()
+    }
+
     fun updateSection(Section :String, UUID: String){
 
         var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
@@ -392,6 +405,7 @@ INSERT INTO `weighing` (
                 if (json.get("psaid").toString().equals(PSAID)) {
                     println("HOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
                     updateSection(SECTION, uuid)
+                    updateDescriptionToBlack(uuid)
                 }
             }
         }
