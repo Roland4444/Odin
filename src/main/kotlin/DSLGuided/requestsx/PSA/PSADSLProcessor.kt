@@ -144,7 +144,7 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         var counter = 0
         while (res?.next() == true) {
             numberpsa = res.getInt("number")
-            println("${counter++} number PSA at currentRow::${res.getInt("number")}")
+            ////println("${counter++} number PSA at currentRow::${res.getInt("number")}")
         }
         numberpsa++
         println("PSA NUMBER==>$numberpsa")
