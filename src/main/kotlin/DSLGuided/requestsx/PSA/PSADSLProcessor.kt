@@ -160,17 +160,6 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         prepared?.execute()
     }
 
-    fun updateSection(Section :String, UUID: String){
-
-        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
-            """UPDATE `psa` SET  `section` = ? WHERE `uuid` = ?;""")
-
-        prepared?.setString(1, Section)
-        prepared?.setString(2, UUID)
-        println("UPDATING SECTION SET SECTION=$Section WHERE PSA UUID=$UUID")
-        prepared?.execute()
-    }
-
 
     var completePSA: completePSA = {Tare: String, Sor: String, UUID: String ->run {
         var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
@@ -326,6 +315,12 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         if (HOOKED.equals(TRUE_ATOM))
             if (HOOKSECTION.length > 0)
                 section = HOOKSECTION
+        if (PSAIDHOOK.equals(TRUE_ATOM)){
+            if (isBlack(vagning, PSAID)) {
+                println("\n\n\n\n\n\nHOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
+                section=SECTION
+            }
+        }
         println("VAGNING: ${vagning}")
         println("\n\nSECTION::$section\n\n")
         val checkpsa = checkpsaexist(uuid)
@@ -339,8 +334,17 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
                 processinvagning__(invagning as JSONObject, uuid)///processinvagning(invagning as JSONObject, uuid)
             }
         }
+    }
 
-
+    fun isBlack(Arr: JSONArray, PatternBlack: String): Boolean {
+        var result = false
+        Arr.forEach { a ->
+            val B = a as JSONObject
+            if (B.get("psaid").toString().equals(PatternBlack))
+            result = true
+            return result
+        }
+        return result
     }
 
     fun createdraftfarg(depsId: Int, guuid: String, section: String) {
@@ -400,15 +404,7 @@ INSERT INTO `weighing` (
         if (prepared != null) {
             prepared.execute()
         }
-        when (PSAIDHOOK){
-            TRUE_ATOM->{
-                if (json.get("psaid").toString().equals(PSAID)) {
-                    println("HOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
-                    updateSection(SECTION, uuid)
-                    updateDescriptionToBlack(uuid)
-                }
-            }
-        }
+
         // prepared.setString();
     }
 

@@ -293,7 +293,24 @@ class PSADSLProcessorTest : TestCase() {
         assertEquals(psa.TRUE_ATOM, psa.PSAIDHOOK )
         assertEquals(psa.SECTION, "1" )
         assertEquals(psa.PSAID, "3" )
-
     }
+
+    val json ="{\"id\":42631,\"waybill\":4,\"date\":\"2021-08-12\",\"time\":\"14:17:31\",\"section\":\"2\",\"comment\":\"\\u0430\\u0431\\u044b\\u0440\\u0432\\u0430\\u043b\\u0433\",\"exportId\":4,\"uuid\":\"aeb38bcfa3ee84eb0d43fbceb7d9fdea\",\"department\":{\"id\":10,\"name\":\"\\u041f\\u0417\\u0423 3 \\u0420\\u041e\\u0416\\u0414 \\u0426\\/\\u041c\",\"value\":10,\"text\":\"\\u041f\\u0417\\u0423 3 \\u0420\\u041e\\u0416\\u0414 \\u0426\\/\\u041c\"},\"departmentId\":10,\"totalMass\":12,\"totalPrice\":2664,\"weighings\":[{\"id\":96745,\"trash\":0,\"clogging\":0,\"tare\":0,\"brutto\":12,\"metal\":{\"id\":65,\"name\":\"5\\u0410\\u0416\\u0414\",\"def\":false,\"psaid\":3},\"metalId\":65,\"mass\":12,\"price\":\"55\",\"totalPrice\":2664,\"newPrice\":\"55\",\"calculatedMass\":\"660.00\"}],\"customer\":381,\"totalPaidAmount\":0,\"hasBeenPaid\":false,\"oldCustomer\":381,\"summary\":{\"3\":{\"weight\":12,\"cost\":660,\"median\":55,\"psaid\":3}}}"
+    fun testPSAIDHOOK2() {
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        var psa  = PSADSLProcessor()
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        assertEquals(psa.TRUE_ATOM, psa.PSAIDHOOK )
+        assertEquals(psa.SECTION, "1" )
+        assertEquals(psa.PSAID, "3" )
+
+        PSADSLProcessor.processColorPSA(json, "22222",psastr,psa)
+    }
+
 
 }
