@@ -15,7 +15,7 @@ import kotlin.collections.ArrayList
 
 typealias psaDraftSection = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String, Section: String) -> Unit
 typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
-typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
+typealias completePSA = (Tara: String, Sor: String, UUID: String, Price: String) -> Unit
 
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
@@ -52,7 +52,8 @@ class PSADSLProcessor  : DSLProcessor() {
             val Sor = params.get("Sor")
             val Tara = params.get("Tara")
             val UUID = params.get("UUID")
-            m(Tara as String, Sor as String,  UUID as String)
+            val Price = params.get("Price")
+            m(Tara as String, Sor as String,  UUID as String, Price as String)
 
         }
     }
@@ -162,18 +163,20 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
     }
 
 
-    var completePSA: completePSA = {Tare: String, Sor: String, UUID: String ->run {
+    var completePSA: completePSA = {Tare: String, Sor: String, UUID: String, price: String ->run {
         var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
 
-            """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ? WHERE `uuid` = ?;"""
+            """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=? WHERE `uuid` = ?;"""
         )
        // prepared?.setFloat(1, Final)
       //  prepared?.setFloat(4, Final)
+        println("\n\n\nPRICE=>$price")
         prepared?.setFloat(1, Tare.toFloat())
         prepared?.setFloat(3, Tare.toFloat())
         prepared?.setFloat(2, Sor.toFloat())
         prepared?.setFloat(4, Sor.toFloat())
-        prepared?.setString(5, UUID)
+        prepared?.setFloat(5, price.toFloat())
+        prepared?.setString(6, UUID)
         prepared?.execute()
     }
 
