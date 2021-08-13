@@ -15,7 +15,8 @@ import kotlin.collections.ArrayList
 
 typealias psaDraftSection = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String, Section: String) -> Unit
 typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
-typealias completePSA = (Tara: String, Sor: String, UUID: String, Price: String) -> Unit
+typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
+typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price: String) -> Unit
 
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
@@ -25,12 +26,12 @@ typealias completePSA = (Tara: String, Sor: String, UUID: String, Price: String)
 
 class PSADSLProcessor  : DSLProcessor() {
     companion object {
-        fun processColorPSA(inputJSON: String, uuid: String,DSL: String,PSAProc: PSADSLProcessor ){
+        fun processColorPSA(inputJSON: String, uuid: String, DSL: String, PSAProc: PSADSLProcessor) {
             PSAProc.render(DSL)
             PSAProc.processfarg(uuid, inputJSON)
         }
 
-        fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit{
+        fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             println("into create draft psa")
             PSAProc.render(DSL)
             val f: psaDraftSection = PSAProc.createdraftsection
@@ -42,18 +43,31 @@ class PSADSLProcessor  : DSLProcessor() {
             val UUID = params.get("UUID")
             val Type = params.get("Type")
             val Section = params.get("Section")
-            f(Brutto as String, Sor as String , Metal as String , DepId as String , PlateNumber as String , UUID as String, Type as String, Section as String)
+            f(
+                Brutto as String,
+                Sor as String,
+                Metal as String,
+                DepId as String,
+                PlateNumber as String,
+                UUID as String,
+                Type as String,
+                Section as String
+            )
         }
 
 
-        fun completePSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit{
+        fun completePSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             PSAProc.render(DSL)
             val m = PSAProc.completePSA
+            val mwp = PSAProc.completePSAwithPrice
             val Sor = params.get("Sor")
             val Tara = params.get("Tara")
             val UUID = params.get("UUID")
             val Price = params.get("Price")
-            m(Tara as String, Sor as String,  UUID as String, Price as String)
+            if (Price == null)
+                m(Tara as String, Sor as String, UUID as String)
+            else
+                mwp(Tara as String, Sor as String, UUID as String, Price as String)
 
         }
     }
@@ -163,24 +177,43 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
     }
 
 
-    var completePSA: completePSA = {Tare: String, Sor: String, UUID: String, price: String ->run {
-        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
+    var completePSA: completePSA = { Tare: String, Sor: String, UUID: String ->
+        run {
+            var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
 
-            """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=? WHERE `uuid` = ?;"""
-        )
-       // prepared?.setFloat(1, Final)
-      //  prepared?.setFloat(4, Final)
-        println("\n\n\nPRICE=>$price")
-        prepared?.setFloat(1, Tare.toFloat())
-        prepared?.setFloat(3, Tare.toFloat())
-        prepared?.setFloat(2, Sor.toFloat())
-        prepared?.setFloat(4, Sor.toFloat())
-        prepared?.setFloat(5, price.toFloat())
-        prepared?.setString(6, UUID)
-        prepared?.execute()
+                """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=? WHERE `uuid` = ?;"""
+            )
+            // prepared?.setFloat(1, Final)
+            //  prepared?.setFloat(4, Final)
+            prepared?.setFloat(1, Tare.toFloat())
+            prepared?.setFloat(3, Tare.toFloat())
+            prepared?.setFloat(2, Sor.toFloat())
+            prepared?.setFloat(4, Sor.toFloat())
+            prepared?.setString(5, UUID)
+            prepared?.execute()
+        }
     }
 
-    }
+        var completePSAwithPrice: completePSAwithPrice = { Tare: String, Sor: String, UUID: String, price: String ->
+            run {
+                var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
+
+                    """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=? WHERE `uuid` = ?;"""
+                )
+                // prepared?.setFloat(1, Final)
+                //  prepared?.setFloat(4, Final)
+                println("\n\n\nPRICE=>$price")
+                prepared?.setFloat(1, Tare.toFloat())
+                prepared?.setFloat(3, Tare.toFloat())
+                prepared?.setFloat(2, Sor.toFloat())
+                prepared?.setFloat(4, Sor.toFloat())
+                prepared?.setFloat(5, price.toFloat())
+                prepared?.setString(6, UUID)
+                prepared?.execute()
+            }
+        }
+
+
     val initialsqldraft =    """
 INSERT INTO `psa` (
 `id`,`number`,`passport_id`, `company_id`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
@@ -399,13 +432,13 @@ INSERT INTO `weighing` (
         prepared?.setFloat(1, json.get("weight").toString().toFloat() ) //Brutto)
         prepared?.setFloat(2, 0.0f)////json.get("tare").toString().toFloat())
         prepared?.setFloat(3,  0.0f)///  json.get("clogging").toString().toFloat())
-        prepared?.setFloat(4, json.get("median").toString().toFloat()*1000)
+        prepared?.setFloat(4, json.get("median").toString().toFloat())
         prepared?.setInt(5, getPSAID(uuid))
         prepared?.setInt(6, json.get("psaid").toString().toInt())
         prepared?.setFloat(7, json.get("weight").toString().toFloat())//json.get("brutto").toString().toFloat() )
         prepared?.setFloat(8, 0.0f)///json.get("tare").toString().toFloat())
         prepared?.setFloat(9, 0.0f)////json.get("clogging").toString().toFloat())
-        prepared?.setFloat(10, json.get("median").toString().toFloat()*1000)
+        prepared?.setFloat(10, json.get("median").toString().toFloat())
         prepared?.setString(11, (Math.round(inspect * 100.0) / 100.0).toString())
         prepared?.setString(12, uuid)
         println("prepared=> $prepared")
@@ -439,13 +472,13 @@ INSERT INTO `weighing` (
         prepared?.setFloat(1, Brutto)/////json.get("brutto").toString().toFloat() ) //Brutto)
         prepared?.setFloat(2, 0.0f)////json.get("tare").toString().toFloat())
         prepared?.setFloat(3,  0.0f)///  json.get("clogging").toString().toFloat())
-        prepared?.setFloat(4, (json.get("price").toString().toFloat())*1000)
+        prepared?.setFloat(4, (json.get("price").toString().toFloat()))
         prepared?.setInt(5, getPSAID(uuid))
         prepared?.setInt(6, getmetalID(json))
         prepared?.setFloat(7, Brutto)//json.get("brutto").toString().toFloat() )
         prepared?.setFloat(8, 0.0f)///json.get("tare").toString().toFloat())
         prepared?.setFloat(9, 0.0f)////json.get("clogging").toString().toFloat())
-        prepared?.setFloat(10, (json.get("price").toString().toFloat())*1000)
+        prepared?.setFloat(10, (json.get("price").toString().toFloat()))
         prepared?.setString(11, (Math.round(inspect * 100.0) / 100.0).toString())
         prepared?.setString(12, uuid)
         println("prepared=> $prepared")

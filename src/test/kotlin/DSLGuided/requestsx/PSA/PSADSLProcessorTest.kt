@@ -48,7 +48,7 @@ class PSADSLProcessorTest : TestCase() {
         println("UUID $uuid")
         f("12", "0.2","5А","17", "KIRILL_F15", uuid, "black")
         val m = psa.completePSA
-         m("12", "1",  uuid, "22")
+         m("12", "1",  uuid)
 
     }//Brutto, Sor, DepId, PlateNumber, UUID, Type
 
