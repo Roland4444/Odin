@@ -88,7 +88,7 @@ class ParseDSL : Serializable {
     }
     fun Atom(input:  String): Any{
         val type = getType(input)
-        println("for string ${input} type = ${type}")
+       // println("for string ${input} type = ${type}")
         var map = mutableMapOf<String, Any>()
         var lst = mutableListOf<Any>()
         when (type){
