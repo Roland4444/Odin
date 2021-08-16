@@ -58,16 +58,21 @@ class PSADSLProcessor  : DSLProcessor() {
 
         fun completePSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             PSAProc.render(DSL)
+            println("\n\n\nIN COMPLETE PSA!!!")
             val m = PSAProc.completePSA
             val mwp = PSAProc.completePSAwithPrice
             val Sor = params.get("Sor")
             val Tara = params.get("Tara")
             val UUID = params.get("UUID")
             val Price = params.get("Price")
-            if (Price == null)
+            println("PRICE::$Price")
+            if (Price == null){
+                println("\n\n\nCALLING M")
                 m(Tara as String, Sor as String, UUID as String)
-            else
-                mwp(Tara as String, Sor as String, UUID as String, Price as String)
+                return
+            }
+            println("\n\n\n\nCALLING M with price")
+            mwp(Tara as String, Sor as String, UUID as String, Price as String)
 
         }
     }
@@ -190,6 +195,8 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
             prepared?.setFloat(2, Sor.toFloat())
             prepared?.setFloat(4, Sor.toFloat())
             prepared?.setString(5, UUID)
+            println("prepared @completePSA=> $prepared")
+
             prepared?.execute()
         }
     }
@@ -209,6 +216,8 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
                 prepared?.setFloat(4, Sor.toFloat())
                 prepared?.setFloat(5, price.toFloat())
                 prepared?.setString(6, UUID)
+                println("prepared @completePSAwithPrice=> $prepared")
+
                 prepared?.execute()
             }
         }
