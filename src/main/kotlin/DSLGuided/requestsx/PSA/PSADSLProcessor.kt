@@ -16,7 +16,7 @@ import kotlin.collections.ArrayList
 typealias psaDraftSection = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String, Section: String) -> Unit
 typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
 typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
-typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price: String) -> Unit
+typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price: String, ClientPrice: String) -> Unit
 
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
@@ -65,6 +65,7 @@ class PSADSLProcessor  : DSLProcessor() {
             val Tara = params.get("Tara")
             val UUID = params.get("UUID")
             val Price = params.get("Price")
+            val ClientPrice = params.get("ClientPrice")
             println("PRICE::$Price")
             if (Price == null){
                 println("\n\n\nCALLING M")
@@ -72,7 +73,7 @@ class PSADSLProcessor  : DSLProcessor() {
                 return
             }
             println("\n\n\n\nCALLING M with price")
-            mwp(Tara as String, Sor as String, UUID as String, Price as String)
+            mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
 
         }
     }
@@ -201,21 +202,23 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         }
     }
 
-        var completePSAwithPrice: completePSAwithPrice = { Tare: String, Sor: String, UUID: String, price: String ->
+        var completePSAwithPrice: completePSAwithPrice = { Tare: String, Sor: String, UUID: String, price: String, ClientPrice: String ->
             run {
                 var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
 
-                    """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=? WHERE `uuid` = ?;"""
+                    """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=?, `client_price`=? WHERE `uuid` = ?;"""
                 )
                 // prepared?.setFloat(1, Final)
                 //  prepared?.setFloat(4, Final)
                 println("\n\n\nPRICE=>$price")
+                println("\n\n\nClientPrice=>$ClientPrice")
                 prepared?.setFloat(1, Tare.toFloat())
                 prepared?.setFloat(3, Tare.toFloat())
                 prepared?.setFloat(2, Sor.toFloat())
                 prepared?.setFloat(4, Sor.toFloat())
                 prepared?.setFloat(5, price.toFloat())
-                prepared?.setString(6, UUID)
+                prepared?.setFloat(6, ClientPrice.toFloat())
+                prepared?.setString(7, UUID)
                 println("prepared @completePSAwithPrice=> $prepared")
 
                 prepared?.execute()
@@ -628,8 +631,19 @@ INSERT INTO `psa` (
 VALUES (
 NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?,     ?);"""
             );                              /////Необходимо выбрать
+            println("CREATE DRAFT PSA WITH SECTION")
+            var uuid = UUID
+            var section = Section
+            if (HOOKED.equals(TRUE_ATOM)){
+                if (HOOKUUID.length > 0)
+                    uuid = HOOKUUID
+                if (HOOKSECTION.length > 0)
+                    section = HOOKSECTION
+            }
+
+            println("SECTION::$section")
             val date: String = LocalDate.now().toString()
-            prepared?.setString(1, getPSANumberviaDSL(DepId, Section))//getPSANumber(DepId))
+            prepared?.setString(1, getPSANumberviaDSL(DepId, section))//getPSANumber(DepId))
            /// getPassportId()?.let { prepared?.setInt(2, it) }
           ///  prepared?.setInt(2, 2)
             prepared?.setDate(2, java.sql.Date.valueOf(date));
@@ -637,8 +651,8 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
             prepared?.setString(4, DepId)
             prepared?.setString(5, descriptionMap.get(Type))////LocalDate getDate
             prepared?.setString(6, Type)
-            prepared?.setString(7, UUID)
-            prepared?.setString(8, Section)
+            prepared?.setString(7, uuid)
+            prepared?.setString(8, section)
             println("prepared=> $prepared")
             println("\n\nSECTION::$Section\n\n")
             if (prepared != null) {
