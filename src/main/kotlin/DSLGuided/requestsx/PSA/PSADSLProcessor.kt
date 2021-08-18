@@ -179,7 +179,7 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         prepared?.setString(2, BLACK_ATOM)
         prepared?.setString(3, UUID)
         println("UPDATING SECTION SET TYPE=$BLACK_ATOM WHERE PSA UUID=$UUID")
-        prepared?.execute()
+        prepared?.execute()/////
     }
 
 
