@@ -7,7 +7,9 @@ import abstractions.Role
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import se.roland.util.Checker.checkdigit
 import se.roland.util.Department
+import java.io.IOException
 import java.sql.*
 import java.time.LocalDate
 import java.util.*
@@ -80,8 +82,10 @@ class PSADSLProcessor  : DSLProcessor() {
     val jsparser = JSONParser()
     var comment: String = ""
     val NONE = "NONE"
-
-
+    val delimiter = "#"
+    val info_start = "::{"
+    val info_finish = "}."
+    val EMPTY_CHAR = ""
     val deps__: Department = Department()
 
     val DepsMap = mapOf(6 to 1, 16 to 1, 10 to 2, 9 to 25)
@@ -107,6 +111,8 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
     var PSAID = ""
     var SECTION = ""
     var PSAIDHOOK = FALSE_ATOM
+    val COMPANY_ATOM = "C"
+    val PERSON_ATOM = "P"
 
     var external_searchdsl =""
     lateinit var psearch: PSASearchProcessor
@@ -460,6 +466,149 @@ INSERT INTO `weighing` (
 
         // prepared.setString();
     }
+
+    fun String.prepare(): String{
+        return this.replace("   "," ").replace("  "," ")
+    }
+
+    fun F_(S: String): String{
+        return S.prepare().F()
+    }
+
+    fun I_(S: String): String{
+        return S.prepare().I()
+    }
+
+    fun O_(S: String): String{
+        return S.prepare().O()
+    }
+
+    fun String.F(): String{
+        if (this.indexOf(" ")<0) return EMPTY_CHAR
+        return this.substring(0, this.indexOf(" "))
+    }
+
+    fun String.I(): String{
+        val F = this.F()
+        if (F.equals(EMPTY_CHAR))
+            return EMPTY_CHAR
+        val Str  = this.substring(F.length+1)
+        if (Str.indexOf(" ")<0)
+            return EMPTY_CHAR
+        return Str.substring(0, this.indexOf(" ")-1)
+    }
+
+    fun String.O(): String{
+        val I = this.I()
+        if (I.equals(EMPTY_CHAR))
+            return EMPTY_CHAR
+        return this.substring(this.indexOf(I)+I.length+1)
+    }
+
+    fun checkViaFIO(input: String): LinkedList<Any>{
+        val param: java.util.ArrayList<Any> = java.util.ArrayList<Any>()
+        param.add("%${F_(input)}%")
+        param.add("%${I_(input)}%")
+        param.add("%${O_(input)}%")
+        var res: ResultSet = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `lname` LIKE ? AND `fname` LIKE ? AND `mname` LIKE ?;", param)
+        return perfomResultSet(res, PERSON_ATOM)
+    }
+
+    fun perfomResultSet(RS: ResultSet, TYPE: String): LinkedList<Any>{
+        var R = LinkedList<Any>()
+        val Empty = LinkedList<Any>()
+        if (RS.next()){
+            R.addFirst(TYPE)
+            R.add(RS.getInt("id"))
+            if (RS.next())
+                return  Empty;
+            return R;
+        }
+        return Empty;
+    }
+
+    fun getUniqueClient(input: String): LinkedList<Any>{
+        val param: java.util.ArrayList<Any> = java.util.ArrayList<Any>()
+        param.add("%$input%")
+        var res: ResultSet = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`company` WHERE `inn` LIKE ?;", param)
+        var R = perfomResultSet(res, COMPANY_ATOM);
+        if ((R.size)>0)
+            return R;
+        res = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`company` WHERE `name` LIKE ?;", param)
+        R = perfomResultSet(res, COMPANY_ATOM);
+        if ((R.size)>0)
+            return R;
+        res = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `number` LIKE ?;", param)
+        R = perfomResultSet(res, PERSON_ATOM);
+        if ((R.size)>0)
+            return R;
+        res = psearch.psaconnector.executor!!.executePreparedSelect(
+            "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
+            processPassportField(input, 4, false)
+        )
+        R = perfomResultSet(res, PERSON_ATOM);
+        if ((R.size)>0)
+            return R;
+        res = psearch.psaconnector.executor!!.executePreparedSelect(
+            "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
+            processPassportField(input, 2, true)
+        )
+        R = perfomResultSet(res, PERSON_ATOM);
+        if ((R.size)>0)
+            return R;
+        res = psearch.psaconnector.executor!!.executePreparedSelect(
+            "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
+            processPassportField(input, 3, true)
+        )
+        R = perfomResultSet(res, PERSON_ATOM);
+        if ((R.size)>0)
+            return R;
+        R=checkViaFIO(input)
+        if ((R.size)>0)
+            return R;
+        return LinkedList<Any>()
+    }
+
+    fun setUniqueClient(input: String): KeyValue{
+        return KeyValue(input, getUniqueClient(input))
+    }
+
+
+
+    @Throws(SQLException::class)
+    fun processCOmpanyRequest(res: ResultSet): String? {
+        return res.getString("name") + info_start + "'C':" + "'" + res.getString("id") + "'" + info_finish
+    }
+
+    @Throws(SQLException::class, IOException::class)
+    fun processPassportRequest(res: ResultSet): String? {
+        val pass_serie = res.getString("series")
+        val pass_number = res.getString("number")
+        val type = "P"
+        return res.getString("lname") + delimiter + res.getString("fname") + delimiter + res.getString("mname") + info_start + "'" + type + "':" + "'" + res.getString(
+            "id"
+        ) + "'" + info_finish
+    }
+
+
+    fun processPassportField(input: String, seriesLength: Int, ignoreDigits: Boolean): java.util.ArrayList<Any>? {
+        val res = java.util.ArrayList<Any>()
+        val sb_series = StringBuilder()
+        val sb_number = StringBuilder()
+        var seriescounter = 0
+        for (i in 1..input.length) {
+            if ((checkdigit(input[i - 1]) || ignoreDigits) && seriescounter < seriesLength) {
+                seriescounter++
+                sb_series.append(input[i - 1])
+            } else sb_number.append(input[i - 1])
+        }
+        res.add("%$sb_series%")
+        res.add("%$sb_number%")
+        println("SERIES::>$sb_series")
+        println("number::>$sb_number")
+        return res
+    }
+
 
 
     fun processinvagning(json: JSONObject, uuid: String){

@@ -312,5 +312,61 @@ class PSADSLProcessorTest : TestCase() {
         PSADSLProcessor.processColorPSA(json, "22222",psastr,psa)
     }
 
+    fun testCheckUnique() {
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        var psa  = PSADSLProcessor()
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        assertEquals(psa.COMPANY_ATOM, psa.getUniqueClient("3017032528").first)
+        assertEquals(0, psa.getUniqueClient("1210").size)
+    }
+
+    fun testF() {
+        var psa  = PSADSLProcessor()
+        val FIO = "Краснов Кирилл Вадимович"
+        assertEquals("Краснов", psa.F_(FIO))
+        assertEquals("Кирилл", psa.I_(FIO))
+        assertEquals("Вадимович", psa.O_(FIO))
+    }
+
+    fun testCalculateUnique(){
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        var psa  = PSADSLProcessor()
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        val FIO = "Краснов Кирилл Вадимович"
+        val R = psa.getUniqueClient(FIO)
+        assertEquals(2, R.size)
+        println(R.last)
+        assertEquals(28372, R.last)
+    }
+
+    fun testCalculateMegafon(){
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        var psa  = PSADSLProcessor()
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        val COMPANY = "МегаФон"
+        val R = psa.getUniqueClient(COMPANY)
+        assertEquals(2, R.size)
+        println(R.last)
+        assertEquals(3, R.last)
+        val trans = "транслом"
+        val R_ = psa.getUniqueClient(trans)
+        println("::${R_.last}")
+    }
+
 
 }
