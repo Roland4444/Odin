@@ -68,6 +68,7 @@ class PSADSLProcessor  : DSLProcessor() {
             val UUID = params.get("UUID")
             val Price = params.get("Price")
             val ClientPrice = params.get("ClientPrice")
+            val Client = params.get("Client")
             println("PRICE::$Price")
             if (Price == null){
                 println("\n\n\nCALLING M")
@@ -76,6 +77,10 @@ class PSADSLProcessor  : DSLProcessor() {
             }
             println("\n\n\n\nCALLING M with price")
             mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
+            if (Client !=null){
+                println("SETTING UP CLIENT ${Client} @ PSA ${UUID}")
+                PSAProc.setupUniqueClient(UUID, Client)
+            }
 
         }
     }
@@ -525,6 +530,67 @@ INSERT INTO `weighing` (
             return R;
         }
         return Empty;
+    }
+
+    @Throws(SQLException::class)
+    private fun updateCompany(UUID: String, name: String, id: Int) {
+        val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
+            .prepareStatement("UPDATE psa set company_id = ?, client = ?, passport_id=NULL   WHERE uuid = ?")
+        stmt.setInt(1, id)
+        stmt.setString(2, name)
+        stmt.setString(3, UUID)
+        println(stmt)
+        stmt.executeUpdate()
+    }
+
+    @Throws(SQLException::class)
+    private fun updateClient(UUID: String, name: String, idclient: Int) {
+        val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
+            .prepareStatement("UPDATE psa set passport_id = ?, client = ?, company_id=NULL   WHERE uuid = ?")
+        stmt.setInt(1, idclient)
+        stmt.setString(2, name)
+        stmt.setString(3, UUID)
+        println(stmt)
+        stmt.executeUpdate()
+    }
+
+    @Throws(SQLException::class)
+    fun getCompanyName(ID: Int): String? {
+        var param = java.util.ArrayList<Any?>()
+        param.add(ID)
+        val res: ResultSet =
+            psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`company` WHERE `id` = ?", param)
+        if (res.next()) {
+            return res.getString("name")
+        };
+        return ""
+    }
+
+    @Throws(SQLException::class, IOException::class)
+    fun getClientName(ID: Int): String? {
+        var param = java.util.ArrayList<Any?>()
+        param.add(ID)
+        val res: ResultSet =
+            psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `id` = ?", param)
+        if (res.next())
+            return "${res.getString("lname")} ${res.getString("fname")} ${res.getString("mname")}"
+        return ""
+
+    }
+
+    fun setupUniqueClient(UUID: String, Client: String){
+        val R = getUniqueClient(Client)
+        when (R.size){
+            0 -> return;
+            2 -> {
+                val TYPE = R.first
+                val ID: Int= R.last.toString().toInt()
+                when (TYPE){
+                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
+                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
+                }
+            }
+        }
     }
 
     fun getUniqueClient(input: String): LinkedList<Any>{
