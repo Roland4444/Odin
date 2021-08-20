@@ -398,6 +398,11 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         }
         if (isBLACK)
             updateDescriptionToBlack(uuid)
+        if (js.get("client")!=null){
+            val client: String = js.get("client").toString()
+            println("FOUND CLIENT::$client")
+            setupUniqueClient(uuid, client)
+        }
     }
 
     fun isBlack(Arr: JSONArray, PatternBlack: String): Boolean {
