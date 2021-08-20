@@ -640,28 +640,6 @@ INSERT INTO `weighing` (
         return LinkedList<Any>()
     }
 
-    fun setUniqueClient(input: String): KeyValue{
-        return KeyValue(input, getUniqueClient(input))
-    }
-
-
-
-    @Throws(SQLException::class)
-    fun processCOmpanyRequest(res: ResultSet): String? {
-        return res.getString("name") + info_start + "'C':" + "'" + res.getString("id") + "'" + info_finish
-    }
-
-    @Throws(SQLException::class, IOException::class)
-    fun processPassportRequest(res: ResultSet): String? {
-        val pass_serie = res.getString("series")
-        val pass_number = res.getString("number")
-        val type = "P"
-        return res.getString("lname") + delimiter + res.getString("fname") + delimiter + res.getString("mname") + info_start + "'" + type + "':" + "'" + res.getString(
-            "id"
-        ) + "'" + info_finish
-    }
-
-
     fun processPassportField(input: String, seriesLength: Int, ignoreDigits: Boolean): java.util.ArrayList<Any>? {
         val res = java.util.ArrayList<Any>()
         val sb_series = StringBuilder()
@@ -679,8 +657,6 @@ INSERT INTO `weighing` (
         println("number::>$sb_number")
         return res
     }
-
-
 
     fun processinvagning(json: JSONObject, uuid: String){
         val prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
