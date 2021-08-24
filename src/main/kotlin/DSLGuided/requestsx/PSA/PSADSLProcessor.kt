@@ -540,7 +540,7 @@ INSERT INTO `weighing` (
     @Throws(SQLException::class)
     private fun updateCompany(UUID: String, name: String, id: Int) {
         val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
-            .prepareStatement("UPDATE psa set company_id = ?, client = ?, passport_id=NULL   WHERE uuid = ?")
+            .prepareStatement("UPDATE psa set company_id = ?, client = ?, `vat`='НДС исчисляется налоговым агентом', passport_id=NULL   WHERE uuid = ?")
         stmt.setInt(1, id)
         stmt.setString(2, name)
         stmt.setString(3, UUID)
@@ -551,7 +551,7 @@ INSERT INTO `weighing` (
     @Throws(SQLException::class)
     private fun updateClient(UUID: String, name: String, idclient: Int) {
         val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
-            .prepareStatement("UPDATE psa set passport_id = ?, client = ?, company_id=NULL   WHERE uuid = ?")
+            .prepareStatement("UPDATE psa set passport_id = ?, client = ?, `vat`='без НДС', company_id=NULL   WHERE uuid = ?")
         stmt.setInt(1, idclient)
         stmt.setString(2, name)
         stmt.setString(3, UUID)
