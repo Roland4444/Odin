@@ -23,7 +23,7 @@ typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
-///////'psa2'=>::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
+///////'psa2'=>::activatePSA{'true':'url'},::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
 /////psaId => metal in PSA   , table metal, db PSA
 
 class PSADSLProcessor  : DSLProcessor() {
@@ -102,37 +102,31 @@ VALUES (
 NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом и отходы черных металлов', 'black',CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,    ?,           '0',        '0',        NULL,    ?);"""
                                             //////Необходимо выбрать
 
-    var login: String=""
-    var pass: String=""
-    var urldb: String =""
-  /////  var urlPsanumberUrl: String =""   DEPRECATED!
- ////   var keyparam_: String =""  DEPRECATED!
-    var dumb: String = ""
-    var json_ = ""
-    var HOOKUUID = ""
-    var HOOKSECTION = ""
-    var HOOKED = FALSE_ATOM
+    var login: String=  EMPTY_CHAR
+    var pass: String=   EMPTY_CHAR
+    var urldb: String = EMPTY_CHAR
 
-    var PSAID = ""
-    var SECTION = ""
+    var dumb: String = EMPTY_CHAR
+    var json_ = EMPTY_CHAR
+    var HOOKUUID = EMPTY_CHAR
+    var HOOKSECTION = EMPTY_CHAR
+    var HOOKED = FALSE_ATOM
+    var ACTIVATE_PSA = FALSE_ATOM
+    var URL_TO_ACTIVATE = EMPTY_CHAR
+
+    var PSAID = EMPTY_CHAR
+    var SECTION = EMPTY_CHAR
     var PSAIDHOOK = FALSE_ATOM
     val COMPANY_ATOM = "C"
     val PERSON_ATOM = "P"
 
-    var external_searchdsl =""
+    var external_searchdsl = EMPTY_CHAR
     lateinit var psearch: PSASearchProcessor
     override fun render(DSL: String): Any {
         parseRoles(DSL)
         clearhooked()
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
-    //    executor = Executor(urldb, login, pass)
-    /////    urlPsanumberUrl += "?"+keyparam_+"="
-        if (enabled == "true") {
-        ///        dbConnection = DriverManager.getConnection(urldb, login, pass)
-        //    dbConnection= executor.conn
-        }
-
         return "OK"
     }
 
@@ -916,6 +910,17 @@ VALUES
         HOOKED=FALSE_ATOM
     }
 
+    val activatePSA: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "activatePSA"){
+                val param: KeyValue = a.key.Param as KeyValue
+                ACTIVATE_PSA = param.Key
+                URL_TO_ACTIVATE = param.Value.toString()
+
+            }
+        }
+    }
+
     val HOOK: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "HOOK"){
@@ -1008,6 +1013,7 @@ VALUES
             "json" -> mapper.put(R, json)
             "HOOK" -> mapper.put(R, HOOK)
             "psaIDtoSEhooK" -> mapper.put(R, psaIDtoSEhooK)
+            "activatePSA" -> mapper.put(R, activatePSA)
         }
     }
 
