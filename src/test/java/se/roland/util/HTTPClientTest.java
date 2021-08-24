@@ -1,7 +1,9 @@
 package se.roland.util;
 
+import abstractions.KeyValue;
 import junit.framework.TestCase;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -26,5 +28,10 @@ public class HTTPClientTest extends TestCase {
     public void testAcess(){
 
 
+    }
+
+    public void testSendPost() throws IOException {
+        var url = "http://192.168.0.126:15000/psa/psa/gettest?id=50";
+        System.out.println(HTTPClient.sendGet(url));
     }
 }
