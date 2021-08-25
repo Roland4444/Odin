@@ -80,8 +80,7 @@ class PSADSLProcessor  : DSLProcessor() {
             mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
             if (Client !=null){
                 println("SETTING UP CLIENT ${Client} @ PSA ${UUID}")
-                PSAProc.setupUniqueClient(UUID, Client)
-                PSAProc.activatePSA(UUID)
+                PSAProc.setupUniqueClientAndActivate(UUID, Client)
             }
         }
     }
@@ -378,9 +377,9 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         if (js.get("client")!=null){
             val client: String = js.get("client").toString()
             println("FOUND CLIENT::$client")
-            setupUniqueClient(uuid, client)
+            setupUniqueClientAndActivate(uuid, client)
         }
-        activatePSA(uuid)
+
     }
 
     fun activatePSA(uuid: String){
@@ -393,7 +392,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         Arr.forEach { a ->
             val B = a as JSONObject
             if (B.get("psaid").toString().equals(PatternBlack))
-            result = true
+                result = true
             return result
         }
         return result
@@ -600,7 +599,7 @@ INSERT INTO `weighing` (
 
     }
 
-    fun setupUniqueClient(UUID: String, Client: String){
+    fun setupUniqueClientAndActivate(UUID: String, Client: String){
         val R = getUniqueClient(Client)
         when (R.size){
             0 -> return;
@@ -613,6 +612,7 @@ INSERT INTO `weighing` (
                 }
             }
         }
+        activatePSA(UUID)
     }
 
     fun getUniqueClient(input: String): LinkedList<Any>{

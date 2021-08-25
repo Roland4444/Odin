@@ -417,6 +417,7 @@ class PSADSLProcessorTest : TestCase() {
         psa.render(psastr)
         assertEquals(false, psa.checkpass("1203","855467"))
         assertEquals(true, psa.checkpass("1203","855464"))
+        assertEquals(true, psa.checkpass("HHHH","opoppoop"))
     }
 
 }
