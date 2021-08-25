@@ -593,8 +593,18 @@ INSERT INTO `weighing` (
         param.add(ID)
         val res: ResultSet =
             psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `id` = ?", param)
-        if (res.next())
-            return "${res.getString("lname")} ${res.getString("fname")} ${res.getString("mname")}"
+        if (res.next()){
+            val STr = java.lang.StringBuilder()
+            if (res.getString("lname")!=null)
+                STr.append(res.getString("lname")+" ")
+            if (res.getString("fname")!=null)
+                STr.append(res.getString("fname")+" ")
+            if (res.getString("mname")!=null)
+                STr.append(res.getString("mname"))
+            return STr.toString()
+        }
+
+
         return ""
 
     }
