@@ -9,6 +9,7 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import se.roland.util.Checker.checkdigit
 import se.roland.util.Department
+import se.roland.util.HTTPClient
 import java.io.IOException
 import java.sql.*
 import java.time.LocalDate
@@ -82,43 +83,34 @@ class PSADSLProcessor  : DSLProcessor() {
                 PSAProc.setupUniqueClient(UUID, Client)
             }
 
+
         }
     }
     val jsparser = JSONParser()
     var comment: String = ""
-    val NONE = "NONE"
-    val delimiter = "#"
-    val info_start = "::{"
-    val info_finish = "}."
-    val EMPTY_CHAR = ""
-    val deps__: Department = Department()
+    val NONE               = "NONE"
+    val EMPTY_CHAR         = ""
+    val deps__             = Department()
+    val DepsMap            = mapOf(6 to 1, 16 to 1, 10 to 2, 9 to 25)
+    var login              = EMPTY_CHAR
+    var pass               = EMPTY_CHAR
+    var urldb              = EMPTY_CHAR
 
-    val DepsMap = mapOf(6 to 1, 16 to 1, 10 to 2, 9 to 25)
+    var dumb               = EMPTY_CHAR
+    var json_              = EMPTY_CHAR
+    var HOOKUUID           = EMPTY_CHAR
+    var HOOKSECTION        = EMPTY_CHAR
+    var HOOKED             = FALSE_ATOM
+    var ACTIVATE_PSA       = FALSE_ATOM
+    var URL_TO_ACTIVATE    = EMPTY_CHAR
 
-    val psaSql =                         """
-INSERT INTO `psa`(
-`id`,`number`,`passport_id`,`date`,`plate_number`,`client`,`department_id`,`description`,             `type`,     `created_at`,    `diamond`,`payment_date`, `comment`,`check_printed`,`deferred`,`filename`,`uuid`) 
-VALUES (
-NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом и отходы черных металлов', 'black',CURRENT_TIMESTAMP,      '0', CURRENT_TIMESTAMP,    ?,           '0',        '0',        NULL,    ?);"""
-                                            //////Необходимо выбрать
-
-    var login: String=  EMPTY_CHAR
-    var pass: String=   EMPTY_CHAR
-    var urldb: String = EMPTY_CHAR
-
-    var dumb: String = EMPTY_CHAR
-    var json_ = EMPTY_CHAR
-    var HOOKUUID = EMPTY_CHAR
-    var HOOKSECTION = EMPTY_CHAR
-    var HOOKED = FALSE_ATOM
-    var ACTIVATE_PSA = FALSE_ATOM
-    var URL_TO_ACTIVATE = EMPTY_CHAR
-
-    var PSAID = EMPTY_CHAR
-    var SECTION = EMPTY_CHAR
-    var PSAIDHOOK = FALSE_ATOM
-    val COMPANY_ATOM = "C"
-    val PERSON_ATOM = "P"
+    var PSAID              = EMPTY_CHAR
+    var SECTION            = EMPTY_CHAR
+    var PSAIDHOOK          = FALSE_ATOM
+    val COMPANY_ATOM       = "C"
+    val PERSON_ATOM        = "P"
+    val BLACK_ATOM         = "black"
+    val COLOR_ATOM         = "color"
 
     var external_searchdsl = EMPTY_CHAR
     lateinit var psearch: PSASearchProcessor
@@ -127,14 +119,11 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         clearhooked()
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
-        return "OK"
+        return OK
     }
 
-    val BLACK_ATOM = "black"
-    val COLOR_ATOM = "color"
+
     val descriptionMap = mapOf(BLACK_ATOM to "Лом и отходы черных металлов", COLOR_ATOM to "Лом и отходы цветных металлов")
-
-
 
     fun getPSANumberviaDSL(DepsId: String): String{
         println("in DSL psa getnumber")
@@ -168,10 +157,9 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
         val res = psearch.getPSA()
         var numberpsa = 0;
         var counter = 0
-        while (res?.next() == true) {
+        while (res?.next() == true)
             numberpsa = res.getInt("number")
             ////println("${counter++} number PSA at currentRow::${res.getInt("number")}")
-        }
         numberpsa++
         println("PSA NUMBER==>$numberpsa")
         return numberpsa.toString()
@@ -191,11 +179,8 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
     var completePSA: completePSA = { Tare: String, Sor: String, UUID: String ->
         run {
             var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
-
                 """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=? WHERE `uuid` = ?;"""
             )
-            // prepared?.setFloat(1, Final)
-            //  prepared?.setFloat(4, Final)
             prepared?.setFloat(1, Tare.toFloat())
             prepared?.setFloat(3, Tare.toFloat())
             prepared?.setFloat(2, Sor.toFloat())
@@ -204,17 +189,15 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
             println("prepared @completePSA=> $prepared")
 
             prepared?.execute()
+            activatePSA(UUID)
         }
     }
 
         var completePSAwithPrice: completePSAwithPrice = { Tare: String, Sor: String, UUID: String, price: String, ClientPrice: String ->
             run {
                 var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
-
                     """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=?, `client_price`=? WHERE `uuid` = ?;"""
                 )
-                // prepared?.setFloat(1, Final)
-                //  prepared?.setFloat(4, Final)
                 println("\n\n\nPRICE=>$price")
                 println("\n\n\nClientPrice=>$ClientPrice")
                 prepared?.setFloat(1, Tare.toFloat())
@@ -227,17 +210,14 @@ NULL,    ?         , ?,           ?,       ?,    'Не выбран', ?, 'Лом
                 println("prepared @completePSAwithPrice=> $prepared")
 
                 prepared?.execute()
+                activatePSA(UUID)
             }
+
         }
 
-
-    val initialsqldraft =    """
-INSERT INTO `psa` (
-`id`,`number`,`passport_id`, `company_id`,  `date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
-VALUES (
-NULL,   ?,         ?,           2,             ?,         ?, 'Не выбран',      ?,              ?,       ?,CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
-
-                                             ////Необходимо выбрать
+    fun constructURLwithId(id: Int): String{
+        return "$URL_TO_ACTIVATE?id=$id"
+    }
 
     fun checkpsaexist(uuid: String): Boolean{
         var param = ArrayList<Any>()
@@ -397,6 +377,12 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             println("FOUND CLIENT::$client")
             setupUniqueClient(uuid, client)
         }
+        activatePSA(uuid)
+    }
+
+    fun activatePSA(uuid: String){
+        if (ACTIVATE_PSA.equals(TRUE_ATOM))
+            println("ACTIVATING PSA!!! UUID::$uuid, ${HTTPClient.sendGet(constructURLwithId(psearch.getPSAIdViaUUID(uuid)))}")
     }
 
     fun isBlack(Arr: JSONArray, PatternBlack: String): Boolean {
@@ -834,8 +820,6 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
             println("SECTION::$section")
             val date: String = LocalDate.now().toString()
             prepared?.setString(1, getPSANumberviaDSL(DepId, section))//getPSANumber(DepId))
-           /// getPassportId()?.let { prepared?.setInt(2, it) }
-          ///  prepared?.setInt(2, 2)
             prepared?.setDate(2, java.sql.Date.valueOf(date));
             prepared?.setString(3, PlateNumber)
             prepared?.setString(4, DepId)
@@ -849,8 +833,7 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
                 prepared.execute()
             }
             prepared = psearch.psaconnector.executor!!.conn.prepareStatement("""SELECT *  FROM `psa` WHERE `date` = ? AND `plate_number` LIKE ? 
-                        AND `department_id` = ? AND `comment`='fromScales' AND `uuid`= ?;"""
-            )
+                        AND `department_id` = ? AND `comment`='fromScales' AND `uuid`= ?;"""            )
             prepared?.setDate(1, java.sql.Date.valueOf(date))
             prepared?.setString(2, PlateNumber)
             prepared?.setString(3, DepId)
@@ -862,13 +845,11 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
                 if (rs.next())
                     PSAId = rs.getInt(1)
             }
-
             prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
 """INSERT INTO `weighing` 
 (`id`, `brutto`,  `sor`, `tare`,`price`, `psa_id`, `metal_id`,  `client_price`, `inspection`, `uuid`) 
 VALUES 
 (NULL,     ?,       ?,    0.0,   0.0,          ?,        ?,             0.0,           ?,            ?);""")
-
             prepared?.setInt(1,Brutto.toInt())
             prepared?.setFloat(2, Sor.toFloat())
             prepared?.setInt(3, PSAId)
@@ -912,12 +893,15 @@ VALUES
 
     val activatePSA: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "activatePSA"){
-                val param: KeyValue = a.key.Param as KeyValue
-                ACTIVATE_PSA = param.Key
-                URL_TO_ACTIVATE = param.Value.toString()
+            if (a.key.Name == "activatePSA")
+                ACTIVATE_PSA = a.key.Param as String
+        }
+    }
 
-            }
+    val urltoActivate: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "urltoActivate")
+                URL_TO_ACTIVATE = a.key.Param as String
         }
     }
 
@@ -937,7 +921,7 @@ VALUES
                                 HOOKUUID = a.Value as String
                                 println("HOOK UUID to=>$HOOKUUID")
                             }
-                            };
+                        };
                         is String -> HOOKED = a;
                     }
                 }
@@ -1014,6 +998,7 @@ VALUES
             "HOOK" -> mapper.put(R, HOOK)
             "psaIDtoSEhooK" -> mapper.put(R, psaIDtoSEhooK)
             "activatePSA" -> mapper.put(R, activatePSA)
+            "urltoActivate" -> mapper.put(R, urltoActivate)
         }
     }
 

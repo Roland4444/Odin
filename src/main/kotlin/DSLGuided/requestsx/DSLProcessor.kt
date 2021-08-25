@@ -8,6 +8,7 @@ typealias DumbHandler2 = (Param:Int, Param2: Int) -> Int
 abstract class DSLProcessor() {
     val TRUE_ATOM = "true"
     val FALSE_ATOM = "false"
+    val OK = "OK"
     val EMPTY_ATOM = ""
     var enabled: String = "false"
     var parser = ParseDSL()

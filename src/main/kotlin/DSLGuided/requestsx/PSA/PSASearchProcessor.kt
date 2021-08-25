@@ -301,6 +301,17 @@ class PSASearchProcessor  : DSLProcessor() {
         D.forEach { appendRole(it) }
     }
 
+    fun getPSAIdViaUUID(UUID: String): Int {
+        var param = ArrayList<Any?>()
+        param.add(UUID)
+        val res: ResultSet =
+            psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`psa` WHERE `uuid` = ?;", param)
+        if (res.next())
+            return res.getInt("id")
+        else
+            return -1;
+    }
+
 
     fun getWViaPSAId(PsaId: String): ResultSet {
         var param = ArrayList<Any?>()

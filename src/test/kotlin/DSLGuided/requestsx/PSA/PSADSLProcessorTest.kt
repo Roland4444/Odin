@@ -1,5 +1,4 @@
 package DSLGuided.requestsx.PSA
-import DSLGuided.requestsx.DSLProcessor
 import junit.framework.TestCase
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
@@ -7,7 +6,6 @@ import se.roland.abstractions.timeBasedUUID
 import java.nio.file.Files
 
 import java.util.HashMap
-import kotlin.test.assertNotEquals
 import java.io.File as File
 
 class PSADSLProcessorTest : TestCase() {
@@ -380,6 +378,32 @@ class PSADSLProcessorTest : TestCase() {
         psa.psearch=PSASearchProcessor
         psa.render(psastr)
         PSADSLProcessor.processColorPSA(input,"565656565", psastr, psa)
+    }
+
+    fun testGetActivatePSA() {
+        var psa  = PSADSLProcessor()
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::activatePSA{false},::urltoActivate{url},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        assertEquals(psa.FALSE_ATOM, psa.ACTIVATE_PSA)
+        assertEquals("url", psa.URL_TO_ACTIVATE)
+    }
+
+    fun testConstructURLwithId() {
+        var psa  = PSADSLProcessor()
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        assertEquals(psa.TRUE_ATOM, psa.ACTIVATE_PSA)
+        assertEquals("http://192.168.0.126:15000/psa/psa/gettest?id=12", psa.constructURLwithId(12))
     }
 
 }

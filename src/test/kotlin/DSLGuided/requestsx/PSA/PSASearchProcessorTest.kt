@@ -218,8 +218,13 @@ fun testsearchplatenumber(){
 
 
   //  ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ!
-
-
+    fun testGetPSAIdViaUUID() {
+      psaconnector.render(initDB)
+      var psasearch = PSASearchProcessor()
+      psasearch. psaconnector=psaconnector
+      val id = psasearch.getPSAIdViaUUID("2156388d-056f-11ec-8133-1d1a29bab143")
+      assertEquals(141701, id)
+    }
 
 
 }
