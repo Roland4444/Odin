@@ -34,7 +34,6 @@ class PSADSLProcessor  : DSLProcessor() {
             PSAProc.render(DSL)
             PSAProc.processfarg(uuid, inputJSON)
         }
-
         fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             println("into create draft psa")
             PSAProc.render(DSL)
@@ -82,9 +81,8 @@ class PSADSLProcessor  : DSLProcessor() {
             if (Client !=null){
                 println("SETTING UP CLIENT ${Client} @ PSA ${UUID}")
                 PSAProc.setupUniqueClient(UUID, Client)
+                PSAProc.activatePSA(UUID)
             }
-
-
         }
     }
 
@@ -195,7 +193,7 @@ class PSADSLProcessor  : DSLProcessor() {
             println("prepared @completePSA=> $prepared")
 
             prepared?.execute()
-            activatePSA(UUID)
+
         }
     }
 
@@ -216,7 +214,6 @@ class PSADSLProcessor  : DSLProcessor() {
                 println("prepared @completePSAwithPrice=> $prepared")
 
                 prepared?.execute()
-                activatePSA(UUID)
             }
 
         }
