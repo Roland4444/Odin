@@ -5,6 +5,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -63,6 +64,21 @@ public class HTTPClient {
         var resp = EntityUtils.toString(response.getEntity());
         return resp;
     };
+
+    public static String sendPost(String serie, String number, String url) throws IOException {
+        HttpPost post = new HttpPost(url);
+        List<NameValuePair> urlParameters = new ArrayList<>();
+        urlParameters.add(new BasicNameValuePair("serie", serie));
+        urlParameters.add(new BasicNameValuePair("number", number));
+        String resp = "";
+        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(post)) {
+            resp = EntityUtils.toString(response.getEntity());
+        }
+        return resp;
+    }
 
 
     public static  String sendGet(String url) throws IOException {

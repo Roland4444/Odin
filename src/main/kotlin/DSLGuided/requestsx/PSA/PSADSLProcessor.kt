@@ -10,6 +10,7 @@ import org.json.simple.parser.JSONParser
 import se.roland.util.Checker.checkdigit
 import se.roland.util.Department
 import se.roland.util.HTTPClient
+import se.roland.util.HTTPClient.sendPost
 import java.io.IOException
 import java.sql.*
 import java.time.LocalDate
@@ -24,7 +25,7 @@ typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
-///////'psa2'=>::activatePSA{'true':'url'},::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
+///////'psa2'=>::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
 /////psaId => metal in PSA   , table metal, db PSA
 
 class PSADSLProcessor  : DSLProcessor() {
@@ -86,33 +87,38 @@ class PSADSLProcessor  : DSLProcessor() {
 
         }
     }
+
+    val EFFECT = "является действующим"
+    val UNEFFECT = "ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ"
+
     val jsparser = JSONParser()
     var comment: String = ""
     val NONE               = "NONE"
-    val EMPTY_CHAR         = ""
     val deps__             = Department()
     val DepsMap            = mapOf(6 to 1, 16 to 1, 10 to 2, 9 to 25)
-    var login              = EMPTY_CHAR
-    var pass               = EMPTY_CHAR
-    var urldb              = EMPTY_CHAR
+    var login              = EMPTY_ATOM
+    var pass               = EMPTY_ATOM
+    var urldb              = EMPTY_ATOM
 
-    var dumb               = EMPTY_CHAR
-    var json_              = EMPTY_CHAR
-    var HOOKUUID           = EMPTY_CHAR
-    var HOOKSECTION        = EMPTY_CHAR
+    var dumb               = EMPTY_ATOM
+    var json_              = EMPTY_ATOM
+    var HOOKUUID           = EMPTY_ATOM
+    var HOOKSECTION        = EMPTY_ATOM
     var HOOKED             = FALSE_ATOM
     var ACTIVATE_PSA       = FALSE_ATOM
-    var URL_TO_ACTIVATE    = EMPTY_CHAR
+    var URL_TO_ACTIVATE    = EMPTY_ATOM
+    var PASS_CHECK_URL     = EMPTY_ATOM
+    var PASS_CHECK         = FALSE_ATOM
 
-    var PSAID              = EMPTY_CHAR
-    var SECTION            = EMPTY_CHAR
+    var PSAID              = EMPTY_ATOM
+    var SECTION            = EMPTY_ATOM
     var PSAIDHOOK          = FALSE_ATOM
     val COMPANY_ATOM       = "C"
     val PERSON_ATOM        = "P"
     val BLACK_ATOM         = "black"
     val COLOR_ATOM         = "color"
 
-    var external_searchdsl = EMPTY_CHAR
+    var external_searchdsl = EMPTY_ATOM
     lateinit var psearch: PSASearchProcessor
     override fun render(DSL: String): Any {
         parseRoles(DSL)
@@ -474,24 +480,24 @@ INSERT INTO `weighing` (
     }
 
     fun String.F(): String{
-        if (this.indexOf(" ")<0) return EMPTY_CHAR
+        if (this.indexOf(" ")<0) return EMPTY_ATOM
         return this.substring(0, this.indexOf(" "))
     }
 
     fun String.I(): String{
         val F = this.F()
-        if (F.equals(EMPTY_CHAR))
-            return EMPTY_CHAR
+        if (F.equals(EMPTY_ATOM))
+            return EMPTY_ATOM
         val Str  = this.substring(F.length+1)
         if (Str.indexOf(" ")<0)
-            return EMPTY_CHAR
+            return EMPTY_ATOM
         return Str.substring(0, this.indexOf(" ")-1)
     }
 
     fun String.O(): String{
         val I = this.I()
-        if (I.equals(EMPTY_CHAR))
-            return EMPTY_CHAR
+        if (I.equals(EMPTY_ATOM))
+            return EMPTY_ATOM
         return this.substring(this.indexOf(I)+I.length+1)
     }
 
@@ -528,8 +534,42 @@ INSERT INTO `weighing` (
         stmt.executeUpdate()
     }
 
+    fun checkpassport(passportId: Int): Boolean{
+        var param = java.util.ArrayList<Any?>()
+        param.add(passportId)
+        val res: ResultSet =
+            psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `id` = ?", param)
+        if (!res.next())
+            return false
+        val seria = res.getString("series")
+        val number = res.getString("number")
+        return checkpass(seria, number)
+    }
+
+    fun  checkpass(series: String, number: String) : Boolean{
+        System.out.println("series "+series + "number"+ number);
+        var answer = sendPost(series, number, PASS_CHECK_URL);
+        var status = getStatusText(answer);
+        System.out.println("STATUS "+status);
+        when (status){
+            EFFECT ->  return true;
+            UNEFFECT ->  return false;
+        }
+        return false;
+    }
+
+    fun getStatusText(input: String): String? {
+        val first = "\"StatusText\":"
+        val index = input.indexOf(first)
+        return if (index < 1) "" else input.substring(index + first.length + 1, input.length - 3)
+    }
+
     @Throws(SQLException::class)
     private fun updateClient(UUID: String, name: String, idclient: Int) {
+        if (PASS_CHECK.equals(TRUE_ATOM)){
+            if (!checkpassport(idclient))
+                return;
+        }
         val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
             .prepareStatement("UPDATE psa set passport_id = ?, client = ?, `vat`='без НДС', company_id=NULL   WHERE uuid = ?")
         stmt.setInt(1, idclient)
@@ -979,6 +1019,20 @@ VALUES
         }
     }
 
+    val passcheckurl: RoleHandler= {
+        mapper.forEach { a ->
+            if (a.key.Name == "passcheckurl")
+                PASS_CHECK_URL = (a.key.Param as String)
+        }
+    }
+
+    val passcheck: RoleHandler= {
+        mapper.forEach { a ->
+            if (a.key.Name == "passcheck")
+                PASS_CHECK = (a.key.Param as String)
+        }
+    }
+
 
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
@@ -991,14 +1045,16 @@ VALUES
 
     fun appendRole(R: Role){
         when (R?.Name){
-            "psa" -> mapper.put(R, psa)
-            "db" -> mapper.put(R, db)
-            "enabled" -> mapper.put(R, enable)
-            "json" -> mapper.put(R, json)
-            "HOOK" -> mapper.put(R, HOOK)
+            "psa"           -> mapper.put(R, psa)
+            "db"            -> mapper.put(R, db)
+            "enabled"       -> mapper.put(R, enable)
+            "json"          -> mapper.put(R, json)
+            "HOOK"          -> mapper.put(R, HOOK)
             "psaIDtoSEhooK" -> mapper.put(R, psaIDtoSEhooK)
-            "activatePSA" -> mapper.put(R, activatePSA)
+            "activatePSA"   -> mapper.put(R, activatePSA)
             "urltoActivate" -> mapper.put(R, urltoActivate)
+            "passcheckurl"  -> mapper.put(R, passcheckurl)
+            "passcheck"     -> mapper.put(R, passcheck)
         }
     }
 

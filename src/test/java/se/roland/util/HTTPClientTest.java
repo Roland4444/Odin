@@ -30,8 +30,8 @@ public class HTTPClientTest extends TestCase {
 
     }
 
-    public void testSendPost() throws IOException {
-        var url = "http://192.168.0.126:15000/psa/psa/gettest?id=50";
+    public void SendPost() throws IOException {
+        var url = "http://192.168.0.126:15000/psa/psa/gettest?id=141708";
         System.out.println(HTTPClient.sendGet(url));
     }
 }
