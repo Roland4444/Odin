@@ -272,7 +272,7 @@ INSERT INTO `weighing` (
         prepared?.setFloat(8, datainvagning.getFloat("client_tare"))///json.get("tare").toString().toFloat())
         prepared?.setFloat(9, datainvagning.getFloat("client_sor"))////json.get("clogging").toString().toFloat())
         prepared?.setFloat(10, datainvagning.getFloat("client_price"))
-        prepared?.setString(11, (Math.round(inspect() * 100.0) / 100.0).toString())
+        prepared?.setString(11, "0"+(Math.round(inspect() * 100.0) / 100.0).toString())
         prepared?.setString(12, uuid)
         println("prepared=> $prepared")
         if (prepared != null) {
@@ -449,7 +449,7 @@ INSERT INTO `weighing` (
         prepared?.setFloat(8, 0.0f)///json.get("tare").toString().toFloat())
         prepared?.setFloat(9, 0.0f)////json.get("clogging").toString().toFloat())
         prepared?.setFloat(10, json.get("median").toString().toFloat())
-        prepared?.setString(11, (Math.round(inspect() * 100.0) / 100.0).toString())
+        prepared?.setString(11, "0"+(Math.round(inspect() * 100.0) / 100.0).toString())
         prepared?.setString(12, uuid)
         println("prepared=> $prepared")
         if (prepared != null) {
@@ -835,7 +835,7 @@ VALUES
             /////var inspect =  /////Random().nextFloat()/4
             prepared?.setInt(4, getMetalId(Metal))
             val m = getMetalId(Metal)
-            prepared?.setString(5, (Math.round(inspect() * 100.0) / 100.0).toString())
+            prepared?.setString(5, "0"+(Math.round(inspect() * 100.0) / 100.0).toString())
             prepared?.setString(6, UUID)
             println(prepared)
             if (PSAId == 0)
@@ -907,7 +907,7 @@ VALUES
             var inspect =  Random().nextFloat()/4
             prepared?.setInt(4, getMetalId(Metal))
             val m = getMetalId(Metal)
-            prepared?.setString(5, (Math.round(inspect() * 100.0) / 100.0).toString())
+            prepared?.setString(5,"0"+ (Math.round(inspect() * 100.0) / 100.0).toString())
             prepared?.setString(6, UUID)
             println(prepared)
             if (PSAId == 0)
