@@ -420,4 +420,18 @@ class PSADSLProcessorTest : TestCase() {
         assertEquals(true, psa.checkpass("HHHH","opoppoop"))
     }
 
+    fun testStandartize() {
+        val psa = PSADSLProcessor()
+        val str1 = "0.1"
+        val str2 = "0.02"
+        val str3 = "1.8"
+        val str4 = "0.18"
+        assertEquals("00.10", psa.standartize(str1))
+        assertEquals("00.02", psa.standartize(str2))
+        assertEquals("01.80", psa.standartize(str3))
+        assertEquals("00.18", psa.standartize(str4))
+
+
+    }
+
 }
