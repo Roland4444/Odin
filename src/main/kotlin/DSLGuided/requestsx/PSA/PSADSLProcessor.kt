@@ -30,6 +30,10 @@ typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price
 
 class PSADSLProcessor  : DSLProcessor() {
     companion object {
+        fun activatePSA(DSL: String, PSAProc: PSADSLProcessor, UUID: String){
+            PSAProc.render(DSL)
+            PSAProc.activatePSA(UUID)
+        }
         fun processColorPSA(inputJSON: String, uuid: String, DSL: String, PSAProc: PSADSLProcessor) {
             PSAProc.render(DSL)
             PSAProc.processfarg(uuid, inputJSON)

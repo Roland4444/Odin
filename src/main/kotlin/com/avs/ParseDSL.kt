@@ -19,7 +19,6 @@ class ParseDSL : Serializable {
         var params: String
         if (input.indexOf("{")<input.indexOf("}")-1)
             params = input.substring(input.indexOf("{") + 1, input.indexOf("}"))
-
         else params=""
         if ((rolename.length == 0) || (rolename ==null)) return null;
         return Role(rolename, params, this)
