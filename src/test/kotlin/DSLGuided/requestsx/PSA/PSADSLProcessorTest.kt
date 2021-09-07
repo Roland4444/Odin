@@ -707,4 +707,9 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
+    fun testgetsummary() {
+            val res=HTTPClient.sendGet("http://192.168.0.126:15000/psa/psa/r?id=141763")
+            print(res)
+    }
+
 }
