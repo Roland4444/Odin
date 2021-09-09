@@ -37,6 +37,7 @@ class PSADSLProcessor  : DSLProcessor() {
         fun processColorPSA(inputJSON: String, uuid: String, DSL: String, PSAProc: PSADSLProcessor) {
             PSAProc.render(DSL)
             PSAProc.processfarg(uuid, inputJSON)
+            PSAProc.activatePSA(uuid)
         }
         fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             println("into create draft psa")
@@ -80,12 +81,16 @@ class PSADSLProcessor  : DSLProcessor() {
                 m(Tara as String, Sor as String, UUID as String)
                 return
             }
+
+
             println("\n\n\n\nCALLING M with price")
             mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
             if (Client !=null){
                 println("SETTING UP CLIENT ${Client} @ PSA ${UUID}")
                 PSAProc.setupUniqueClientAndActivate(UUID, Client)
+                return
             }
+            PSAProc.activatePSA(UUID)
         }
     }
 
