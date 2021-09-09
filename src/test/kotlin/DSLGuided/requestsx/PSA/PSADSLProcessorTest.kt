@@ -707,7 +707,7 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
-    fun testactivateviauuid(){
+    fun activateviauuid(){
         val startTime = System.nanoTime()
         var counter = 0
         for (i in 140000..149224){
@@ -719,7 +719,7 @@ class PSADSLProcessorTest : TestCase() {
         println("time execution:: " + duration / 1000000000)
     }
 
-    fun testgetsummary() {
+    fun etsummary() {
             val res=HTTPClient.sendGet("http://192.168.0.126:15000/psa/psa/r?id=141763")
             print(res)
     }
