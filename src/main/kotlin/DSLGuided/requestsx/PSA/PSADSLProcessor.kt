@@ -79,13 +79,14 @@ class PSADSLProcessor  : DSLProcessor() {
             if (Price == null){
                 println("\n\n\nCALLING M")
                 m(Tara as String, Sor as String, UUID as String)
+                PSAProc.activatePSA(UUID)
                 return
             }
 
 
             println("\n\n\n\nCALLING M with price")
             mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
-            if (Client !=null){
+            if ((Client !=null) && (!Client.equals(""))){
                 println("SETTING UP CLIENT ${Client} @ PSA ${UUID}")
                 PSAProc.setupUniqueClientAndActivate(UUID, Client)
                 return
