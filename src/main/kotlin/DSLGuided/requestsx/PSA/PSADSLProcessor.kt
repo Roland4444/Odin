@@ -77,6 +77,9 @@ class PSADSLProcessor  : DSLProcessor() {
             val ClientPrice = params.get("ClientPrice")
             val Client = params.get("Client")
             println("PRICE::$Price")
+            when (PSAProc.NUMBER_AT_2_W){
+                PSAProc.TRUE_ATOM ->{ PSAProc.updateNumberPSAViaUUID(UUID!!)}
+            }
             if (Price == null){
                 println("\n\n\nCALLING M")
                 m(Tara as String, Sor as String, UUID as String)
@@ -93,6 +96,7 @@ class PSADSLProcessor  : DSLProcessor() {
                 return
             }
             PSAProc.activatePSA(UUID)
+
         }
     }
 
@@ -139,6 +143,27 @@ class PSADSLProcessor  : DSLProcessor() {
 
 
     val descriptionMap = mapOf(BLACK_ATOM to "Лом и отходы черных металлов", COLOR_ATOM to "Лом и отходы цветных металлов")
+
+    fun updateNumberPSAViaUUID(UUID: String){
+        var param = java.util.ArrayList<Any?>()
+        param.add(UUID)
+        val res: ResultSet =
+            psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`psa` WHERE `uuid` = ?;", param)
+        if (!res.next())
+            return
+        val department_id = res.getInt("department_id")
+        val section = res.getString("section")
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(               ////color/black
+                """
+UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID') """
+            );                              /////Необходимо выбрать
+        prepared?.setString(1, getPSANumberviaDSL(department_id.toString(), section))//getPSANumber(DepId))
+        println("prepared=> $prepared")
+        if (prepared != null) {
+            prepared.execute()
+        }
+
+    }
 
     fun getPSANumberviaDSL(DepsId: String): String{
         println("in DSL psa getnumber")
@@ -894,7 +919,11 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
 
             println("SECTION::$section")
             val date: String = LocalDate.now().toString()
-            prepared?.setString(1, getPSANumberviaDSL(DepId, section))//getPSANumber(DepId))
+            var numberPSA = "0"
+            when (NUMBER_AT_2_W){
+                FALSE_ATOM-> numberPSA = getPSANumberviaDSL(DepId, section);
+            }
+            prepared?.setString(1, numberPSA)//getPSANumber(DepId))
             prepared?.setDate(2, java.sql.Date.valueOf(date));
             prepared?.setString(3, PlateNumber)
             prepared?.setString(4, DepId)
