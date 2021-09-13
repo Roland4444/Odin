@@ -77,8 +77,9 @@ class PSADSLProcessor  : DSLProcessor() {
             val ClientPrice = params.get("ClientPrice")
             val Client = params.get("Client")
             println("PRICE::$Price")
-            when (PSAProc.NUMBER_AT_2_W){
-                PSAProc.TRUE_ATOM ->{ PSAProc.updateNumberPSAViaUUID(UUID!!)}
+            if (PSAProc.NUMBER_AT_2_W.equals(PSAProc.TRUE_ATOM)){
+                  println("\n\n\n\n\n\n\nUPDATE numberpsa$$$$$$$$$$$$$$$$$$$$$$!!!!!!!!!!")
+                  PSAProc.updateNumberPSAViaUUID(UUID!!)
             }
             if (Price == null){
                 println("\n\n\nCALLING M")
@@ -155,7 +156,7 @@ class PSADSLProcessor  : DSLProcessor() {
         val section = res.getString("section")
         var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(               ////color/black
                 """
-UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID') """
+UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
             );                              /////Необходимо выбрать
         prepared?.setString(1, getPSANumberviaDSL(department_id.toString(), section))//getPSANumber(DepId))
         println("prepared=> $prepared")
@@ -177,7 +178,9 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID') """
         val res = psearch.getPSA()
         var numberpsa = 0;
         while (res?.next() == true) {
-            numberpsa = res.getInt("number")
+            val number = res.getInt("number")
+            if (number !=0)
+                numberpsa = res.getInt("number")
         }
         numberpsa++
         return numberpsa.toString()
@@ -196,10 +199,12 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID') """
         external_searchdsl = buildSearchDSL
         val res = psearch.getPSA()
         var numberpsa = 0;
-        var counter = 0
-        while (res?.next() == true)
-            numberpsa = res.getInt("number")
+        while (res?.next() == true) {
+            val number = res.getInt("number")
+            if (number !=0)
+                numberpsa = number
             ////println("${counter++} number PSA at currentRow::${res.getInt("number")}")
+        }
         numberpsa++
         println("PSA NUMBER==>$numberpsa")
         return numberpsa.toString()
