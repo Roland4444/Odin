@@ -724,4 +724,15 @@ class PSADSLProcessorTest : TestCase() {
             print(res)
     }
 
+    fun testGetEFFECT() {
+        var psa  = PSADSLProcessor()
+        val psastr = "'psa'=>::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
+        psa.render(psastr)
+        assertEquals(psa.TRUE_ATOM, psa.NUMBER_AT_2_W)
+        val psastr2 = "'psa'=>::number_at_2_w{false},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
+        psa.render(psastr2)
+        assertEquals(psa.FALSE_ATOM, psa.NUMBER_AT_2_W)
+
+    }
+
 }

@@ -9,6 +9,7 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import se.roland.util.Checker.checkdigit
 import se.roland.util.Department
+import se.roland.util.GLOBAL.LOG
 import se.roland.util.HTTPClient
 import se.roland.util.HTTPClient.sendPost
 import java.io.IOException
@@ -37,7 +38,7 @@ class PSADSLProcessor  : DSLProcessor() {
         fun processColorPSA(inputJSON: String, uuid: String, DSL: String, PSAProc: PSADSLProcessor) {
             PSAProc.render(DSL)
             PSAProc.processfarg(uuid, inputJSON)
-            PSAProc.activatePSA(uuid)
+
         }
         fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             println("into create draft psa")
@@ -106,6 +107,7 @@ class PSADSLProcessor  : DSLProcessor() {
     var login              = EMPTY_ATOM
     var pass               = EMPTY_ATOM
     var urldb              = EMPTY_ATOM
+    var NUMBER_AT_2_W      = FALSE_ATOM
 
     var dumb               = EMPTY_ATOM
     var json_              = EMPTY_ATOM
@@ -345,6 +347,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             if (HOOKUUID.length > 0)
                 uuid = HOOKUUID
         println("inputJSON=> $inputJSON, uuid $uuid")
+        LOG("INPUT JSON in COLOR PSA")
         clearweignings(uuid)
         val js = jsparser.parse(inputJSON) as JSONObject
         comment = js.get("comment") as String
@@ -977,6 +980,13 @@ VALUES
         }
     }
 
+    val number_at_2_w: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "number_at_2_w")
+                NUMBER_AT_2_W = a.key.Param as String
+        }
+    }
+
     val HOOK: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "HOOK"){
@@ -1066,6 +1076,7 @@ VALUES
     }
 
 
+
     override fun parseRoles(DSL: String): List<Role> {
         return parser.parseRoles(DSL!!)
     }
@@ -1087,6 +1098,9 @@ VALUES
             "urltoActivate" -> mapper.put(R, urltoActivate)
             "passcheckurl"  -> mapper.put(R, passcheckurl)
             "passcheck"     -> mapper.put(R, passcheck)
+            "number_at_2_w" -> mapper.put(R, number_at_2_w)
+
+
         }
     }
 
