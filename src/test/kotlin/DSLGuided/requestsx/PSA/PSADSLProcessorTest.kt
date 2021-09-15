@@ -735,4 +735,16 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
+    fun testGetDeletePSA() {
+        val uuid ="da08fe57-162b-11ec-af50-ed3d91637dad"
+        var psa  = PSADSLProcessor()
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::deletePSA{$uuid}."
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+    }
+
 }

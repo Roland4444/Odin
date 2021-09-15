@@ -31,6 +31,10 @@ typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price
 
 class PSADSLProcessor  : DSLProcessor() {
     companion object {
+        fun deletePSA(DSL: String, PSAProc: PSADSLProcessor){
+            PSAProc.render(DSL)
+        }
+
         fun activatePSA(DSL: String, PSAProc: PSADSLProcessor, UUID: String){
             PSAProc.render(DSL)
             PSAProc.activatePSA(UUID)
@@ -320,6 +324,12 @@ INSERT INTO `weighing` (
         if (prepared != null) {
             prepared.execute()
         }
+    }
+
+    fun deletePSAviaUUID(uuid: String){
+        var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(      "DELETE FROM `psa` WHERE `uuid`=?;");
+        prepared?.setString(1, uuid);
+        prepared?.executeUpdate();
     }
 
     fun createPSA(data: ResultSet, uuid: String) {
@@ -1108,6 +1118,13 @@ VALUES
                 PASS_CHECK = (a.key.Param as String)
         }
     }
+    val deletePSA: RoleHandler= {
+        mapper.forEach { a ->
+            if (a.key.Name == "deletePSA")
+                deletePSAviaUUID(a.key.Param.toString())
+        }
+    }
+
 
 
 
@@ -1133,8 +1150,7 @@ VALUES
             "passcheckurl"  -> mapper.put(R, passcheckurl)
             "passcheck"     -> mapper.put(R, passcheck)
             "number_at_2_w" -> mapper.put(R, number_at_2_w)
-
-
+            "deletePSA"     -> mapper.put(R, deletePSA)
         }
     }
 
