@@ -201,7 +201,7 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
         var numberpsa = 0;
         while (res?.next() == true) {
             val number = res.getInt("number")
-            if (number !=0)
+            if ((number !=0) && (numberpsa<= number))
                 numberpsa = number
             ////println("${counter++} number PSA at currentRow::${res.getInt("number")}")
         }
