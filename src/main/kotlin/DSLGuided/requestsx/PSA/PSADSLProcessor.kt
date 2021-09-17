@@ -393,7 +393,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         comment = js.get("comment") as String
         println("comment:: $comment")
         val inputdepID = Integer.parseInt(js.get("departmentId").toString() )
-        val f = deps__.DepsMap.get(inputdepID)
+
         val realdepID = deps__.DepsMap.get(inputdepID)
         val sum = extractSummary(inputJSON)
         println("SUMM: $sum")
@@ -491,7 +491,6 @@ INSERT INTO `weighing` (
                 """  );
         ///   "cost":4736.16,"median":52,"weight":91.08,"psaid":12
 
-        val inspect =  Random().nextFloat()/4
         prepared?.setFloat(1, json.get("weight").toString().toFloat() ) //Brutto)
         prepared?.setFloat(2, 0.0f)////json.get("tare").toString().toFloat())
         prepared?.setFloat(3,  0.0f)///  json.get("clogging").toString().toFloat())
