@@ -490,16 +490,26 @@ INSERT INTO `weighing` (
                                 
                 """  );
         ///   "cost":4736.16,"median":52,"weight":91.08,"psaid":12
-
-        prepared?.setFloat(1, json.get("weight").toString().toFloat() ) //Brutto)
-        prepared?.setFloat(2, 0.0f)////json.get("tare").toString().toFloat())
-        prepared?.setFloat(3,  0.0f)///  json.get("clogging").toString().toFloat())
+        var WEIGTH = 0.0f
+        if (json.get("weight")==null)
+            WEIGTH = json.get("brutto").toString().toFloat()
+        else
+            WEIGTH  = json.get("weight").toString().toFloat()
+        var TARA = 0.0f
+        if (json.get("tare")!=null)
+            TARA = json.get("tare").toString().toFloat()
+        var CLOG = 0.0f
+        if (json.get("clogging")!=null)
+            CLOG = json.get("clogging").toString().toFloat()
+        prepared?.setFloat(1, WEIGTH ) //Brutto)brutto       ///////weight
+        prepared?.setFloat(2, TARA)////////////
+        prepared?.setFloat(3,  CLOG)///////////////////
         prepared?.setFloat(4, json.get("median").toString().toFloat())
         prepared?.setInt(5, getPSAID(uuid))
         prepared?.setInt(6, json.get("psaid").toString().toInt())
-        prepared?.setFloat(7, json.get("weight").toString().toFloat())//json.get("brutto").toString().toFloat() )
-        prepared?.setFloat(8, 0.0f)///json.get("tare").toString().toFloat())
-        prepared?.setFloat(9, 0.0f)////json.get("clogging").toString().toFloat())
+        prepared?.setFloat(7, WEIGTH)//json.get("brutto").toString().toFloat() )
+        prepared?.setFloat(8, TARA)              ///////////////////////
+        prepared?.setFloat(9, CLOG)              /////////////////////
         prepared?.setFloat(10, json.get("median").toString().toFloat())
         prepared?.setString(11, standartize((Math.round(inspect() * 100.0) / 100.0).toString()))
         prepared?.setString(12, uuid)
