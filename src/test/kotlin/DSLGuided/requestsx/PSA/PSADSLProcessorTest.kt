@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser
 import se.roland.abstractions.timeBasedUUID
 import se.roland.util.HTTPClient
 import java.nio.file.Files
+import java.util.ArrayList
 
 import java.util.HashMap
 import java.io.File as File
@@ -745,6 +746,25 @@ class PSADSLProcessorTest : TestCase() {
         PSASearchProcessor.psaconnector= psaconnector
         psa.psearch=PSASearchProcessor
         psa.render(psastr)
+    }
+
+    fun testupdateplatenumber(){
+        var psa  = PSADSLProcessor()
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        psa.setupPlatenumber("fff0ce28-f030-11eb-98d6-052cbb92572e","kamaz", "belaz" )
+        val ARR = ArrayList<Any>()
+        ARR.add("fff0ce28-f030-11eb-98d6-052cbb92572e")
+        val res = psa.psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM psa where `uuid`=?", ARR)
+        var Plate = ""
+        if (res.next())
+            Plate = res.getString("plate_number")
+        assertEquals("kamaz belaz", Plate)
     }
 
 }

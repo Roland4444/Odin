@@ -432,7 +432,24 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             println("FOUND CLIENT::$client")
             setupUniqueClientAndActivate(uuid, client)
         }
+      //  "car":"KAMAZ-NAMAZ",
+     //   "plateNumber":"х666пдж",
+        if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
+            val car: String = js.get("car").toString()
+            val plateNumber: String = js.get("plateNumber").toString()
+            println("FOUND CAR::$car with platenumber:: $plateNumber")
+            setupPlatenumber(uuid, car, plateNumber)
+        }
 
+    }
+
+    fun setupPlatenumber(uuid: String, car: String, plateNumber: String) {
+        val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
+        .prepareStatement("UPDATE `psa` set `plate_number` = ?    WHERE uuid = ?")
+        stmt.setString(1, "$car $plateNumber")
+        stmt.setString(2, uuid)
+        println(stmt)
+        stmt.executeUpdate()
     }
 
     fun activatePSA(uuid: String){
