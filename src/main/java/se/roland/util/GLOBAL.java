@@ -19,6 +19,16 @@ public class GLOBAL {
         ///LTHR.LOG__(msg);
     }
 
+    public static void LOG(String msg, String filename) throws IOException {
+        LocalDateTime ls = LocalDateTime.now();
+        String data = ls.toString()+"::"+msg;
+        FileOutputStream fos = new FileOutputStream(filename, true);
+        fos.write((data+"\r\n").getBytes());
+        fos.close();
+
+        ///LTHR.LOG__(msg);
+    }
+
 
 
 }

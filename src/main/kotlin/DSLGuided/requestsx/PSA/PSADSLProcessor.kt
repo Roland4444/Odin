@@ -47,6 +47,7 @@ class PSADSLProcessor  : DSLProcessor() {
         fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             println("into create draft psa")
             PSAProc.render(DSL)
+            PSAProc.LOG("into create draft psa")
             val f: psaDraftSection = PSAProc.createdraftsection
             val Brutto = params.get("Brutto")
             val Sor = params.get("Sor")
@@ -74,6 +75,7 @@ class PSADSLProcessor  : DSLProcessor() {
             println("\n\n\nIN COMPLETE PSA!!!")
             val m = PSAProc.completePSA
             val mwp = PSAProc.completePSAwithPrice
+            PSAProc.LOG("IN COMPLETE PSA!!!")
             val Sor = params.get("Sor")
             val Tara = params.get("Tara")
             val UUID = params.get("UUID")
@@ -83,6 +85,7 @@ class PSADSLProcessor  : DSLProcessor() {
             println("PRICE::$Price")
             if (PSAProc.NUMBER_AT_2_W.equals(PSAProc.TRUE_ATOM)){
                   println("\n\n\n\n\n\n\nUPDATE numberpsa$$$$$$$$$$$$$$$$$$$$$$!!!!!!!!!!")
+                  PSAProc.LOG("UPDATE numberpsa$$")
                   PSAProc.updateNumberPSAViaUUID(UUID!!)
             }
             if (Price == null){
@@ -135,6 +138,8 @@ class PSADSLProcessor  : DSLProcessor() {
     val PERSON_ATOM        = "P"
     val BLACK_ATOM         = "black"
     val COLOR_ATOM         = "color"
+    var ENABLED_LOG        = FALSE_ATOM
+    var FILENAME_LOG       = EMPTY_ATOM
 
     var external_searchdsl = EMPTY_ATOM
     lateinit var psearch: PSASearchProcessor
@@ -236,7 +241,7 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
             prepared?.setFloat(4, Sor.toFloat())
             prepared?.setString(5, UUID)
             println("prepared @completePSA=> $prepared")
-
+            LOG("prepared @completePSA=> $prepared")
             prepared?.execute()
 
         }
@@ -247,6 +252,9 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
                 var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(
                     """UPDATE `weighing` SET  `tare` = ?, `sor` = ?,  `client_tare` = ?, `client_sor` = ?, `price`=?, `client_price`=? WHERE `uuid` = ?;"""
                 )
+                LOG("PRICE=>$price")
+                LOG("ClientPrice=>$ClientPrice")
+
                 println("\n\n\nPRICE=>$price")
                 println("\n\n\nClientPrice=>$ClientPrice")
                 prepared?.setFloat(1, Tare.toFloat())
@@ -257,7 +265,7 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
                 prepared?.setFloat(6, ClientPrice.toFloat())
                 prepared?.setString(7, UUID)
                 println("prepared @completePSAwithPrice=> $prepared")
-
+                LOG("prepared @completePSAwithPrice=> $prepared")
                 prepared?.execute()
             }
 
@@ -388,6 +396,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
                 uuid = HOOKUUID
         println("inputJSON=> $inputJSON, uuid $uuid")
         LOG("INPUT JSON in COLOR PSA")
+        LOG("inputJSON=> $inputJSON, uuid $uuid")
         clearweignings(uuid)
         val js = jsparser.parse(inputJSON) as JSONObject
         comment = js.get("comment") as String
@@ -397,6 +406,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         val realdepID = deps__.DepsMap.get(inputdepID)
         val sum = extractSummary(inputJSON)
         println("SUMM: $sum")
+        LOG("SUMM: $sum")
         val vagning = convertToListJSON(sum)
         var section = NONE
         var isBLACK=false
@@ -409,19 +419,23 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             if (isBlack(vagning, PSAID)) {
                 isBLACK = true
                 println("\n\n\n\n\n\nHOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
+                LOG("HOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
                 section=SECTION
             }
         }
         println("VAGNING: ${vagning}")
+
         println("\n\nSECTION::$section\n\n")
         val checkpsa = checkpsaexist(uuid)
         if ((realdepID != null) &&  !checkpsa) {
             println("creating draft @$realdepID")
+            LOG("creating draft @$realdepID")
             createdraftfarg(realdepID, uuid, section)
         }
         vagning.forEach { invagning ->
             if (realdepID != null) {
                 println("process vagning  @JSON::${invagning.toString()}")
+                LOG("process W  @JSON::${invagning.toString()}")
                 processinvagning__(invagning as JSONObject, uuid)///processinvagning(invagning as JSONObject, uuid)
             }
         }
@@ -430,14 +444,14 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         if (js.get("client")!=null){
             val client: String = js.get("client").toString()
             println("FOUND CLIENT::$client")
+            LOG("FOUND CLIENT::$client")
             setupUniqueClientAndActivate(uuid, client)
         }
-      //  "car":"KAMAZ-NAMAZ",
-     //   "plateNumber":"х666пдж",
         if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
             val car: String = js.get("car").toString()
             val plateNumber: String = js.get("plateNumber").toString()
             println("FOUND CAR::$car with platenumber:: $plateNumber")
+            LOG("FOUND CAR::$car with platenumber:: $plateNumber")
             setupPlatenumber(uuid, car, plateNumber)
         }
 
@@ -449,12 +463,15 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         stmt.setString(1, "$car $plateNumber")
         stmt.setString(2, uuid)
         println(stmt)
+        LOG(stmt.toString())
         stmt.executeUpdate()
     }
 
     fun activatePSA(uuid: String){
-        if (ACTIVATE_PSA.equals(TRUE_ATOM))
+        if (ACTIVATE_PSA.equals(TRUE_ATOM)) {
             println("ACTIVATING PSA!!! UUID::$uuid, ${HTTPClient.sendGet(constructURLwithId(psearch.getPSAIdViaUUID(uuid)))}")
+            LOG("ACTIVATING PSA!!! UUID::$uuid")
+        }
     }
 
     fun isBlack(Arr: JSONArray, PatternBlack: String): Boolean {
@@ -531,6 +548,7 @@ INSERT INTO `weighing` (
         prepared?.setString(11, standartize((Math.round(inspect() * 100.0) / 100.0).toString()))
         prepared?.setString(12, uuid)
         println("prepared=> $prepared")
+        LOG("prepared=> $prepared")
         if (prepared != null) {
             prepared.execute()
         }
@@ -702,6 +720,14 @@ INSERT INTO `weighing` (
             }
         }
         activatePSA(UUID)
+    }
+
+    fun LOG(MSG: String){
+        if (!ENABLED_LOG.equals(TRUE_ATOM))
+            return
+        if (FILENAME_LOG.equals(EMPTY_ATOM))
+            return
+        LOG(MSG, FILENAME_LOG)
     }
 
     fun getUniqueClient(input: String): LinkedList<Any>{
@@ -949,6 +975,7 @@ VALUES (
 NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?,     ?);"""
             );                              /////Необходимо выбрать
             println("CREATE DRAFT PSA WITH SECTION")
+            LOG("CREATE DRAFT PSA WITH SECTION")
             var uuid = UUID
             var section = Section
             if (HOOKED.equals(TRUE_ATOM)){
@@ -959,6 +986,7 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
             }
 
             println("SECTION::$section")
+            LOG("SECTION::$section")
             val date: String = LocalDate.now().toString()
             var numberPSA = "0"
             when (NUMBER_AT_2_W){
@@ -974,6 +1002,7 @@ NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              
             prepared?.setString(8, section)
             println("prepared=> $prepared")
             println("\n\nSECTION::$Section\n\n")
+            LOG("prepared=> $prepared")
             if (prepared != null) {
                 prepared.execute()
             }
@@ -1004,6 +1033,7 @@ VALUES
             prepared?.setString(5,standartize((Math.round(inspect() * 100.0) / 100.0).toString()))
             prepared?.setString(6, UUID)
             println(prepared)
+            LOG(prepared.toString())
             if (PSAId == 0)
                 println("Wrong psaId")
             prepared?.execute()
@@ -1151,6 +1181,16 @@ VALUES
         }
     }
 
+    val log: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "log") {
+                val K: KeyValue = a.key.Param as KeyValue
+                ENABLED_LOG = K.Key
+                FILENAME_LOG = K.Value.toString()
+            }
+        }
+
+    }
 
 
 
@@ -1177,6 +1217,7 @@ VALUES
             "passcheck"     -> mapper.put(R, passcheck)
             "number_at_2_w" -> mapper.put(R, number_at_2_w)
             "deletePSA"     -> mapper.put(R, deletePSA)
+            "log"           -> mapper.put(R, log)
         }
     }
 

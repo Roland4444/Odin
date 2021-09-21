@@ -708,10 +708,10 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
-    fun activateviauuid(){
+    fun testactivateviauuid(){
         val startTime = System.nanoTime()
         var counter = 0
-        for (i in 140000..149224){
+        for (i in 140000..148000){
             println("${counter++} STEP, activate id $i")
             HTTPClient.sendGet("http://192.168.0.2:15000/psa/psa/gettest?id=$i")
         }
@@ -765,6 +765,19 @@ class PSADSLProcessorTest : TestCase() {
         if (res.next())
             Plate = res.getString("plate_number")
         assertEquals("kamaz belaz", Plate)
+    }
+
+    fun testlog(){
+        var psa  = PSADSLProcessor()
+        val psastr = "'psa'=>::log{'true':'1.filename'},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        assertEquals(psa.TRUE_ATOM, psa.ENABLED_LOG)
+        assertEquals("1.filename", psa.FILENAME_LOG)
+
+
     }
 
 }
