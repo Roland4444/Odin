@@ -708,7 +708,7 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
-    fun testactivateviauuid(){
+    fun activateviauuid(){
         val startTime = System.nanoTime()
         var counter = 0
         for (i in 140000..148000){
