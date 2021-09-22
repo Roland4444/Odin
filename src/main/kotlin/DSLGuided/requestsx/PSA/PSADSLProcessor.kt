@@ -389,11 +389,29 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         prepared?.execute()
     }
 
+    fun checkpsacompleted(uuid: String): Boolean{
+        val id = psearch.getPSAIdViaUUID(uuid)
+        val param: java.util.ArrayList<Any> = java.util.ArrayList<Any>()
+        param.add(id)
+        var res: ResultSet = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`payments` WHERE `psa_id`= ?;", param)
+        if (res.next()){
+            val status = res.getString("status")
+            if (status.equals("Completed"))
+                return true
+        }
+        return false
+    }
+
     fun processfarg(uuid_: String, inputJSON: String){
         var uuid = uuid_
         if (HOOKED.equals(TRUE_ATOM))
             if (HOOKUUID.length > 0)
                 uuid = HOOKUUID
+        if (checkpsacompleted(uuid)){
+            LOG("PSA WITH UUID = $uuid compeleted!. ABorting....")
+            println("PSA WITH UUID = $uuid compeleted!. ABorting....")
+            return
+        }
         println("inputJSON=> $inputJSON, uuid $uuid")
         LOG("INPUT JSON in COLOR PSA")
         LOG("inputJSON=> $inputJSON, uuid $uuid")
