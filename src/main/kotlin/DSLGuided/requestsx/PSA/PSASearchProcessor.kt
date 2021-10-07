@@ -15,6 +15,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.sql.ResultSet
 import java.time.Duration
+import java.time.LocalDate
 import java.util.*
 
 
@@ -54,7 +55,7 @@ class PSASearchProcessor  : DSLProcessor() {
     var initialString: StringBuilder = StringBuilder()
     var first = true
     fun reset() {
-        initialString.clear()
+        initialString.setLength(0)
         searchFrom = ""
         searchTo = ""
         numberPsa = ""
@@ -310,6 +311,29 @@ class PSASearchProcessor  : DSLProcessor() {
             return res.getInt("id")
         else
             return -1;
+    }
+
+    fun getPSANumberviaDSL(DepsId: String, Section: String): String{
+        println("in DSL psa getnumber")
+        println("DEP_ID::$DepsId, SECTION::$Section")
+        val name = getdepNameExecutor(DepsId)
+        val year = Calendar.getInstance()[Calendar.YEAR]
+        val date: String = LocalDate.now().toString()
+        println("date => $date")
+        val buildSearchDSL = "'search'=>::sql{'SELECT * FROM psa '},::section{'${Section}'},::department{'${name}',''},::datarange{'${year}-01-01':'${java.sql.Date.valueOf(date)}'}."
+        println("PREPARED DSL for search=> $buildSearchDSL")
+        render(buildSearchDSL)
+        val res = getPSA()
+        var numberpsa = 0;
+        while (res?.next() == true) {
+            val number = res.getInt("number")
+            if ((number !=0) && (numberpsa<= number))
+                numberpsa = number
+            ////println("${counter++} number PSA at currentRow::${res.getInt("number")}")
+        }
+        numberpsa++
+        println("PSA NUMBER==>$numberpsa")
+        return numberpsa.toString()
     }
 
 

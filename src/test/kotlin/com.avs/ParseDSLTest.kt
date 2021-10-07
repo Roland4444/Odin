@@ -5,9 +5,10 @@ import abstractions.DSLBNF.Expression
 import abstractions.DSLRole
 import abstractions.KeyValue
 import abstractions.Role
+import javassist.CtMethod.ConstParameter.string
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.collections.List as List1
+
 
 internal class ParseDSLTest {
     val input: String = """'requests' => ::read{}, ::write{}, ::create{}."""
@@ -24,6 +25,14 @@ internal class ParseDSLTest {
         var ObjectRules : DSLRole = DSLRole("requests", Roles)
         assertEquals(ObjectRules, parser.getDSLRulesfromString(input))
     }
+    @Test
+    fun testbstr(){
+        val r = "substring".substring(2, 4)
+        assertEquals("bs", r)
+
+    }
+
+
     @Test
     fun testParseRole() {
         val readRole: Role = Role("read","", parser)
@@ -174,6 +183,14 @@ internal class ParseDSLTest {
     }
 
     @Test
+    fun testhead(){
+        var initial = "12,'aaaa','f':56";
+        parser.Head(initial);
+        assertEquals("12", parser.Head(initial));
+
+    }
+
+    @Test
     fun testSequencetoList(){
         val initial = "12,'5','f',56";
         var lst = mutableListOf<String>()
@@ -181,6 +198,8 @@ internal class ParseDSLTest {
         lst.add("'5'")
         lst.add("'f'")
         lst.add("56")
+        val LST = parser.getList(initial)
+        LST.forEach { a -> println(a) }
         assertEquals(lst, parser.getList(initial))
     }
 

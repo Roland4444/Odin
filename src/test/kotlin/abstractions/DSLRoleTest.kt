@@ -29,6 +29,7 @@ class DSLRoleTest : TestCase() {
         val dsl = DSLRole("requests", Roles)
         val bytes = Saver.savedToBLOB(dsl)
         val restored = Saver.restored(bytes)
+        println(dsl.toString())
         assertEquals(dsl.toString(), restored.toString())
     }
 

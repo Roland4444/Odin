@@ -13,6 +13,26 @@ import java.io.FileReader
 import java.io.IOException
 import java.util.*
 class DSL {
+    companion object{
+        fun getDSLforObject(nameObject: String, User: String): String {
+            val f = File("rules" + File.separator + User + ".rules")
+            if (!f.exists()) return ""
+            val fr = FileReader(f.path)
+            val br = BufferedReader(fr)
+            var line: String
+            while (br.readLine().also { line = it } != null) {
+                val str = "'$nameObject'"
+                if (line.indexOf(str) > -1) {
+                    br.close()
+                    fr.close()
+                    return line
+                }
+            }
+            br.close()
+            fr.close()
+            return ""
+        }
+    }
     constructor() {
         prepareMap()
         prepareDSLProcessors()

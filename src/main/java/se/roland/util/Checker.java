@@ -21,6 +21,8 @@ public class Checker implements Serializable {
         }
         return true;
     }
+
+    
     public static boolean checkdigit(char input){
         var result = false;
         result = switch (input){
