@@ -169,7 +169,7 @@ fun testsearchplatenumber(){
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::datarange{'2021-01-01':'2021-01-31'}."
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
-        psasearch. psaconnector=psaconnector
+        psasearch.psaconnector=psaconnector
         psasearch.render(search3)
         val R  = psasearch.getPSA()
         var counter = 0
@@ -222,7 +222,7 @@ fun testsearchplatenumber(){
       psaconnector.render(initDB)
       var psasearch = PSASearchProcessor()
       psasearch. psaconnector=psaconnector
-      val id = psasearch.getPSAIdViaUUID("2156388d-056f-11ec-8133-1d1a29bab143")
+      val id = psasearch.getPSAIdViaUUID("475647564375326regfgdhvgdvfhdvgdsgsdhghfdgsdfhgdfgdfdgerwge")
       assertEquals(141701, id)
     }
 

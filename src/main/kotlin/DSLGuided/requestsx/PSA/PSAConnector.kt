@@ -36,7 +36,7 @@ class PSAConnector  : DSLProcessor() {
         val watcher = Watcher(delay)
         watcher.callback = object : Call {
             override fun doIt() {
-                println("Reconnecting to db")
+                println("Reconnecting to db(PSAConnector)")
                 recharge()
 
             }

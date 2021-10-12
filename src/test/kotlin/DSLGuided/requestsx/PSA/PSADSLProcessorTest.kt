@@ -808,7 +808,7 @@ class PSADSLProcessorTest : TestCase() {
         psa.psearch=PSASearchProcessor
         psa.render(psastr)
 
-        assertEquals(true, psa.checkpsacompleted("zxzxzxzxzxzxzxzxzxxzxzxzxzxzxxzxzxzxxzxzxzxzx"))
+        assertEquals(false, psa.checkpsacompleted("zxzxzxzxzxzxzxzxzxxzxzxzxzxzxxzxzxzxxzxzxzxzx"))
     }
 
 
