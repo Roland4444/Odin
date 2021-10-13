@@ -103,6 +103,8 @@ class PSADSLProcessor  : DSLProcessor() {
                 PSAProc.setupUniqueClientAndActivate(UUID, Client)
                 return
             }
+            else
+                PSAProc.updateClient(UUID, PSAProc.getClientName(1)!!, 1)
             PSAProc.activatePSA(UUID)
 
         }
@@ -465,6 +467,8 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             LOG("FOUND CLIENT::$client")
             setupUniqueClientAndActivate(uuid, client)
         }
+        else
+            updateClient(uuid, getClientName(1)!!, 1)
         if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
             val car: String = js.get("car").toString()
             val plateNumber: String = js.get("plateNumber").toString()
@@ -472,8 +476,9 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             LOG("FOUND CAR::$car with platenumber:: $plateNumber")
             setupPlatenumber(uuid, car, plateNumber)
         }
-
     }
+
+
 
     fun setupPlatenumber(uuid: String, car: String, plateNumber: String) {
         val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
