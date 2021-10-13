@@ -222,8 +222,8 @@ fun testsearchplatenumber(){
       psaconnector.render(initDB)
       var psasearch = PSASearchProcessor()
       psasearch. psaconnector=psaconnector
-      val id = psasearch.getPSAIdViaUUID("475647564375326regfgdhvgdvfhdvgdsgsdhghfdgsdfhgdfgdfdgerwge")
-      assertEquals(141701, id)
+      val id = psasearch.getPSAIdViaUUID("7487548745867458678746756754y764y674576547685764586754684765874")
+      assertEquals(174, id)
     }
 
 

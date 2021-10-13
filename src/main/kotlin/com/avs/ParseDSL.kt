@@ -164,7 +164,7 @@ class ParseDSL : Serializable {
 
     fun Head(input: String): String{
         val p = getnumberopencolon(input)
-        println("P::"+p);
+
 
         if (p>0)
             return input.substring(0, p)

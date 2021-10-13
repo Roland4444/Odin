@@ -83,12 +83,12 @@ class PSADSLProcessor  : DSLProcessor() {
             val ClientPrice = params.get("ClientPrice")
             val Client = params.get("Client")
             println("PRICE::$Price")
-            if (PSAProc.NUMBER_AT_2_W.equals(PSAProc.TRUE_ATOM)){
-                  println("\n\n\n\n\n\n\nUPDATE numberpsa$$$$$$$$$$$$$$$$$$$$$$!!!!!!!!!!")
-                  PSAProc.LOG("UPDATE numberpsa$$")
-                  PSAProc.updateNumberPSAViaUUID(UUID!!)
+            if (PSAProc.NUMBER_AT_2_W.equals(PSAProc.TRUE_ATOM)) {
+                println("\n\n\n\n\n\n\nUPDATE numberpsa$$$$$$$$$$$$$$$$$$$$$$!!!!!!!!!!")
+                PSAProc.LOG("UPDATE numberpsa$$")
+                PSAProc.updateNumberPSAViaUUID(UUID!!)
             }
-            if (Price == null){
+            if (Price == null) {
                 println("\n\n\nCALLING M")
                 m(Tara as String, Sor as String, UUID as String)
                 PSAProc.activatePSA(UUID)
@@ -97,14 +97,31 @@ class PSADSLProcessor  : DSLProcessor() {
 
 
             println("\n\n\n\nCALLING M with price")
+            println("\n\n\n\n\n\n\n\n\nCLIENT::$Client")
+            println("CLIENT SIZE::${Client!!.length}")
             mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
+            when (Client.length) {
+                0 -> {
+                    println("Sett Client 1(len=0)")
+                    PSAProc.updateClient(UUID, PSAProc.getClientName(1)!!, 1)
+                }
+            }
+
+            when (Client) {
+                null -> {
+                    println("Sett Client 1(null)")
+                    PSAProc.updateClient(UUID, PSAProc.getClientName(1)!!, 1)
+                }
+                "" -> {
+                    println("Sett Client 1\"\"")
+                    PSAProc.updateClient(UUID, PSAProc.getClientName(1)!!, 1)
+                }
+            }
             if ((Client !=null) && (!Client.equals(""))){
                 println("SETTING UP CLIENT ${Client} @ PSA ${UUID}")
                 PSAProc.setupUniqueClientAndActivate(UUID, Client)
                 return
             }
-            else
-                PSAProc.updateClient(UUID, PSAProc.getClientName(1)!!, 1)
             PSAProc.activatePSA(UUID)
 
         }
@@ -392,14 +409,26 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
     }
 
     fun checkpsacompleted(uuid: String): Boolean{
+        println("CHECK COMPLETED")
         val id = psearch.getPSAIdViaUUID(uuid)
         val param: java.util.ArrayList<Any> = java.util.ArrayList<Any>()
+        println("ID $id")
         param.add(id)
         var res: ResultSet = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`payments` WHERE `psa_id`= ?;", param)
         if (res.next()){
             val status = res.getString("status")
+            println("status! $status")
+
             if (status.equals("Completed"))
                 return true
+        }
+        var res2: ResultSet = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`draft_print` WHERE `psa_id`= ?;", param)
+        if (res2.next()){
+            val status = res2.getString("message")
+            println("message! $status")
+            if (status.equals("Успешно распечатан")) {
+                return true
+            }
         }
         return false
     }
@@ -461,14 +490,31 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         }
         if (isBLACK)
             updateDescriptionToBlack(uuid)
+        val Client = js.get("client")
+        println("\n\n\n\n\n\n\n\n\n\n\n\n\nCLIENT::$Client")
+        when (Client) {
+            null -> {
+                println("Sett Client 1(null)")
+                updateClient(uuid, getClientName(1)!!, 1)
+            }
+            "" -> {
+                println("Sett Client 1\"\"")
+                updateClient(uuid, getClientName(1)!!, 1)
+            }
+        }
+        when (Client.toString().length) {
+            0 -> {
+                println("Sett Client 1(len=0)")
+                updateClient(uuid, getClientName(1)!!, 1)
+            }
+        }
+
         if (js.get("client")!=null){
             val client: String = js.get("client").toString()
             println("FOUND CLIENT::$client")
             LOG("FOUND CLIENT::$client")
             setupUniqueClientAndActivate(uuid, client)
         }
-        else
-            updateClient(uuid, getClientName(1)!!, 1)
         if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
             val car: String = js.get("car").toString()
             val plateNumber: String = js.get("plateNumber").toString()
@@ -682,10 +728,14 @@ INSERT INTO `weighing` (
 
     @Throws(SQLException::class)
     private fun updateClient(UUID: String, name: String, idclient: Int) {
-        if (PASS_CHECK.equals(TRUE_ATOM)){
+        println("INTO UPDATE CLIENT UUID=$UUID name=$name id=$idclient")
+
+        if (PASS_CHECK.equals(TRUE_ATOM) && (idclient !=1)){
+            println("INTO PASS CHECK CLAUSE")
             if (!checkpassport(idclient))
                 return;
         }
+        println("AFTER PASS CHECK")
         val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
             .prepareStatement("UPDATE psa set passport_id = ?, client = ?, `vat`='без НДС', company_id=NULL   WHERE uuid = ?")
         stmt.setInt(1, idclient)

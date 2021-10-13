@@ -282,6 +282,35 @@ class PSADSLProcessorTest : TestCase() {
      ///   assertEquals(1, counter)
     }
 
+    fun testClientUpdate() {
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::HOOK{'true','section':'20007'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        var psa  = PSADSLProcessor()
+
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        var JSON = String(Files.readAllBytes(File("color-psa-with-secton.js").toPath()))
+        PSADSLProcessor.processColorPSA(JSON, timeBasedUUID.generate(), psastr, psa)
+
+        ///   assertEquals(1, counter)
+    }
+
+    fun testcompelted(){
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        var psa  = PSADSLProcessor()
+
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        val psastr = "'psa'=>::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
+        psa.render(psastr)
+        assertEquals(true, psa.checkpsacompleted("ghdfgjhdjgdhjgdhgj"))
+    }
+
     fun testPSAIDHOOK() {
         val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         val psastr = "'psa'=>::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007'},::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.126:8888/psa/psa/num},::keyparam{department_id},::enabled{'true'}."
@@ -748,7 +777,7 @@ class PSADSLProcessorTest : TestCase() {
         psa.render(psastr)
     }
 
-    fun testupdateplatenumber(){
+    fun updateplatenumber(){
         var psa  = PSADSLProcessor()
         val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         val psastr = "'psa'=>::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
@@ -781,9 +810,10 @@ class PSADSLProcessorTest : TestCase() {
         psa.render(psastr)
         assertEquals(psa.TRUE_ATOM, psa.ENABLED_LOG)
         assertEquals("1.filename", psa.FILENAME_LOG)
-        psa.setupPlatenumber("fff0ce28-f030-11eb-98d6-052cbb92572e","kamaz", "belaz" )
+        val uuid = "7487548745867458678746756754y764y674576547685764586754684765874"
+        psa.setupPlatenumber(uuid,"kamaz", "belaz" )
         val ARR = ArrayList<Any>()
-        ARR.add("fff0ce28-f030-11eb-98d6-052cbb92572e")
+        ARR.add(uuid)
         val res = psa.psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM psa where `uuid`=?", ARR)
         var Plate = ""
         if (res.next())
