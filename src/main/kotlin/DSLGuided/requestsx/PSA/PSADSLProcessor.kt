@@ -44,7 +44,7 @@ class PSADSLProcessor  : DSLProcessor() {
             PSAProc.processfarg(uuid, inputJSON)
 
         }
-        fun createdraftPSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
+        fun createdraftPSA(params: HashMap<String, Any>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             println("into create draft psa")
             PSAProc.render(DSL)
             PSAProc.LOG("into create draft psa")
@@ -67,6 +67,8 @@ class PSADSLProcessor  : DSLProcessor() {
                 Type as String,
                 Section as String
             )
+            val Client = params.get("Client")
+            PSAProc.checksetupClient(UUID, Client!!, false)
         }
 
 
@@ -100,29 +102,8 @@ class PSADSLProcessor  : DSLProcessor() {
             println("\n\n\n\n\n\n\n\n\nCLIENT::$Client")
             println("CLIENT SIZE::${Client!!.length}")
             mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
-            when (Client.length) {
-                0 -> {
-                    println("Sett Client 1(len=0)")
-                    PSAProc.updateClient(UUID, PSAProc.getClientName(1)!!, 1)
-                }
-            }
-
-            when (Client) {
-                null -> {
-                    println("Sett Client 1(null)")
-                    PSAProc.updateClient(UUID, PSAProc.getClientName(1)!!, 1)
-                }
-                "" -> {
-                    println("Sett Client 1\"\"")
-                    PSAProc.updateClient(UUID, PSAProc.getClientName(1)!!, 1)
-                }
-            }
-            if ((Client !=null) && (!Client.equals(""))){
-                println("SETTING UP CLIENT ${Client} @ PSA ${UUID}")
-                PSAProc.setupUniqueClientAndActivate(UUID, Client)
-                return
-            }
-            PSAProc.activatePSA(UUID)
+            PSAProc.checksetupClient(UUID, Client, true)
+         ///   PSAProc.activatePSA(UUID)
 
         }
     }
@@ -492,6 +473,17 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             updateDescriptionToBlack(uuid)
         val Client = js.get("client")
         println("\n\n\n\n\n\n\n\n\n\n\n\n\nCLIENT::$Client")
+        checksetupClient(uuid, Client!!,true)
+        if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
+            val car: String = js.get("car").toString()
+            val plateNumber: String = js.get("plateNumber").toString()
+            println("FOUND CAR::$car with platenumber:: $plateNumber")
+            LOG("FOUND CAR::$car with platenumber:: $plateNumber")
+            setupPlatenumber(uuid, car, plateNumber)
+        }
+    }
+
+    fun checksetupClient(uuid: String, Client:Any, aktivate: Boolean){
         when (Client) {
             null -> {
                 println("Sett Client 1(null)")
@@ -509,22 +501,13 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             }
         }
 
-        if (js.get("client")!=null){
-            val client: String = js.get("client").toString()
+        if (Client!=null){
+            val client: String = Client.toString()
             println("FOUND CLIENT::$client")
             LOG("FOUND CLIENT::$client")
-            setupUniqueClientAndActivate(uuid, client)
-        }
-        if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
-            val car: String = js.get("car").toString()
-            val plateNumber: String = js.get("plateNumber").toString()
-            println("FOUND CAR::$car with platenumber:: $plateNumber")
-            LOG("FOUND CAR::$car with platenumber:: $plateNumber")
-            setupPlatenumber(uuid, car, plateNumber)
+            setupUniqueClientAndActivate(uuid, client, aktivate)
         }
     }
-
-
 
     fun setupPlatenumber(uuid: String, car: String, plateNumber: String) {
         val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
@@ -779,7 +762,7 @@ INSERT INTO `weighing` (
 
     }
 
-    fun setupUniqueClientAndActivate(UUID: String, Client: String){
+    fun setupUniqueClientAndActivate(UUID: String, Client: String, activate: Boolean){
         val R = getUniqueClient(Client)
         when (R.size){
             0 -> return;
@@ -792,7 +775,8 @@ INSERT INTO `weighing` (
                 }
             }
         }
-        activatePSA(UUID)
+        if (activate)
+            activatePSA(UUID)
     }
 
     fun LOG(MSG: String){
