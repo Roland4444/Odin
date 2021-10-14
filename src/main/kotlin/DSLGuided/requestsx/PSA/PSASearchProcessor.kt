@@ -313,6 +313,16 @@ class PSASearchProcessor  : DSLProcessor() {
             return -1;
     }
 
+    fun getPSAViaUUID(UUID: String): ResultSet? {
+        var param = ArrayList<Any?>()
+        param.add(UUID)
+        val res: ResultSet =
+            psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`psa` WHERE `uuid` = ?;", param)
+        if (res.next())
+            return res
+        return null
+    }
+
     fun getPSANumberviaDSL(DepsId: String, Section: String): String{
         println("in DSL psa getnumber")
         println("DEP_ID::$DepsId, SECTION::$Section")

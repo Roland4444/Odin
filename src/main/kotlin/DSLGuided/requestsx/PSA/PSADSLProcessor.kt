@@ -26,7 +26,7 @@ typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
-///////'psa2'=>::default1{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
+///////'psa2'=>::notupdate{true},::default1{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
 /////psaId => metal in PSA   , table metal, db PSA
 
 class PSADSLProcessor  : DSLProcessor() {
@@ -34,7 +34,6 @@ class PSADSLProcessor  : DSLProcessor() {
         fun deletePSA(DSL: String, PSAProc: PSADSLProcessor){
             PSAProc.render(DSL)
         }
-
         fun activatePSA(DSL: String, PSAProc: PSADSLProcessor, UUID: String){
             PSAProc.render(DSL)
             PSAProc.activatePSA(UUID)
@@ -68,7 +67,7 @@ class PSADSLProcessor  : DSLProcessor() {
                 Section as String
             )
             val Client = params.get("Client")
-            PSAProc.checksetupClient(UUID, Client, false)
+            PSAProc.checksetupClient(UUID, Client, false, false)
         }
 
 
@@ -102,7 +101,7 @@ class PSADSLProcessor  : DSLProcessor() {
             println("\n\n\n\n\n\n\n\n\nCLIENT::$Client")
             println("CLIENT SIZE::${Client!!.length}")
             mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
-            PSAProc.checksetupClient(UUID, Client, true)
+            PSAProc.checksetupClient(UUID, Client, true, true)
          ///   PSAProc.activatePSA(UUID)
 
         }
@@ -121,6 +120,7 @@ class PSADSLProcessor  : DSLProcessor() {
     var urldb              = EMPTY_ATOM
     var NUMBER_AT_2_W      = FALSE_ATOM
     var DEFAULT1           = FALSE_ATOM
+    var NOT_UPDATE_CLIENT  = FALSE_ATOM
 
     var dumb               = EMPTY_ATOM
     var json_              = EMPTY_ATOM
@@ -474,7 +474,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             updateDescriptionToBlack(uuid)
         val Client = js.get("client")
         println("\n\n\n\n\n\n\n\n\n\n\n\n\nCLIENT::$Client")
-        checksetupClient(uuid, Client,true)
+        checksetupClient(uuid, Client,true, false)
         if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
             val car: String = js.get("car").toString()
             val plateNumber: String = js.get("plateNumber").toString()
@@ -484,7 +484,31 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         }
     }
 
-    fun checksetupClient(uuid: String, Client:Any?, aktivate: Boolean){
+    fun checkClientExist(uuid: String): Boolean{
+        LOG("INTO CHECK EXIST")
+        val PSA: ResultSet? = psearch.getPSAViaUUID(uuid)
+        if (PSA == null)
+            return false
+
+        if (PSA?.getInt("passport_id")  ==null) {
+            LOG("PASSPORT ID=null")
+            return false
+        }
+
+        if (PSA?.getInt("passport_id")  ==1){
+            LOG("PASSPORT ID=1")
+            return false
+        }
+        LOG("PASSPORT ID="+PSA?.getInt("passport_id"))
+        return true
+    }
+
+    fun checksetupClient(uuid: String, Client:Any?, aktivate: Boolean, checkExist: Boolean){
+        if (checkExist) {
+            if (NOT_UPDATE_CLIENT.equals(TRUE_ATOM))
+                if (checkClientExist(uuid))
+                    return
+        }
         when (Client) {
             null -> {
                 println("Sett Client 1(null)")
@@ -1257,11 +1281,18 @@ VALUES
 
     val default1: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "default1") {
+            if (a.key.Name == "default1")
                 DEFAULT1 = a.key.Param.toString()
-            }
         }
     }
+
+    val notupdate: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "notupdate")
+                NOT_UPDATE_CLIENT = a.key.Param.toString()
+        }
+    }
+
 
 
 
@@ -1290,6 +1321,7 @@ VALUES
             "deletePSA"     -> mapper.put(R, deletePSA)
             "log"           -> mapper.put(R, log)
             "default1"      -> mapper.put(R, default1)
+            "notupdate"     -> mapper.put(R, notupdate)
         }
     }
 

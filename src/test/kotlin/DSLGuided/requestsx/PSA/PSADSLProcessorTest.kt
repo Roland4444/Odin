@@ -740,7 +740,7 @@ class PSADSLProcessorTest : TestCase() {
     fun activateviauuid(){
         val startTime = System.nanoTime()
         var counter = 0
-        for (i in 150000..155000){
+        for (i in 152000..155000){
             println("${counter++} STEP, activate id $i")
             HTTPClient.sendGet("http://192.168.0.2:15000/psa/psa/gettest?id=$i")
         }
@@ -844,7 +844,7 @@ class PSADSLProcessorTest : TestCase() {
     fun testdefault1(){
         var psa  = PSADSLProcessor()
         val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
-        val psastr = "'psa'=>::default1{true},::log{'true':'1.filename'}, ::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
+        val psastr = "'psa'=>::notupdate{true},::default1{true},::log{'true':'1.filename'},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
         psaconnector.render(psaconnstr)
         val PSASearchProcessor = PSASearchProcessor()
         PSASearchProcessor.psaconnector= psaconnector
@@ -855,6 +855,7 @@ class PSADSLProcessorTest : TestCase() {
         psa.render(psastr)
 
         assertEquals("true", psa.DEFAULT1)
+        assertEquals("true", psa.NOT_UPDATE_CLIENT)
     }
 
 
