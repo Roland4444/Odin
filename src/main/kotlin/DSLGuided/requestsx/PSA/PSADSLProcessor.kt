@@ -41,6 +41,7 @@ class PSADSLProcessor  : DSLProcessor() {
         fun processColorPSA(inputJSON: String, uuid: String, DSL: String, PSAProc: PSADSLProcessor) {
             PSAProc.render(DSL)
             PSAProc.processfarg(uuid, inputJSON)
+            PSAProc.activatePSA(uuid)
 
         }
         fun createdraftPSA(params: HashMap<String, Any>, DSL: String, PSAProc: PSADSLProcessor): Unit {
@@ -102,7 +103,7 @@ class PSADSLProcessor  : DSLProcessor() {
             println("CLIENT SIZE::${Client!!.length}")
             mwp(Tara as String, Sor as String, UUID as String, Price as String, ClientPrice as String)
             PSAProc.checksetupClient(UUID, Client, true, true)
-         ///   PSAProc.activatePSA(UUID)
+            PSAProc.activatePSA(UUID)
 
         }
     }
