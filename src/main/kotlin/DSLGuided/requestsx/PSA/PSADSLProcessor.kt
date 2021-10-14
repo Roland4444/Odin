@@ -26,7 +26,7 @@ typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
-///////'psa2'=>::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
+///////'psa2'=>::default1{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::psa{'login':user123,'pass':password},::db{jdbc:mysql://192.168.0.121:3306/psa},::getPsaNumberfrom{http://192.168.0.121:8080/psa/psa/num},::keyparam{department_id},::enabled{'true'}
 /////psaId => metal in PSA   , table metal, db PSA
 
 class PSADSLProcessor  : DSLProcessor() {
@@ -68,7 +68,7 @@ class PSADSLProcessor  : DSLProcessor() {
                 Section as String
             )
             val Client = params.get("Client")
-            PSAProc.checksetupClient(UUID, Client!!, false)
+            PSAProc.checksetupClient(UUID, Client, false)
         }
 
 
@@ -120,6 +120,7 @@ class PSADSLProcessor  : DSLProcessor() {
     var pass               = EMPTY_ATOM
     var urldb              = EMPTY_ATOM
     var NUMBER_AT_2_W      = FALSE_ATOM
+    var DEFAULT1           = FALSE_ATOM
 
     var dumb               = EMPTY_ATOM
     var json_              = EMPTY_ATOM
@@ -473,7 +474,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             updateDescriptionToBlack(uuid)
         val Client = js.get("client")
         println("\n\n\n\n\n\n\n\n\n\n\n\n\nCLIENT::$Client")
-        checksetupClient(uuid, Client!!,true)
+        checksetupClient(uuid, Client,true)
         if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
             val car: String = js.get("car").toString()
             val plateNumber: String = js.get("plateNumber").toString()
@@ -483,7 +484,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         }
     }
 
-    fun checksetupClient(uuid: String, Client:Any, aktivate: Boolean){
+    fun checksetupClient(uuid: String, Client:Any?, aktivate: Boolean){
         when (Client) {
             null -> {
                 println("Sett Client 1(null)")
@@ -765,7 +766,12 @@ INSERT INTO `weighing` (
     fun setupUniqueClientAndActivate(UUID: String, Client: String, activate: Boolean){
         val R = getUniqueClient(Client)
         when (R.size){
-            0 -> return;
+            0 -> {
+                when (DEFAULT1) {
+                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
+                }
+                return
+            };
             2 -> {
                 val TYPE = R.first
                 val ID: Int= R.last.toString().toInt()
@@ -1144,6 +1150,7 @@ VALUES
         }
     }
 
+
     val HOOK: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "HOOK"){
@@ -1246,7 +1253,14 @@ VALUES
                 FILENAME_LOG = K.Value.toString()
             }
         }
+    }
 
+    val default1: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "default1") {
+                DEFAULT1 = a.key.Param.toString()
+            }
+        }
     }
 
 
@@ -1275,6 +1289,7 @@ VALUES
             "number_at_2_w" -> mapper.put(R, number_at_2_w)
             "deletePSA"     -> mapper.put(R, deletePSA)
             "log"           -> mapper.put(R, log)
+            "default1"      -> mapper.put(R, default1)
         }
     }
 

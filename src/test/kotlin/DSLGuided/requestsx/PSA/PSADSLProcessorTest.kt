@@ -70,7 +70,7 @@ class PSADSLProcessorTest : TestCase() {
         hash.put("UUID",  timeBasedUUID.generate())
         hash.put("Type", "black")
         hash.put("Section", "1")
-        PSADSLProcessor.createdraftPSA(hash as HashMap<String, String>, copy, psa )
+        PSADSLProcessor.createdraftPSA(hash as HashMap<String, Any>, copy, psa )
 
     }
 
@@ -100,7 +100,7 @@ class PSADSLProcessorTest : TestCase() {
         hash.put("PlateNumber", "VTB100")
         hash.put("UUID",  timeBasedUUID.generate())
         hash.put("Type", "black")
-        PSADSLProcessor.createdraftPSA(hash as HashMap<String, String>, copy, psa )
+        PSADSLProcessor.createdraftPSA(hash as HashMap<String, Any>, copy, psa )
 
     }
 
@@ -840,6 +840,23 @@ class PSADSLProcessorTest : TestCase() {
 
         assertEquals(false, psa.checkpsacompleted("zxzxzxzxzxzxzxzxzxxzxzxzxzxzxxzxzxzxxzxzxzxzx"))
     }
+
+    fun testdefault1(){
+        var psa  = PSADSLProcessor()
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::default1{true},::log{'true':'1.filename'}, ::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+
+        assertEquals("true", psa.DEFAULT1)
+    }
+
 
 
 }
