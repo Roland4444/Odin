@@ -213,11 +213,23 @@ fun testsearchplatenumber(){
     }
 
 
+    fun testsearchcountMaxNuberPSA(){
+        val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::datarange{'2021-10-12':'2021-10-15'}."
+        psaconnector.render(initDB)
+        var psasearch = PSASearchProcessor()
+        psasearch. psaconnector=psaconnector
+        psasearch.render(search6)
+        val res = psasearch.getPSA()
+
+    }
 
 
 
 
-  //  ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ!
+
+
+
+    //  ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ!
     fun testGetPSAIdViaUUID() {
       psaconnector.render(initDB)
       var psasearch = PSASearchProcessor()

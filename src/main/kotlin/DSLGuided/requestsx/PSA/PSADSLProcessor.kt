@@ -475,7 +475,6 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             updateDescriptionToBlack(uuid)
         val Client = js.get("client")
         println("\n\n\n\n\n\n\n\n\n\n\n\n\nCLIENT::$Client")
-        checksetupClient(uuid, Client,true, false)
         if ((js.get("car")!=null) && (js.get("plateNumber")!=null)){
             val car: String = js.get("car").toString()
             val plateNumber: String = js.get("plateNumber").toString()
@@ -483,6 +482,8 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
             LOG("FOUND CAR::$car with platenumber:: $plateNumber")
             setupPlatenumber(uuid, car, plateNumber)
         }
+        checksetupClient(uuid, Client,true, false)
+
     }
 
     fun checkClientExist(uuid: String): Boolean{
