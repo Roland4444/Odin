@@ -1,5 +1,6 @@
 package DSLGuided.requestsx.PSA
 
+import abstractions.RSet
 import junit.framework.TestCase
 import org . json . simple . JSONArray
 import org . json . simple . JSONObject
@@ -220,7 +221,21 @@ fun testsearchplatenumber(){
         psasearch. psaconnector=psaconnector
         psasearch.render(search6)
         val res = psasearch.getPSA()
+        val RSet = RSet(res!!)
+        val rsdump  =  "rdump.bin"
+        Saver.Saver.write(Saver.Saver.savedToBLOB(RSet), rsdump)
+        var counter = 0
+        while (res!!.next())
+            println("COUNTER::${counter++}")
+    }
 
+    fun testsearchcount(){
+        val search6 =  "'search'=>::sql{'SELECT * FROM logs '},::date{'2021-10-12':'2021-10-15'},::users{'20','25','26','15','34'}."
+        psaconnector.render(initDB)
+        var psasearch = PSASearchProcessor()
+        psasearch. psaconnector=psaconnector
+        psasearch.render(search6)
+        println("SQL::\n ${psasearch.initialString}")
     }
 
 

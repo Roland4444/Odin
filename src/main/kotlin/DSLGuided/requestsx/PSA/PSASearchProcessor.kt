@@ -4,7 +4,6 @@ import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
-import fr.roland.DB.Executor
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import se.roland.util.HTTPForm.collectParams
@@ -175,6 +174,24 @@ class PSASearchProcessor  : DSLProcessor() {
         return result.toString()
     }
 
+    fun users(input: List<String>): String {
+        val builder = StringBuilder()
+        if (input.size == 0)
+            return ""
+        builder.append("(")
+        for (i in 0..input.size - 1) {
+            if (input.get(i) == "") continue
+            println("CURRENT::"+input.get(i))
+            val userid = input.get(i)
+            builder.append("(user_id=$userid)")
+            if ((i == input.size - 1))
+                break
+            builder.append("   or ")
+        }
+        builder.append(")")
+        return builder.toString()
+    }
+
     fun departments(input: List<String>): String {
         val builder = StringBuilder()
         if (input.size == 0)
@@ -224,6 +241,17 @@ class PSASearchProcessor  : DSLProcessor() {
             }
         }
     }
+
+    val users: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "users") {
+                departments = a.key.Param as MutableList<String>
+                params()
+                val appendix = users(departments)
+                initialString.append(appendix)
+            }
+        }
+    }
     val numberpsa: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "numberpsa") {
@@ -262,6 +290,21 @@ class PSASearchProcessor  : DSLProcessor() {
             }
         }
     }
+
+
+    val date: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "date") {
+                val keyvalue: KeyValue = a.key.Param as KeyValue
+                searchFrom = keyvalue.Key
+                searchTo = keyvalue.Value as String
+                params()
+                val appendix = "( `date` between '${searchFrom}' and '${searchTo}')"
+                initialString.append(appendix)
+            }
+        }
+    }
+
     val client: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "client") {
@@ -378,6 +421,8 @@ class PSASearchProcessor  : DSLProcessor() {
             "limit" -> mapper.put(R, limit)
             "section" -> mapper.put(R, section)
             "enabled" -> mapper.put(R, enable)
+            "users" -> mapper.put(R, users)
+            "date" -> mapper.put(R, date)
 
         }
     }
