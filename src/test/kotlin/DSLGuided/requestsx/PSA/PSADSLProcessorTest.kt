@@ -9,6 +9,7 @@ import java.nio.file.Files
 import java.util.ArrayList
 
 import java.util.HashMap
+import java.util.stream.Collectors
 import java.io.File as File
 
 class PSADSLProcessorTest : TestCase() {
@@ -737,21 +738,25 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
-    fun activateone(){
-        val startTime = System.nanoTime()
-        var counter = 0
-        val i= 154767
-        HTTPClient.sendGet("http://192.168.0.126:15000/psa/psa/gettest?id=$i")
-
-        val endTime = System.nanoTime()
-        val duration = endTime - startTime
-        println("time execution:: " + duration / 1000000000)
+    fun testsplitpsa(){
+        var psa  = PSADSLProcessor()
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'true','section':'20007', 'uuid':'146000000'},::enabled{'true'}."
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        psa.splitpsa("89eaf9feb35b9d00c56abbeabda6f7ad")
     }
 
-    fun activateviauuid(){
+
+
+
+    fun testactivateviauuid(){
         val startTime = System.nanoTime()
         var counter = 0
-        for (i in 153000..157000){
+        for (i in 156000..156600){
             println("${counter++} STEP, activate id $i")
             HTTPClient.sendGet("http://192.168.0.2:15000/psa/psa/gettest?id=$i")
         }
@@ -867,6 +872,13 @@ class PSADSLProcessorTest : TestCase() {
 
         assertEquals("true", psa.DEFAULT1)
         assertEquals("true", psa.NOT_UPDATE_CLIENT)
+    }
+
+    fun teststream() {
+        val arr = listOf(1 , 2)
+        val n = arr.map{a->a+1}.filter{a->a>2}
+        n.forEach { a-> println(a) }
+
     }
 
 

@@ -16,7 +16,12 @@ class SQLDump: DSLProcessor() {
         TODO("Not yet implemented")
     }
 
-    val count: RoleHandler{
-
+    val count: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "count") {
+              ///  typepayment_ = a.key.Param as String
+            ////    params()
+            }
+        }
     }
 }

@@ -370,9 +370,9 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         prepared?.setString(9, data.getString("payment_date"))
         prepared?.setString(10, uuid)
         println("prepared @createPSA=> $prepared")
-        if (prepared != null) {
+        if (prepared != null)
             prepared.execute()
-        }
+
     }
 
     fun updateDatainvagning(data: ResultSet, uuid: String) {
@@ -409,9 +409,8 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         if (res2.next()){
             val status = res2.getString("message")
             println("message! $status")
-            if (status.equals("Успешно распечатан")) {
+            if (status.equals("Успешно распечатан"))
                 return true
-            }
         }
         return false
     }
@@ -588,9 +587,8 @@ NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?, 
 
         println("UUID= $guuid")
         println("prepared=> $prepared")
-        if (prepared != null) {
+        if (prepared != null)
             prepared.execute()
-        }
     }
 
     fun processinvagning__(json: JSONObject, uuid: String){
@@ -761,9 +759,8 @@ INSERT INTO `weighing` (
         param.add(ID)
         val res: ResultSet =
             psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`company` WHERE `id` = ?", param)
-        if (res.next()) {
+        if (res.next())
             return res.getString("name")
-        };
         return ""
     }
 
