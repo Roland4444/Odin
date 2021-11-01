@@ -221,9 +221,6 @@ fun testsearchplatenumber(){
         psasearch. psaconnector=psaconnector
         psasearch.render(search6)
         val res = psasearch.getPSA()
-        val RSet = RSet(res!!)
-        val rsdump  =  "rdump.bin"
-        Saver.Saver.write(Saver.Saver.savedToBLOB(RSet), rsdump)
         var counter = 0
         while (res!!.next())
             println("COUNTER::${counter++}")
@@ -245,12 +242,12 @@ fun testsearchplatenumber(){
 
 
     //  ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ!
-    fun testGetPSAIdViaUUID() {
+    fun testDBConnectorTestGetPSAIdViaUUID() {
       psaconnector.render(initDB)
       var psasearch = PSASearchProcessor()
       psasearch. psaconnector=psaconnector
       val id = psasearch.getPSAIdViaUUID("7487548745867458678746756754y764y674576547685764586754684765874")
-      assertEquals(174, id)
+      assertEquals(-1, id)
     }
 
 
