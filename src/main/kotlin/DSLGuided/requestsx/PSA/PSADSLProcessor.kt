@@ -570,7 +570,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
 INSERT INTO `psa` (
 `id`,`number`,   `date`,  `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`, `section`) 
 VALUES (
-NULL,   ?,       ?,  'Не выбран ($comment)',   ?,           ?,       ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',       NULL,      ?,     ?);"""
+NULL,   ?,       ?,  'Клиент не установлен($comment)',   ?,           ?,       ?,   CURRENT_TIMESTAMP, '0', CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',       NULL,      ?,     ?);"""
                          ////Необходимо выбрать
         var prepared = psearch.psaconnector.executor!!.conn.prepareStatement(initial);
         val date: String = LocalDate.now().toString()
@@ -983,7 +983,7 @@ INSERT INTO `weighing` (
 INSERT INTO `psa` (
 `id`,`number`,`date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`) 
 VALUES (
-NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
+NULL,   ?,      ?,         ?,'Клиент не установлен ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?);"""
             );                              /////Необходимо выбрать
             val date: String = LocalDate.now().toString()
             prepared?.setString(1, getPSANumberviaDSL(DepId))//getPSANumber(DepId))
@@ -1058,7 +1058,7 @@ VALUES
 INSERT INTO `psa` (
 `id`,`number`,`date`, `plate_number`, `client`, `department_id`, `description`, `type`, `created_at`, `diamond`, `payment_date`, `comment`, `check_printed`, `deferred`,`filename`, `uuid`, `section`) 
 VALUES (
-NULL,   ?,      ?,         ?,'Не выбран ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?,     ?);"""
+NULL,   ?,      ?,         ?,'Клиент не установлен ($PlateNumber)',?,              ?,         ?,  CURRENT_TIMESTAMP, '0',   CURRENT_TIMESTAMP, 'fromScales',     '0',          '0',    NULL,         ?,     ?);"""
             );                              /////Необходимо выбрать
             println("CREATE DRAFT PSA WITH SECTION")
             LOG("CREATE DRAFT PSA WITH SECTION")

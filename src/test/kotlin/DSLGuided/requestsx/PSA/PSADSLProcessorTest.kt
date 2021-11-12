@@ -753,10 +753,10 @@ class PSADSLProcessorTest : TestCase() {
 
 
 
-    fun activateviauuid(){
+    fun testactivateviauuid(){
         val startTime = System.nanoTime()
         var counter = 0
-        for (i in 156000..156600){
+        for (i in 158000..159000){
             println("${counter++} STEP, activate id $i")
             HTTPClient.sendGet("http://192.168.0.2:15000/psa/psa/gettest?id=$i")
         }

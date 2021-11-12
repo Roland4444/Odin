@@ -8,8 +8,8 @@ class Aktivator {
         fun main(args: Array<String>) {
                 val startTime = System.nanoTime()
                 var counter = 0
-                val i= 156949
-                HTTPClient.sendGet("http://192.168.0.2:15000/psa/psa/gettest?id=$i")
+                val i= 159183
+                HTTPClient.sendGet("http://192.168.0.126:15000/psa/psa/gettest?id=$i")
 
                 val endTime = System.nanoTime()
                 val duration = endTime - startTime
