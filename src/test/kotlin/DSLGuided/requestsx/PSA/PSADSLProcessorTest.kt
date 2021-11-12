@@ -299,7 +299,7 @@ class PSADSLProcessorTest : TestCase() {
         ///   assertEquals(1, counter)
     }
 
-    fun testcompelted(){
+    fun compelted(){
         val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         var psa  = PSADSLProcessor()
 
@@ -753,7 +753,7 @@ class PSADSLProcessorTest : TestCase() {
 
 
 
-    fun testactivateviauuid(){
+    fun activateviauuid(){
         val startTime = System.nanoTime()
         var counter = 0
         for (i in 158000..159000){
