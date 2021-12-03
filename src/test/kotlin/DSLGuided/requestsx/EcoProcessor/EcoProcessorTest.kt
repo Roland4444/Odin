@@ -70,8 +70,8 @@ class EcoProcessorTest : TestCase() {
         EcoProc.process()
     }
 
-    fun quatermap(){
-        val dsl = "'eco'=>::generatefor{'quarter':4,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::quartermap{'1':'year-01-01'/'year-05-31','2':''year-04-01'/'year-06-30'','3':''year-07-01'/'year-9-30'','4':''year-10-01'/'year-12-31''},::enabled{'false'}."
+    fun testquatermap(){
+        val dsl = "'eco'=>::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::quartermap{'1':'year-01-01'/'year-02-31','2':''year-04-01'/'year-06-30'','3':''year-07-01'/'year-9-30'','4':''year-10-01'/'year-12-31''},::enabled{'true'}."
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()
         psaconnector.render(initDB)
@@ -80,17 +80,17 @@ class EcoProcessorTest : TestCase() {
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch
         EcoProc.render(dsl)
-        assertEquals("'year-01-01':'year-05-31'", EcoProc.QuarterMap.get(1) )
+        assertEquals("'year-01-01':'year-02-31'", EcoProc.QuarterMap.get(1) )
     }
 
-    fun processpatchedmapap() {
+    fun testprocesspatchedmapap() {
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()
         psaconnector.render(initDB)
         var psasearch = PSASearchProcessor()
         psasearch.psaconnector= psaconnector
         val dsl = "'eco'=>::quartermap{'1':'year-01-01'/'year-01-31','2':''year-04-01'/'year-04-04'','3':''year-07-01'/'year-07-04'','4':''year-10-01'/'year-10-04''}," +
-                  "::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №2','ПЗУ №3','ПЗУ №12','ПЗУ №1']},::enabled{'false'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12'
+                  "::generatefor{'quarter':1,'year':2021,'department':['ПЗУ №2','ПЗУ №3']},::enabled{'true'}."///'ПЗУ №3', 'ПЗУ №2', 'ПЗУ №12', ,'ПЗУ №12','ПЗУ №1'
         val EcoProc = EcoProcessor()
         EcoProc.PSASearchProcessor = psasearch
         EcoProc.render(dsl)
@@ -117,4 +117,12 @@ class EcoProcessorTest : TestCase() {
 //        println("V=$v")
         println("V0=$v0")
     }
+
+    fun test_clone(){
+        val eco = EcoProcessor()
+        assertEquals("Description","Description" )
+        eco.clone("template.xlsx", "copy.xlsx", "Description")
+    }
+
+
 }

@@ -9,10 +9,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellUtil
+import org.apache.poi.xssf.usermodel.XSSFFont
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.sql.ResultSet
 import java.util.*
-import kotlin.collections.HashMap
+
+
 /////"'eco'=>::generatefor{'quarter':4,'year':2019,'department':6},::enabled{'false'}."
 typealias MapUpdater = (Map: Map<String, Float>, Value:Float) -> Unit
 class EcoProcessor:  DSLProcessor() {
@@ -40,6 +45,8 @@ class EcoProcessor:  DSLProcessor() {
     var Book: Workbook = HSSFWorkbook()
 
     var borderStyle: CellStyle = Book.createCellStyle()
+    var BoldTextStyle: CellStyle = Book.createCellStyle()
+    var _CursiveTextStyle: CellStyle = Book.createCellStyle()
     var Filename: String = "temp.xlsx"
     var quarter = 0
     var year = 0
@@ -58,6 +65,26 @@ class EcoProcessor:  DSLProcessor() {
         borderStyle.borderRight = CellStyle.BORDER_THIN
         borderStyle.borderTop = CellStyle.BORDER_THIN
         borderStyle.alignment = CellStyle.ALIGN_CENTER
+
+        val Boldfont = Book.createFont()
+        Boldfont.fontHeightInPoints = 13.toShort()
+        Boldfont.fontName = "Arial"
+        Boldfont.color = IndexedColors.WHITE.getIndex()
+        Boldfont.bold = true
+        Boldfont.italic = false
+
+        val _CursiveFont = Book.createFont()
+        Boldfont.fontHeightInPoints = 10.toShort()
+        Boldfont.fontName = "Arial"
+        Boldfont.color = IndexedColors.WHITE.getIndex()
+        Boldfont.bold = true
+        Boldfont.italic = true
+
+
+
+        _CursiveTextStyle.setFont(_CursiveFont)
+
+        BoldTextStyle.setFont(Boldfont)
         return "OK"
     }
 
@@ -145,6 +172,51 @@ class EcoProcessor:  DSLProcessor() {
             val T: Double = (u.toDouble()/1000)
             cell4.setCellValue(u.toDouble())////"%.3f".format(T))
         }
+
+    }
+
+    fun clone(Source_FileName: String, Target_FileName: String, SheetName: String){
+        val Source__ = XSSFWorkbook(FileInputStream(File(Source_FileName)))
+        println("#sheet ${Source__.getNameIndex(SheetName)}")
+        for (i in 0..2)
+            println("#::"+Source__.getSheetName(i))
+        var sheet_src = Source__.getSheet(SheetName)
+        val Target = XSSFWorkbook()
+        var sheet = Target.createSheet(SheetName)
+        var counter = 0
+        for (i in 0..35){
+            val r = sheet.createRow(i)
+            for (j in 0..60) {
+                val cell_ = r.createCell(j)
+                if (sheet_src.getRow(i)!=null)
+                    if (sheet_src.getRow(i).getCell(j)!=null)
+                        cell_.setCellValue(sheet_src.getRow(i).getCell(j).stringCellValue)
+            }
+        }
+
+//        sheet_src.forEach { a->
+//            run {
+//                val r = sheet.createRow(counter)
+//                counter++
+//                var counter_cell = 0
+//                a.forEach {
+//                    val cell_ = r.createCell(counter_cell)
+//                    if (a.getCell(counter_cell) != null) {
+//                        cell_.setCellValue(a.getCell(counter_cell).stringCellValue)
+//                        println("VALUE::${a.getCell(counter_cell).stringCellValue}")
+//                    }
+//                    println("COUNTER_CELL::$counter_cell  @counter =$counter   ")
+//                    counter_cell++
+//                }
+//            }
+//        }
+        Target?.write(FileOutputStream(Target_FileName))
+        Target?.close()
+
+    }
+
+    fun appendDescriptionLiost(){
+        var DS = Book.createSheet("Description")
 
     }
 
