@@ -26,4 +26,9 @@ public class JHOFTest extends TestCase {
     }
 
 
+    public void testSwitchj(){
+
+    }
+
+
 }

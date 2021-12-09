@@ -228,6 +228,7 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
         prepared?.setString(2, BLACK_ATOM)
         prepared?.setString(3, UUID)
         println("UPDATING SECTION SET TYPE=$BLACK_ATOM WHERE PSA UUID=$UUID")
+        LOG("UPDATING SECTION SET TYPE=$BLACK_ATOM WHERE PSA UUID=$UUID")
         prepared?.execute()
     }
 
@@ -587,6 +588,7 @@ NULL,   ?,       ?,  'Клиент не установлен($comment)',   ?,   
 
         println("UUID= $guuid")
         println("prepared=> $prepared")
+        LOG("prepared=> $prepared")
         if (prepared != null)
             prepared.execute()
     }
