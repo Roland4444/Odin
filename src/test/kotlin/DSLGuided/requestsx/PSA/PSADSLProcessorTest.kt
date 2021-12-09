@@ -894,7 +894,7 @@ class PSADSLProcessorTest : TestCase() {
         val vagning = psa.convertToListJSON(sum)
         assertEquals(false, psa.isBlack(vagning, psa.PSAID))
         val inputjson = String(Saver.Saver.readBytes("temp.js"))
-        PSADSLProcessor.processColorPSA(inputjson, "9999999999999", psastr, psa)
+     ///   PSADSLProcessor.processColorPSA(inputjson, "9999999999999", psastr, psa)
 
     }
 
