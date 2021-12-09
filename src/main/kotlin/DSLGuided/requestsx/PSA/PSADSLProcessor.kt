@@ -174,6 +174,7 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
         if (prepared != null) {
             prepared.execute()
         }
+        LOG(prepared.toString())
 
     }
 
@@ -230,6 +231,7 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
         println("UPDATING SECTION SET TYPE=$BLACK_ATOM WHERE PSA UUID=$UUID")
         LOG("UPDATING SECTION SET TYPE=$BLACK_ATOM WHERE PSA UUID=$UUID")
         prepared?.execute()
+        LOG(prepared.toString())
     }
 
 
@@ -444,17 +446,20 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         var isBLACK=false
         if (js.get("section")!= null)
             section = js.get("section") as String
-        if (HOOKED.equals(TRUE_ATOM))
-            if (HOOKSECTION.length > 0)
-                section = HOOKSECTION
-        if (PSAIDHOOK.equals(TRUE_ATOM)){
-            if (isBlack(vagning, PSAID)) {
-                isBLACK = true
+        when (HOOKED){
+            TRUE_ATOM ->
+                if (HOOKSECTION.length > 0)
+                    section = HOOKSECTION
+        }
+        when (PSAIDHOOK){
+            TRUE_ATOM ->{
+                isBLACK=isBlack(vagning, PSAID)
                 println("\n\n\n\n\n\nHOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
                 LOG("HOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
                 section=SECTION
             }
         }
+
         println("VAGNING: ${vagning}")
 
         println("\n\nSECTION::$section\n\n")
@@ -542,7 +547,7 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         stmt.setString(1, "$car $plateNumber")
         stmt.setString(2, uuid)
         println(stmt)
-        LOG(stmt.toString())
+        LOG("SETUP PALTENUMBER::\n"+stmt.toString())
         stmt.executeUpdate()
     }
 
@@ -703,6 +708,7 @@ INSERT INTO `weighing` (
         stmt.setString(2, name)
         stmt.setString(3, UUID)
         println(stmt)
+        LOG("UPDATE COMPANY::\n"+stmt.toString())
         stmt.executeUpdate()
     }
 
@@ -739,12 +745,14 @@ INSERT INTO `weighing` (
     @Throws(SQLException::class)
     private fun updateClient(UUID: String, name: String, idclient: Int) {
         println("INTO UPDATE CLIENT UUID=$UUID name=$name id=$idclient")
-
+        LOG("INTO UPDATE CLIENT UUID=$UUID name=$name id=$idclient")
         if (PASS_CHECK.equals(TRUE_ATOM) && (idclient !=1)){
             println("INTO PASS CHECK CLAUSE")
+            LOG("INTO PASS CHECK CLAUSE")
             if (!checkpassport(idclient))
                 return;
         }
+        LOG("AFTER PASS CHECK")
         println("AFTER PASS CHECK")
         val stmt: PreparedStatement = psearch.psaconnector.executor!!.getConn()
             .prepareStatement("UPDATE psa set passport_id = ?, client = ?, `vat`='без НДС', company_id=NULL   WHERE uuid = ?")
@@ -752,6 +760,7 @@ INSERT INTO `weighing` (
         stmt.setString(2, name)
         stmt.setString(3, UUID)
         println(stmt)
+        LOG(stmt.toString())
         stmt.executeUpdate()
     }
 
@@ -913,6 +922,7 @@ INSERT INTO `weighing` (
         if (prepared != null) {
             prepared.execute()
         }
+        LOG("processinvagning::"+prepared.toString())
 
        // prepared.setString();
 
@@ -1034,6 +1044,7 @@ VALUES
             if (PSAId == 0)
                 println("Wrong psaId")
             prepared?.execute()
+            LOG(prepared.toString())
         }
     }
 

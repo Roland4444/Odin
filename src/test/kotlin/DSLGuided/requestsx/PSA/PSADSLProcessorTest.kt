@@ -881,6 +881,23 @@ class PSADSLProcessorTest : TestCase() {
 
     }
 
+    fun testisblack(){
+        var psa  = PSADSLProcessor()
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr = "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
+        psaconnector.render(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        psa.render(psastr)
+        val sum = psa.extractSummary("{\"11\":{\"cost\":2445.3,\"median\":66994.52055,\"weight\":36.5,\"psaid\":11},\"5\":{\"cost\":86427.55,\"median\":652924.00091,\"weight\":132.37,\"psaid\":5},\"6\":{\"cost\":3961.4,\"median\":117479.24081,\"weight\":33.72,\"psaid\":6},\"8\":{\"cost\":4609.5,\"median\":350000,\"weight\":13.17,\"psaid\":8}}")
+        val vagning = psa.convertToListJSON(sum)
+        assertEquals(false, psa.isBlack(vagning, psa.PSAID))
+        val inputjson = String(Saver.Saver.readBytes("temp.js"))
+        PSADSLProcessor.processColorPSA(inputjson, "9999999999999", psastr, psa)
+
+    }
+
 
 
 }
