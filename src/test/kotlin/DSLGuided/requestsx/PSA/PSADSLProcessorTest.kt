@@ -1,4 +1,5 @@
 package DSLGuided.requestsx.PSA
+import DSLGuided.requestsx.DSLProcessor
 import junit.framework.TestCase
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
@@ -895,6 +896,20 @@ class PSADSLProcessorTest : TestCase() {
         assertEquals(false, psa.isBlack(vagning, psa.PSAID))
         val inputjson = String(Saver.Saver.readBytes("temp.js"))
      ///   PSADSLProcessor.processColorPSA(inputjson, "9999999999999", psastr, psa)
+
+    }
+
+    fun testwhen(){
+        val psa = PSADSLProcessor()
+        var HOOKED = psa.TRUE_ATOM
+        var result = 0
+        when (HOOKED){
+            psa.TRUE_ATOM ->
+                result=5
+        }
+        assertEquals(5, result)
+
+
 
     }
 

@@ -446,14 +446,13 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         var isBLACK=false
         if (js.get("section")!= null)
             section = js.get("section") as String
-        when (HOOKED){
-            TRUE_ATOM ->
-                if (HOOKSECTION.length > 0)
-                    section = HOOKSECTION
-        }
-        when (PSAIDHOOK){
-            TRUE_ATOM ->{
-                isBLACK=isBlack(vagning, PSAID)
+
+        if (HOOKED.equals(TRUE_ATOM))
+            if (HOOKSECTION.length > 0)
+                section = HOOKSECTION
+        if (PSAIDHOOK.equals(TRUE_ATOM)){
+            if (isBlack(vagning, PSAID)) {
+                isBLACK = true
                 println("\n\n\n\n\n\nHOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
                 LOG("HOOK SECTION SET TO $SECTION @ PSAID=$PSAID")
                 section=SECTION
