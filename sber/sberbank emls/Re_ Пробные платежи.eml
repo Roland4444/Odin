@@ -1,0 +1,381 @@
+Delivered-To: akvt@bk.ru
+Return-path: <Shabrin.S.V@sberbank.ru>
+Received-SPF: pass (mx183.mail.ru: domain of sberbank.ru designates 194.186.207.37 as permitted sender) client-ip=194.186.207.37; envelope-from=Shabrin.S.V@sberbank.ru; helo=email1.sberbank.ru;
+Received: from email1.sberbank.ru ([194.186.207.37]:36706)
+	by mx183.mail.ru with esmtp (envelope-from <Shabrin.S.V@sberbank.ru>)
+	id 1jnM5U-0000Iy-9J
+	for akvt@bk.ru; Mon, 22 Jun 2020 16:02:12 +0300
+Received: from ceroklis2.smtp.sbrf.ru (10.54.224.102) by
+ CAB-VSP-EDG2003.sigma.sbrf.ru (10.44.254.7) with Microsoft SMTP Server id
+ 15.0.1497.2; Mon, 22 Jun 2020 16:02:12 +0300
+Received: from smtp.sberbank.ru (localhost [127.0.0.1])
+	by ceroklis2.smtp.sbrf.ru (Postfix) with ESMTP id 02EE1D09
+	for <akvt@bk.ru>; Mon, 22 Jun 2020 16:02:12 +0300 (MSK)
+Received: from ceroklis2.smtp.sbrf.ru
+    by 127.0.0.1
+    for <akvt@bk.ru>;
+    Mon Jun 22 16:02:11 2020
+Received: from CAB-VSP-MBX5068.sigma.sbrf.ru (cab-vsp-mbx1068.sigma.sbrf.ru [10.34.38.68])
+	by ceroklis2.smtp.sbrf.ru (Postfix) with ESMTP id 7DBA7D09
+	for <akvt@bk.ru>; Mon, 22 Jun 2020 16:02:11 +0300 (MSK)
+Received: from CAB-VSP-MBX7108.sigma.sbrf.ru (10.34.241.138) by
+ CAB-VSP-MBX5068.sigma.sbrf.ru (10.34.38.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.1979.3; Mon, 22 Jun 2020 16:02:11 +0300
+Received: from CAB-VSP-MBX8101.sigma.sbrf.ru (10.34.241.101) by
+ CAB-VSP-MBX7108.sigma.sbrf.ru (10.34.241.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.595.3;
+ Mon, 22 Jun 2020 16:02:11 +0300
+Received: from CAB-VSP-MBX8101.sigma.sbrf.ru ([fe80::453f:6fbe:7f3c:2be5]) by
+ CAB-VSP-MBX8101.sigma.sbrf.ru ([fe80::453f:6fbe:7f3c:2be5%9]) with mapi id
+ 15.02.0595.003; Mon, 22 Jun 2020 16:02:11 +0300
+From: =?windows-1251?B?2ODh8OjtINHl8OPl6SDC6Ory7vDu4uj3?=
+	<Shabrin.S.V@sberbank.ru>
+To: =?windows-1251?B?w/Do4+7w6Okg0uj17u3u4g==?= <akvt@bk.ru>
+Subject: =?windows-1251?B?UmU6IM/w7uHt++Ug7+vg8uXm6A==?=
+Thread-Topic: =?windows-1251?B?z/Du4e375SDv6+Dy5ebo?=
+Thread-Index: AQHWSJRLQ4Ub0GKKBEep90hFutWxYajkmBUc
+Date: Mon, 22 Jun 2020 13:02:10 +0000
+Message-ID: <2d328b1b266c4446923bfb6cc61cac4f@sberbank.ru>
+References: <1592830480.116361851@f338.i.mail.ru>
+In-Reply-To: <1592830480.116361851@f338.i.mail.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: ru-RU
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-originating-ip: [10.41.11.2]
+Content-Type: multipart/alternative;
+	boundary="_000_2d328b1b266c4446923bfb6cc61cac4fsberbankru_"
+MIME-Version: 1.0
+X-KSE-ServerInfo: CAB-VSP-MBX5068.sigma.sbrf.ru, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 6/21/2020 9:08:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+X-KSE-ServerInfo: CAB-VSP-EDG2003.sigma.sbrf.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: white sender email list
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 6/22/2020 10:15:00 AM
+X-7564579A: 78E4E2B564C1792B
+X-77F55803: B326E297F9FD4C4F07119A9C4A6B01A2D065BFE6A7F09A9CCDF514D9FD8AFC567CFB3C2F4C1E902BD984657910CFF80BDFE964BE01B98E08
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7F6EE1C40B2E8BE15EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637F907CB39E8CA2E228638F802B75D45FF5571747095F342E8C7A0BC55FA0FE5FC1B0B4C66B8000EB11DD58453B9C4D2EF8B216B3F5AC8AAED4AF75897E43B5B30A18204E546F3947C91E4BF118115E49216FE1FCEE245473732756F8456974DD0A8DF7F3B2552694A48BB2CDAA5CDAB14A54B52C917363A3378DA827A17800CE72C7CA1964810B42B4AF75897E43B5B30CD7AA050E1829FF324E0C75FCB509D3E
+X-C8649E89: 3ADBA62A5F2A0AAE0C521CBD8C4ADDB7587DED894C92B55310FEBC7E2DE864C2E0B73447025AAF03
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr59cQFxbtK52nrsBwskjMlLbwTDbZjg0ktGWyd3ZwR5M2G0g+gzS0PKeJDOBrL//rLYldd2avYxhfs9M+DuXTOBSH/SnnzuO3dUdTEydar/8efXUlVNrQsmwxKo1wIJQ4/g==
+X-F696D7D5: wD/15f+J8cgAgTjDhaLjRB5gadJFFT74lDh0TaoMYbg=
+X-Mailru-Dmarc-Auth: dmarc=pass header.from=shabrin.s.v@sberbank.ru
+X-Mras: Ok
+X-Spam: undefined
+Authentication-Results: mxs.mail.ru; spf=pass (mx183.mail.ru: domain of sberbank.ru designates 194.186.207.37 as permitted sender) smtp.mailfrom=Shabrin.S.V@sberbank.ru smtp.helo=email1.sberbank.ru; dmarc=pass header.from=shabrin.s.v@sberbank.ru
+X-Mailru-Intl-Transport: d,41d7dec
+
+--_000_2d328b1b266c4446923bfb6cc61cac4fsberbankru_
+Content-Type: text/plain; charset="windows-1251"
+Content-Transfer-Encoding: quoted-printable
+
+=EE=F2=EB=E8=F7=ED=EE.
+
+
+=C2=FB =E3=EE=F2=EE=E2=FB =E8 =EC=EE=E6=E5=F2=E5 =EF=F0=EE=E2=EE=E4=E8=F2=
+=FC =EF=E5=F0=E5=E2=EE=E4=FB =ED=E0 =EA=E0=F0=F2=FB =F4=E8=E7. =EB=E8=F6.
+
+
+=EE=E1=F0=E0=F2=E8=EB =E2=ED=E8=EC=E0=ED=E8=E5 =ED=E0 =F2=E5=F1=F2=E5 =E2 =
+=ED=E0=E7=ED=E0=F7=E5=ED=E8=E8 =EF=EB=E0=F2=E5=E6=E0 =C2=FB =F3=EA=E0=E7=FB=
+=E2=E0=E5=F2=E5 =F2=EE=EB=FC=EA=EE =ED=EE=EC=E5=F0 =E8 =E4=E0=F2=F3 =CF=D1=
+=C0.
+
+=E2 =EE=EF=E8=F1=E0=ED=E8=E8 =F1=F6=E5=ED=E0=F0=E8=FF =F0=E5=EA=EE=EC=E5=ED=
+=E4=E0=F6=E8=FF =EA =E4=E0=ED=ED=EE=EC=F3 =EF=EE=EB=F3 =F1=EB=E5=E4=F3=FE=
+=F9=E0=FF:
+
+  1.  description =96 =E2 =FD=F2=EE=EC =F2=E5=E3=E5 =EF=E5=F0=E5=E4=E0=E5=
+=F2=F1=FF =ED=E0=E7=ED=E0=F7=E5=ED=E8=E5 =EF=EB=E0=F2=E5=E6=E0 (=E2=EA=EB=
+=FE=F7=E0=E5=F2 =E2=F1=FE =E8=ED=F4=EE=F0=EC=E0=F6=E8=FE =EE =EF=E5=F0=E5=
+=E2=EE=E4=E5. =C4=E0=ED=ED=FB=E9 =F2=E5=E3 =E1=F3=E4=E5=F2 =EE=F2=F0=E0=E6=
+=E0=F2=FC=F1=FF =E2 =EE=F2=F7=E5=F2=E0=F5)
+
+=D1=D2=D0=D3=CA=D2=D3=D0=C0 =C7=C0=CF=CE=CB=CD=C5=CD=C8=DF =CF=CE=CB=DF "=
+=ED=E0=E7=ED=E0=F7=E5=ED=E8=E5 =EF=EB=E0=F2=E5=E6=E0" (!!! =CE=C1=DF=C7=C0=
+=D2=C5=CB=DC=CD=CE =C7=C0=CF=CE=CB=CD=DF=D2=DC !!!)
+
+  *   =D4=C8=CE =E8 =B9 =EF=E0=F1=EF=EE=F0=F2=E0 =EF=EE=EB=F3=F7=E0=F2=E5=
+=EB=FF
+  *   =B9 =E8 =E4=E0=F2=E0 =EF=E5=F0=E2=E8=F7=ED=EE=E3=EE =E4=EE=EA=F3=EC=
+=E5=ED=F2=E0
+  *   =CF=E0=F0=E0=EC=E5=F2=F0=FB =F1=E4=E5=EB=EA=E8
+=CF=D0=C8=CC=C5=D0: =C8=E2=E0=ED=EE=E2 =C8=E2=E0=ED =C8=EB=FC=E8=F7, 1234 9=
+87654; =CF=D1=C0 =B9123 =EE=F2 01.01.2020;
+=EB=EE=EC =F1=F2=E0=EB=FC=ED=EE=E9, 123 =EA=E3, 15000 =F0=F3=E1./=F2.
+=F1=F2=F0=EE=EA=E0 =E2=FB=F1=F2=F0=EE=E5=ED=E0 =E2 =F1=F2=F0=EE=E3=EE=E9 =
+=EF=EE=F1=EB=E5=E4=EE=E2=E0=F2=E5=EB=FC=ED=EE=F1=F2=E8 =F1 =E8=F1=EF=EE=EB=
+=FC=E7=EE=E2=E0=ED=E8=E5=EC =F0=E0=E7=E4=E5=EB=E8=F2=E5=EB=E5=E9 =93;=94 =
+=E8=EB=E8 =93|=94
+
+
+
+=F1 =F3=E2=E0=E6=E5=ED=E8=E5=EC,
+=D1=E5=F0=E3=E5=E9 =D8=E0=E1=F0=E8=ED
+
+
+
+________________________________
+=CE=F2: =C3=F0=E8=E3=EE=F0=E8=E9 =D2=E8=F5=EE=ED=EE=E2 <akvt@bk.ru>
+=CE=F2=EF=F0=E0=E2=EB=E5=ED=EE: 22 =E8=FE=ED=FF 2020 =E3. 15:54
+=CA=EE=EC=F3: =D8=E0=E1=F0=E8=ED =D1=E5=F0=E3=E5=E9 =C2=E8=EA=F2=EE=F0=EE=
+=E2=E8=F7
+=D2=E5=EC=E0: =CF=F0=EE=E1=ED=FB=E5 =EF=EB=E0=F2=E5=E6=E8
+
+=C2=CD=C8=CC=C0=CD=C8=C5: =C2=CD=C5=D8=CD=C8=C9 =CE=D2=CF=D0=C0=C2=C8=D2=C5=
+=CB=DC
+=D1=E5=F0=E3=E5=E9, =E4=EE=E1=F0=FB=E9 =E4=E5=ED=FC!
+
+=C4=E2=E0 =EF=F0=EE=E1=ED=FB=F5 =EF=EB=E0=F2=E5=E6=E0 =EF=F0=EE=F8=EB=E8 =
+=F3=F1=EF=E5=F8=ED=EE.
+
+=D1 =F3=E2=E0=E6=E5=ED=E8=E5=EC,
+=C3=F0=E8=E3=EE=F0=E8=E9 =D2=E8=F5=EE=ED=EE=E2
+akvt@bk.ru
+=D3=C2=C5=C4=CE=CC=CB=C5=CD=C8=C5 =CE =CA=CE=CD=D4=C8=C4=C5=CD=D6=C8=C0=CB=
+=DC=CD=CE=D1=D2=C8: =DD=F2=EE =FD=EB=E5=EA=F2=F0=EE=ED=ED=EE=E5 =F1=EE=EE=
+=E1=F9=E5=ED=E8=E5 =E8 =EB=FE=E1=FB=E5 =E4=EE=EA=F3=EC=E5=ED=F2=FB, =EF=F0=
+=E8=EB=EE=E6=E5=ED=ED=FB=E5 =EA =ED=E5=EC=F3, =F1=EE=E4=E5=F0=E6=E0=F2 =EA=
+=EE=ED=F4=E8=E4=E5=ED=F6=E8=E0=EB=FC=ED=F3=FE =E8=ED=F4=EE=F0=EC=E0=F6=E8=
+=FE. =CD=E0=F1=F2=EE=FF=F9=E8=EC =F3=E2=E5=E4=EE=EC=EB=FF=E5=EC =C2=E0=F1 =
+=EE =F2=EE=EC, =F7=F2=EE =E5=F1=EB=E8 =FD=F2=EE =F1=EE=EE=E1=F9=E5=ED=E8=E5=
+ =ED=E5 =EF=F0=E5=E4=ED=E0=E7=ED=E0=F7=E5=ED=EE =C2=E0=EC, =E8=F1=EF=EE=EB=
+=FC=E7=EE=E2=E0=ED=E8=E5, =EA=EE=EF=E8=F0=EE=E2=E0=ED=E8=E5, =F0=E0=F1=EF=
+=F0=EE=F1=F2=F0=E0=ED=E5=ED=E8=E5 =E8=ED=F4=EE=F0=EC=E0=F6=E8=E8, =F1=EE=E4=
+=E5=F0=E6=E0=F9=E5=E9=F1=FF =E2 =ED=E0=F1=F2=EE=FF=F9=E5=EC =F1=EE=EE=E1=F9=
+=E5=ED=E8=E8, =E0 =F2=E0=EA=E6=E5 =EE=F1=F3=F9=E5=F1=F2=E2=EB=E5=ED=E8=E5 =
+=EB=FE=E1=FB=F5 =E4=E5=E9=F1=F2=E2=E8=E9 =ED=E0 =EE=F1=ED=EE=E2=E5 =FD=F2=
+=EE=E9 =E8=ED=F4=EE=F0=EC=E0=F6=E8=E8, =F1=F2=F0=EE=E3=EE =E7=E0=EF=F0=E5=
+=F9=E5=ED=EE. =C5=F1=EB=E8 =C2=FB =EF=EE=EB=F3=F7=E8=EB=E8 =FD=F2=EE =F1=EE=
+=EE=E1=F9=E5=ED=E8=E5 =EF=EE =EE=F8=E8=E1=EA=E5, =EF=EE=E6=E0=EB=F3=E9=F1=
+=F2=E0, =F1=EE=EE=E1=F9=E8=F2=E5 =EE=E1 =FD=F2=EE=EC =EE=F2=EF=F0=E0=E2=E8=
+=F2=E5=EB=FE =EF=EE =FD=EB=E5=EA=F2=F0=EE=ED=ED=EE=E9 =EF=EE=F7=F2=E5 =E8 =
+=F3=E4=E0=EB=E8=F2=E5 =FD=F2=EE =F1=EE=EE=E1=F9=E5=ED=E8=E5. CONFIDENTIALIT=
+Y NOTICE: This email and any files attached to it are confidential. If you =
+are not the intended recipient you are notified that using, copying, distri=
+buting or taking any action in reliance on the contents of this information=
+ is strictly prohibited. If you have received this email in error please no=
+tify the sender and delete this email.
+
+--_000_2d328b1b266c4446923bfb6cc61cac4fsberbankru_
+Content-Type: text/html; charset="windows-1251"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dwindows-1=
+251">
+<style type=3D"text/css" style=3D"display:none;"><!-- P {margin-top:0;margi=
+n-bottom:0;} --></style>
+</head>
+<body dir=3D"ltr">
+<div id=3D"divtagdefaultwrapper" style=3D"font-size:12pt;color:#000000;font=
+-family:Calibri,Helvetica,sans-serif;" dir=3D"ltr">
+<p>=EE=F2=EB=E8=F7=ED=EE.</p>
+<p><br>
+</p>
+<p>=C2=FB =E3=EE=F2=EE=E2=FB =E8 =EC=EE=E6=E5=F2=E5 =EF=F0=EE=E2=EE=E4=E8=
+=F2=FC =EF=E5=F0=E5=E2=EE=E4=FB =ED=E0 =EA=E0=F0=F2=FB =F4=E8=E7. =EB=E8=F6=
+.</p>
+<p><br>
+</p>
+<p>=EE=E1=F0=E0=F2=E8=EB =E2=ED=E8=EC=E0=ED=E8=E5 =ED=E0 =F2=E5=F1=F2=E5 =
+=E2 =ED=E0=E7=ED=E0=F7=E5=ED=E8=E8 =EF=EB=E0=F2=E5=E6=E0 =C2=FB =F3=EA=E0=
+=E7=FB=E2=E0=E5=F2=E5 =F2=EE=EB=FC=EA=EE =ED=EE=EC=E5=F0 =E8 =E4=E0=F2=F3 =
+=CF=D1=C0.</p>
+<p>=E2 =EE=EF=E8=F1=E0=ED=E8=E8 =F1=F6=E5=ED=E0=F0=E8=FF =F0=E5=EA=EE=EC=E5=
+=ED=E4=E0=F6=E8=FF =EA =E4=E0=ED=ED=EE=EC=F3 =EF=EE=EB=F3 =F1=EB=E5=E4=F3=
+=FE=F9=E0=FF:</p>
+<p></p>
+<ol nodeid=3D"1">
+<li><i style=3D"mso-bidi-font-style:normal"><span style=3D"font-size:10.0pt=
+;mso-bidi-font-size:11.0pt;line-height:108%;font-family:=0A=
+&quot;Calibri&quot;,sans-serif;mso-fareast-font-family:Calibri">description=
+</span></i><span style=3D"font-size:10.0pt;mso-bidi-font-size:11.0pt;line-h=
+eight:108%;font-family:=0A=
+&quot;Calibri&quot;,sans-serif;mso-fareast-font-family:Calibri">
+ =96 =E2 =FD=F2=EE=EC =F2=E5=E3=E5 =EF=E5=F0=E5=E4=E0=E5=F2=F1=FF =ED=E0=E7=
+=ED=E0=F7=E5=ED=E8=E5 =EF=EB=E0=F2=E5=E6=E0 (=E2=EA=EB=FE=F7=E0=E5=F2 =E2=
+=F1=FE =E8=ED=F4=EE=F0=EC=E0=F6=E8=FE =EE =EF=E5=F0=E5=E2=EE=E4=E5. =C4=E0=
+=ED=ED=FB=E9 =F2=E5=E3 =E1=F3=E4=E5=F2 =EE=F2=F0=E0=E6=E0=F2=FC=F1=FF =E2 =
+=EE=F2=F7=E5=F2=E0=F5)</span><span style=3D"font-size:12.0pt;mso-bidi-font-=
+size:=0A=
+11.0pt;line-height:108%;font-family:&quot;Times New Roman&quot;,serif;mso-f=
+areast-font-family:=0A=
+&quot;Times New Roman&quot;">
+</span><o:p></o:p><br>
+<br>
+<span style=3D"font-size:10.0pt;mso-bidi-font-size:11.0pt;line-height:114%;=
+font-family:=0A=
+&quot;Calibri&quot;,sans-serif;mso-fareast-font-family:Calibri">=D1=D2=D0=
+=D3=CA=D2=D3=D0=C0 =C7=C0=CF=CE=CB=CD=C5=CD=C8=DF =CF=CE=CB=DF &quot;=ED=E0=
+=E7=ED=E0=F7=E5=ED=E8=E5 =EF=EB=E0=F2=E5=E6=E0&quot; (</span><span style=3D=
+"font-size:10.0pt;=0A=
+mso-bidi-font-size:11.0pt;line-height:114%;font-family:&quot;Calibri&quot;,=
+sans-serif;=0A=
+mso-fareast-font-family:Calibri;color:#C00000">!!!
+ =CE=C1=DF=C7=C0=D2=C5=CB=DC=CD=CE =C7=C0=CF=CE=CB=CD=DF=D2=DC !!!</span><s=
+pan style=3D"font-size:10.0pt;mso-bidi-font-size:11.0pt;line-height:114%;fo=
+nt-family:=0A=
+&quot;Calibri&quot;,sans-serif;mso-fareast-font-family:Calibri">)<o:p></o:p=
+></span></li></ol>
+<ul nodeid=3D"2">
+<li><span style=3D"font-family:&quot;Calibri&quot;,sans-serif;=0A=
+mso-fareast-font-family:Calibri">=D4=C8=CE =E8
+</span><span style=3D"font-family:&quot;Segoe UI Symbol&quot;,sans-serif;=
+=0A=
+mso-fareast-font-family:&quot;Segoe UI Symbol&quot;;mso-bidi-font-family:&q=
+uot;Segoe UI Symbol&quot;">=B9</span><span style=3D"font-family:&quot;Calib=
+ri&quot;,sans-serif;mso-fareast-font-family:Calibri"> =EF=E0=F1=EF=EE=F0=F2=
+=E0 =EF=EE=EB=F3=F7=E0=F2=E5=EB=FF</span><span style=3D"font-size:10.0pt;ms=
+o-bidi-font-size:=0A=
+11.0pt;line-height:114%;font-family:&quot;Times New Roman&quot;,serif;mso-f=
+areast-font-family:=0A=
+&quot;Times New Roman&quot;">
+<o:p></o:p></span></li><li><span style=3D"font-family:&quot;Segoe UI Symbol=
+&quot;,sans-serif;=0A=
+mso-fareast-font-family:&quot;Segoe UI Symbol&quot;;mso-bidi-font-family:&q=
+uot;Segoe UI Symbol&quot;">=B9</span><span style=3D"font-family:&quot;Calib=
+ri&quot;,sans-serif;mso-fareast-font-family:Calibri"> =E8 =E4=E0=F2=E0 =EF=
+=E5=F0=E2=E8=F7=ED=EE=E3=EE =E4=EE=EA=F3=EC=E5=ED=F2=E0</span><span style=
+=3D"font-size:10.0pt;mso-bidi-font-size:=0A=
+11.0pt;line-height:114%;font-family:&quot;Times New Roman&quot;,serif;mso-f=
+areast-font-family:=0A=
+&quot;Times New Roman&quot;">
+</span><span style=3D"font-size:6.0pt;mso-bidi-font-size:=0A=
+11.0pt;line-height:114%"><o:p></o:p></span></li><li><span style=3D"font-fam=
+ily:&quot;Calibri&quot;,sans-serif;=0A=
+mso-fareast-font-family:Calibri">=CF=E0=F0=E0=EC=E5=F2=F0=FB =F1=E4=E5=EB=
+=EA=E8</span><span style=3D"font-size:=0A=
+10.0pt;mso-bidi-font-size:11.0pt;line-height:114%;font-family:&quot;Times N=
+ew Roman&quot;,serif;=0A=
+mso-fareast-font-family:&quot;Times New Roman&quot;">
+</span><o:p></o:p></li></ul>
+<p class=3D"MsoNormal" style=3D"margin-top:0cm;margin-right:0cm;margin-bott=
+om:2.9pt;=0A=
+margin-left:62.95pt;text-indent:-42.5pt;line-height:100%">
+<b style=3D"mso-bidi-font-weight:=0A=
+normal"><span style=3D"font-size:10.0pt;mso-bidi-font-size:11.0pt;line-heig=
+ht:=0A=
+100%;font-family:&quot;Calibri&quot;,sans-serif;mso-fareast-font-family:Cal=
+ibri;=0A=
+color:#0070C0">=CF=D0=C8=CC=C5=D0: =C8=E2=E0=ED=EE=E2 =C8=E2=E0=ED =C8=EB=
+=FC=E8=F7, 1234 987654; =CF=D1=C0 =B9123 =EE=F2 01.01.2020;
+<o:p></o:p></span></b></p>
+<p class=3D"MsoNormal" style=3D"margin-top:0cm;margin-right:0cm;margin-bott=
+om:2.9pt;=0A=
+margin-left:62.95pt;text-indent:-.55pt;line-height:100%">
+<b style=3D"mso-bidi-font-weight:=0A=
+normal"><span style=3D"font-size:10.0pt;mso-bidi-font-size:11.0pt;line-heig=
+ht:=0A=
+100%;font-family:&quot;Calibri&quot;,sans-serif;mso-fareast-font-family:Cal=
+ibri;=0A=
+color:#0070C0">=EB=EE=EC =F1=F2=E0=EB=FC=ED=EE=E9, 123 =EA=E3, 15000 =F0=F3=
+=E1./=F2.
+</span></b><o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-top:0cm;margin-right:0cm;margin-bott=
+om:4.9pt;=0A=
+margin-left:20.45pt;text-indent:0cm;line-height:107%">
+<span style=3D"font-size:=0A=
+10.0pt;mso-bidi-font-size:11.0pt;line-height:107%;font-family:&quot;Calibri=
+&quot;,sans-serif;=0A=
+mso-fareast-font-family:Calibri;color:#0070C0">=F1=F2=F0=EE=EA=E0 =E2=FB=F1=
+=F2=F0=EE=E5=ED=E0 =E2 =F1=F2=F0=EE=E3=EE=E9 =EF=EE=F1=EB=E5=E4=EE=E2=E0=F2=
+=E5=EB=FC=ED=EE=F1=F2=E8 =F1 =E8=F1=EF=EE=EB=FC=E7=EE=E2=E0=ED=E8=E5=EC =F0=
+=E0=E7=E4=E5=EB=E8=F2=E5=EB=E5=E9
+<b style=3D"mso-bidi-font-weight:=0A=
+normal">=93;=94 </b>=E8=EB=E8<b style=3D"mso-bidi-font-weight:normal"> =93|=
+=94
+</b></span><o:p></o:p></p>
+<br>
+<p></p>
+<p><br>
+</p>
+<div id=3D"Signature">
+<div id=3D"divtagdefaultwrapper" dir=3D"ltr" style=3D"font-size: 12pt; colo=
+r: rgb(0, 0, 0); font-family: Calibri, Helvetica, sans-serif, EmojiFont, &q=
+uot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, NotoColorEmoji, &q=
+uot;Segoe UI Symbol&quot;, &quot;Android Emoji&quot;, EmojiSymbols;">
+<span style=3D"font-family:Calibri,Helvetica,sans-serif; font-size:10pt; co=
+lor:rgb(0,111,201)">=F1 =F3=E2=E0=E6=E5=ED=E8=E5=EC,</span>
+<div><span style=3D"color:rgb(0,111,201); font-size:10pt">=D1=E5=F0=E3=E5=
+=E9 =D8=E0=E1=F0=E8=ED</span><br>
+</div>
+<div><br>
+</div>
+</div>
+</div>
+<br>
+<br>
+<div style=3D"color: rgb(0, 0, 0);">
+<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" co=
+lor=3D"#000000" style=3D"font-size:11pt"><b>=CE=F2:</b> =C3=F0=E8=E3=EE=F0=
+=E8=E9 =D2=E8=F5=EE=ED=EE=E2 &lt;akvt@bk.ru&gt;<br>
+<b>=CE=F2=EF=F0=E0=E2=EB=E5=ED=EE:</b> 22 =E8=FE=ED=FF 2020 =E3. 15:54<br>
+<b>=CA=EE=EC=F3:</b> =D8=E0=E1=F0=E8=ED =D1=E5=F0=E3=E5=E9 =C2=E8=EA=F2=EE=
+=F0=EE=E2=E8=F7<br>
+<b>=D2=E5=EC=E0:</b> =CF=F0=EE=E1=ED=FB=E5 =EF=EB=E0=F2=E5=E6=E8</font>
+<div>&nbsp;</div>
+</div>
+<div>
+<table>
+<tbody>
+<tr>
+<td><font color=3D"#EE3B3B" face=3D"arial" size=3D"1">=C2=CD=C8=CC=C0=CD=C8=
+=C5: =C2=CD=C5=D8=CD=C8=C9 =CE=D2=CF=D0=C0=C2=C8=D2=C5=CB=DC</font></td>
+</tr>
+</tbody>
+</table>
+<div>
+<div>=D1=E5=F0=E3=E5=E9, =E4=EE=E1=F0=FB=E9 =E4=E5=ED=FC!</div>
+<div>&nbsp;</div>
+<div>=C4=E2=E0 =EF=F0=EE=E1=ED=FB=F5 =EF=EB=E0=F2=E5=E6=E0 =EF=F0=EE=F8=EB=
+=E8 =F3=F1=EF=E5=F8=ED=EE.</div>
+<div>&nbsp;</div>
+<div>
+<div>
+<div>=D1 =F3=E2=E0=E6=E5=ED=E8=E5=EC,<br>
+=C3=F0=E8=E3=EE=F0=E8=E9 =D2=E8=F5=EE=ED=EE=E2<br>
+akvt@bk.ru</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+=D3=C2=C5=C4=CE=CC=CB=C5=CD=C8=C5 =CE =CA=CE=CD=D4=C8=C4=C5=CD=D6=C8=C0=CB=
+=DC=CD=CE=D1=D2=C8: =DD=F2=EE =FD=EB=E5=EA=F2=F0=EE=ED=ED=EE=E5 =F1=EE=EE=
+=E1=F9=E5=ED=E8=E5 =E8 =EB=FE=E1=FB=E5 =E4=EE=EA=F3=EC=E5=ED=F2=FB, =EF=F0=
+=E8=EB=EE=E6=E5=ED=ED=FB=E5 =EA =ED=E5=EC=F3, =F1=EE=E4=E5=F0=E6=E0=F2 =EA=
+=EE=ED=F4=E8=E4=E5=ED=F6=E8=E0=EB=FC=ED=F3=FE =E8=ED=F4=EE=F0=EC=E0=F6=E8=
+=FE. =CD=E0=F1=F2=EE=FF=F9=E8=EC =F3=E2=E5=E4=EE=EC=EB=FF=E5=EC =C2=E0=F1 =
+=EE =F2=EE=EC, =F7=F2=EE =E5=F1=EB=E8 =FD=F2=EE =F1=EE=EE=E1=F9=E5=ED=E8=E5=
+ =ED=E5 =EF=F0=E5=E4=ED=E0=E7=ED=E0=F7=E5=ED=EE =C2=E0=EC, =E8=F1=EF=EE=EB=
+=FC=E7=EE=E2=E0=ED=E8=E5, =EA=EE=EF=E8=F0=EE=E2=E0=ED=E8=E5, =F0=E0=F1=EF=
+=F0=EE=F1=F2=F0=E0=ED=E5=ED=E8=E5
+ =E8=ED=F4=EE=F0=EC=E0=F6=E8=E8, =F1=EE=E4=E5=F0=E6=E0=F9=E5=E9=F1=FF =E2 =
+=ED=E0=F1=F2=EE=FF=F9=E5=EC =F1=EE=EE=E1=F9=E5=ED=E8=E8, =E0 =F2=E0=EA=E6=
+=E5 =EE=F1=F3=F9=E5=F1=F2=E2=EB=E5=ED=E8=E5 =EB=FE=E1=FB=F5 =E4=E5=E9=F1=F2=
+=E2=E8=E9 =ED=E0 =EE=F1=ED=EE=E2=E5 =FD=F2=EE=E9 =E8=ED=F4=EE=F0=EC=E0=F6=
+=E8=E8, =F1=F2=F0=EE=E3=EE =E7=E0=EF=F0=E5=F9=E5=ED=EE. =C5=F1=EB=E8 =C2=FB=
+ =EF=EE=EB=F3=F7=E8=EB=E8 =FD=F2=EE =F1=EE=EE=E1=F9=E5=ED=E8=E5 =EF=EE =EE=
+=F8=E8=E1=EA=E5, =EF=EE=E6=E0=EB=F3=E9=F1=F2=E0, =F1=EE=EE=E1=F9=E8=F2=E5 =
+=EE=E1 =FD=F2=EE=EC =EE=F2=EF=F0=E0=E2=E8=F2=E5=EB=FE =EF=EE =FD=EB=E5=EA=
+=F2=F0=EE=ED=ED=EE=E9 =EF=EE=F7=F2=E5 =E8 =F3=E4=E0=EB=E8=F2=E5 =FD=F2=EE =
+=F1=EE=EE=E1=F9=E5=ED=E8=E5.
+ CONFIDENTIALITY NOTICE: This email and any files attached to it are confid=
+ential. If you are not the intended recipient you are notified that using, =
+copying, distributing or taking any action in reliance on the contents of t=
+his information is strictly prohibited.
+ If you have received this email in error please notify the sender and dele=
+te this email.
+</body>
+</html>
+
+--_000_2d328b1b266c4446923bfb6cc61cac4fsberbankru_--
