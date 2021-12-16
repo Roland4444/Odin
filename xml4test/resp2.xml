@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+xmlns:pkg="http://roskazna.ru/gisgmp/xsd/Package/2.0.1">
+<xsl:template match="//pkg:ImportedPayment[@paymentId/string() = '10471020010005232407201700000001']">
+<req:ImportPaymentsResponse xmlns:org="http://roskazna.ru/gisgmp/xsd/Organization/2.0.1"
+xmlns:com="http://roskazna.ru/gisgmp/xsd/Common/2.0.1" xmlns:rfd="http://roskazna.ru/gisgmp/xsd/Refund/2.0.1"
+xmlns:bdi="http://roskazna.ru/gisgmp/xsd/BudgetIndex/2.0.1"
+xmlns:req="urn://roskazna.ru/gisgmp/xsd/services/import-payments/2.0.1"
+xmlns:pkg="http://roskazna.ru/gisgmp/xsd/Package/2.0.1" xmlns:chg="http://roskazna.ru/gisgmp/xsd/Charge/2.0.1"
+xmlns:pmnt="http://roskazna.ru/gisgmp/xsd/Payment/2.0.1" Id="I_1aa5aaca-d28f-48b1-9b39-b3a5f16d4e5c"
+RqId="I_13032ed0-4a7a-49ed-ad46-2a7206d3bca7" recipientIdentifier="3eb646" timestamp="{current-dateTime()}">
+<com:ImportProtocol entityID="I_09bcf2c6-a08a-4ea2-959d-8e198ba689d9" code="0" description="Успешно"/>
+</req:ImportPaymentsResponse>
+</xsl:template>
+</xsl:stylesheet>

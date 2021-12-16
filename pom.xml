@@ -39,6 +39,12 @@
             <version>3.1.4</version>
         </dependency>
         <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-ri</artifactId>
+            <version>2.3.2</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
             <groupId>fr.roland</groupId>
             <artifactId>Executor</artifactId>
             <version>1.0.6</version>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Header/>
+  <soapenv:Body xmlns:ns="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/1.1" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <ns:GetResponseRequest>
+      <ns2:MessageTypeSelector xmlns:ns2="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/basic/1.1" xmlns="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/1.1" Id="SIGNED_BY_CALLER">
+        <ns2:NamespaceURI>urn://ru/mvd/sovm/p001/1.0.0</ns2:NamespaceURI>
+        <ns2:RootElementLocalName>request</ns2:RootElementLocalName>
+        <ns2:Timestamp>2018-06-29T10:39:04.683</ns2:Timestamp>
+      </ns2:MessageTypeSelector>
+      <ns4:CallerInformationSystemSignature xmlns:ns4="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/1.1" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:Signature>
+          <ds:SignedInfo>
+            <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+            <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr34102001-gostr3411"/>
+            <ds:Reference URI="#SIGNED_BY_CALLER">
+              <ds:Transforms>
+                <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"/>
+                <ds:Transform Algorithm="urn://smev-gov-ru/xmldsig/transform" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"/>
+              </ds:Transforms>
+              <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/>
+              <ds:DigestValue>000</ds:DigestValue>
+            </ds:Reference>
+          </ds:SignedInfo>
+          <ds:SignatureValue>000</ds:SignatureValue>
+          <ds:KeyInfo>
+            <ds:X509Data>
+              <ds:X509Certificate>000</ds:X509Certificate>
+            </ds:X509Data>
+          </ds:KeyInfo>
+        </ds:Signature>
+      <ds:Signature Id="sigID" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr34102001-gostr3411"/><ds:Reference URI="#SIGNED_BY_CALLER"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:Transform Algorithm="urn://smev-gov-ru/xmldsig/transform"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#gostr3411"/><ds:DigestValue>1z+ZUBHuTY93Bw5H7tawuA+k0+Bg1wNrf1FWqLuzFN4=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>jIXPsm/X5m03W1M6dDlhUTsUw4D2BhhowfEhEGBoiYG7d33xLV+F2E6WSp8fuu4Zex2+A+r6iJ9wUiVAm18jrw==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIDgDCCAy+gAwIBAgITEgAqBcDR4re043l3zAAAACoFwDAIBgYqhQMCAgMwfzEjMCEGCSqGSIb3DQEJARYUc3VwcG9ydEBjcnlwdG9wcm8ucnUxCzAJBgNVBAYTAlJVMQ8wDQYDVQQHEwZNb3Njb3cxFzAVBgNVBAoTDkNSWVBUTy1QUk8gTExDMSEwHwYDVQQDExhDUllQVE8tUFJPIFRlc3QgQ2VudGVyIDIwHhcNMTgwNjIyMTExNzQ4WhcNMTgwOTIyMTEyNzQ4WjCBjjEpMCcGCSqGSIb3DQEJARYaanVuZ2xlZnJvbWxvbmRvbkB5YW5kZXgucnUxDjAMBgNVBAMMBVJvbWFuMQowCAYDVQQLDAFTMRAwDgYDVQQKDAdWa2FiYW5rMRIwEAYDVQQHDAlBc3RyYWtoYW4xEjAQBgNVBAgMCUFzdHJha2hhbjELMAkGA1UEBhMCUlUwYzAcBgYqhQMCAhMwEgYHKoUDAgIjAQYHKoUDAgIeAQNDAARAZQh32TZOeafmSFEsyNTfLh+galmVJ02h96bU07BcrzIJ1tHWo4TZlYQqU0pXd5feMnXOra/wpnhGewy1aMV01aOCAXAwggFsMA4GA1UdDwEB/wQEAwIGwDATBgNVHSUEDDAKBggrBgEFBQcDAjAdBgNVHQ4EFgQUUyFMzwDupwipdgaJHKxwgyK6NiowHwYDVR0jBBgwFoAUFTF8sI0a3mbXFZxJUpcXJLkBeoMwWQYDVR0fBFIwUDBOoEygSoZIaHR0cDovL3Rlc3RjYS5jcnlwdG9wcm8ucnUvQ2VydEVucm9sbC9DUllQVE8tUFJPJTIwVGVzdCUyMENlbnRlciUyMDIuY3JsMIGpBggrBgEFBQcBAQSBnDCBmTBhBggrBgEFBQcwAoZVaHR0cDovL3Rlc3RjYS5jcnlwdG9wcm8ucnUvQ2VydEVucm9sbC90ZXN0LWNhLTIwMTRfQ1JZUFRPLVBSTyUyMFRlc3QlMjBDZW50ZXIlMjAyLmNydDA0BggrBgEFBQcwAYYoaHR0cDovL3Rlc3RjYS5jcnlwdG9wcm8ucnUvb2NzcC9vY3NwLnNyZjAIBgYqhQMCAgMDQQA+ZovHbCfYDnOlDXRVRCULTjz5+2JToBoA/OlGJ1sCu48hmAILzV5GbEM8XNZWV/5hTNeFitGb7qwv3ge0aKcn</ds:X509Certificate></ds:X509Data></ds:KeyInfo></ds:Signature></ns4:CallerInformationSystemSignature>
+    </ns:GetResponseRequest>
+  </soapenv:Body>
+</soapenv:Envelope>

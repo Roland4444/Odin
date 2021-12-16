@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Всё то же, что в test case 1, плюс правила 3, 7 и 8:
+	- Атрибуты должны быть отсортированы в алфавитном порядке: сначала по namespace URI (если атрибут - в qualified form), затем – по local name. 
+		Атрибуты в unqualified form после сортировки идут после атрибутов в qualified form.
+	- Объявления namespace prefix должны находиться перед атрибутами. Объявления префиксов должны быть отсортированы в порядке объявления, а именно:
+		a.	Первым объявляется префикс пространства имен элемента, если он не был объявлен выше по дереву.
+		b.	Дальше объявляются префиксы пространств имен атрибутов, если они требуются. 
+			Порядок этих объявлений соответствует порядку атрибутов, отсортированных в алфавитном порядке (см. п.5).
+-->
+<?xml-stylesheet type="text/xsl" href="style.xsl"?>
+
+<elementOne xmlns="http://test/1" xmlns:qwe="http://test/2" xmlns:asd="http://test/3">
+	<qwe:elementTwo>
+		<asd:elementThree xmlns:wer="http://test/a" xmlns:zxc="http://test/0" wer:attZ="zzz" attB="bbb" attA="aaa" zxc:attC="ccc" asd:attD="ddd" asd:attE="eee" qwe:attF="fff"/>
+	</qwe:elementTwo> 
+</elementOne> 

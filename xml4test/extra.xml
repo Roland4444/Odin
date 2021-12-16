@@ -1,0 +1,19 @@
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns2="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/basic/1.1">
+  <S:Body>
+    <ns2:SendRequestRequest>
+      <ns:SenderProvidedRequestData xmlns:ns="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/1.1" xmlns:ns2="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/basic/1.1" Id="SIGNED_BY_CONSUMER">
+        <ns:MessageID>185E052E-4487-4A60-8A6B-C66CC0A753B7</ns:MessageID>
+        <ns2:MessagePrimaryContent>
+          <ns1:FNSVipIPRequest xmlns:ns1="urn://x-artefacts-fns-vipip-tosmv-ru/311-15/4.0.5" ИдДок="2018E097-8A84-4380-9706-B96F74B37995" НомерДела="ABF5EF0E-297A-4670-82C3-2472885C2471">
+            <ns1:ЗапросИП>
+              <ns1:ИНН>301501000012</ns1:ИНН>
+            </ns1:ЗапросИП>
+          </ns1:FNSVipIPRequest>
+        </ns2:MessagePrimaryContent>
+        <ns:TestMessage />
+      </ns:SenderProvidedRequestData>
+      <ns4:CallerInformationSystemSignature xmlns:ns4="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/1.1" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">       
+      </ns4:CallerInformationSystemSignature>
+    </ns2:SendRequestRequest>
+  </S:Body>
+</S:Envelope>

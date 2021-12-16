@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns2="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/1.1">
+  <S:Body>
+    <ns2:SendRequestRequest>
+      <ns:SenderProvidedRequestData xmlns:ns="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/1.1" xmlns:ns2="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/basic/1.1" Id="SIGNED_BY_CONSUMER">
+        <ns:MessageID>c4d5bb52-60d6-11e9-a1dd-37ea8ab9d239</ns:MessageID>
+        <ns2:MessagePrimaryContent>
+          <ns1:FNSVipULRequest xmlns:ns1="urn://x-artefacts-fns-vipul-tosmv-ru/311-14/4.0.5" ИдДок="F69BB651-80C9-4007-B3FB-09A20BBE2DA5" НомерДела="F05367CD-EDC6-4E37-A7EE-A422F067F6B5">
+            <ns1:ЗапросЮЛ>
+              <ns1:ОГРН>5087746429843</ns1:ОГРН>
+            </ns1:ЗапросЮЛ>
+          </ns1:FNSVipULRequest>
+        </ns2:MessagePrimaryContent>
+        <ns:TestMessage/>
+      </ns:SenderProvidedRequestData>
+      <ns4:CallerInformationSystemSignature xmlns:ns4="urn://x-artefacts-smev-gov-ru/services/message-exchange/types/1.1" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+      </ns4:CallerInformationSystemSignature>
+    </ns2:SendRequestRequest>
+  </S:Body>
+</S:Envelope>
