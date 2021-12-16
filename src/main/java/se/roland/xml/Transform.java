@@ -28,6 +28,7 @@ public class Transform {
     public byte[] transform(byte[] data) throws ParserConfigurationException, IOException, SAXException, TransformerException, TransformationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setIgnoringElementContentWhitespace(true);
+        System.out.println(new String(data));
         dbf.setCoalescing(true);
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();

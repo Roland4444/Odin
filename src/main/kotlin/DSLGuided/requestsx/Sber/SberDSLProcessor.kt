@@ -10,6 +10,8 @@ import se.roland.xml.Transform
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
+import java.sql.ResultSet
+import java.util.ArrayList
 
 ////////////Пример DSL для SberDSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
@@ -43,7 +45,8 @@ class SberDSLProcessor: DSLProcessor() {
         <wsse:UsernameToken wsu:Id="UsernameToken-UUID">
         <wsse:Username>${login_()}</wsse:Username>
         <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${pass_()}</wsse:Password>
-        </wsse:UsernameToken>        
+        </wsse:UsernameToken></wsse:Security>
+</soapenv:Header>   
     """.trimIndent()}
 
     val JUST_HEADER = {"""
@@ -101,6 +104,15 @@ class SberDSLProcessor: DSLProcessor() {
         }
     }
 
+    val registerp2pviapsaid: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "registerp2p") {
+                val psaid = a.key.Param.toString().toInt()
+                render(constructDSL4registerP2p(psaid))
+            }
+        }
+    }
+
     val registerp2p: RoleHandler = {
         mapper.forEach { a->
             if (a.key.Name=="registerp2p") {
@@ -147,9 +159,30 @@ class SberDSLProcessor: DSLProcessor() {
                         }
                     }
                 }
-                send(TEMPLATE_P2P_REGISTER())
+                val reply=send(TEMPLATE_P2P_REGISTER())
+                println(reply)
+
             }
         }
+    }
+
+    fun constructDSL4registerP2p(PsaID: Int): String{
+        var param = ArrayList<Any?>()
+        param.add(PsaID)
+        var amount = 0
+        var orderNumber = 0
+        var clientId = 0
+
+        val res: ResultSet = PSADSLProcessor.psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`payments` WHERE `psa_id` = ?;", param)
+        if (res.next()) {
+            amount = (res.getFloat("amount")*100).toInt()
+            orderNumber = res.getInt("id")
+        };
+        val res2: ResultSet = PSADSLProcessor.psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`psa` WHERE `id` = ?;", param)
+        if (res2.next()) {
+            clientId = res2.getInt("passport_id")
+        };
+        return "'sber'=>::registerp2p{'amount':$amount,'currency':643,'orderNumber':$orderNumber,'clientId':$clientId}.";
     }
 
     fun send(ToSend: String): String{
