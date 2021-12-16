@@ -11,4 +11,13 @@ class SberDSLProcessorTest : TestCase() {
         Sber.render("'sber'=>::endpoint{$EndP}.")
         assertEquals(EndP, Sber.endpoint_())
     }
+    fun testLoginPass() {
+        val EndP = "https://123"
+        val Sber = SberDSLProcessor()
+        assertEquals(Sber.DEFAULT_URL, Sber.endpoint_())
+        Sber.render("'sber'=>::endpoint{$EndP},::login{hello},::pass{pass}.")
+        assertEquals({"hello"}(), Sber.login_())
+        assertEquals({"pass"}(),  Sber.pass_())
+    }
+
 }

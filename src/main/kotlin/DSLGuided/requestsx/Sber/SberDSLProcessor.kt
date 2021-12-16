@@ -16,17 +16,29 @@ class SberDSLProcessor: DSLProcessor() {
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key) }
         return "OK"
-
     }
-
     var endpoint_: simpleString = {DEFAULT_URL}
+    var login_: simpleString = {EMPTY_ATOM}
+    var pass_: simpleString = {EMPTY_ATOM}
 
     val endpoint: RoleHandler = {
-        mapper.forEach {
-                a->
-            if (a.key.Name=="endpoint"){
+        mapper.forEach { a->
+            if (a.key.Name=="endpoint")
                 endpoint_= {a.key.Param as String}
-            }
+        }
+    }
+
+    val login: RoleHandler = {
+        mapper.forEach { a->
+            if (a.key.Name=="login")
+                login_= {a.key.Param as String}
+        }
+    }
+
+    val pass: RoleHandler = {
+        mapper.forEach { a->
+            if (a.key.Name=="pass")
+                pass_= {a.key.Param as String}
         }
     }
 
@@ -40,6 +52,9 @@ class SberDSLProcessor: DSLProcessor() {
     fun appendRole(R: Role){
         when (R?.Name){
             "endpoint" -> mapper.put(R, endpoint)
+            "login" -> mapper.put(R, login)
+            "pass" -> mapper.put(R, pass)
+
             "enabled" -> mapper.put(R, enable)
         }
     }
