@@ -1,6 +1,7 @@
 package DSLGuided.requestsx.Sber
 
 import DSLGuided.requestsx.DSLProcessor
+import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
@@ -9,18 +10,19 @@ import se.roland.xml.Transform
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
-import java.nio.file.Path
 
 ////////////Пример DSL для SberDSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
 ///////'sber'=>::endpoint{https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl},::login{test_AVS-api},::pass{test_AVS},::enabled{'true'}
 typealias simpleString = () -> String
+typealias Str1Int = (A: Int) -> String
 typealias simpleInt = () -> Int
 class SberDSLProcessor: DSLProcessor() {
     /////для первичного платежа
     /////'sber'=>::registerp2p{'amount':400, 'currency':643, 'orderNumber':555}.
     lateinit var TRANSPORT: SAAJ
+    lateinit var PSADSLProcessor: PSADSLProcessor
     val DEFAULT_URL             = "DEFAULT"
     val TEMP_FILE_TO_TRANSFORM  = "temp_trans.xml"
     val TEMP_FILE_TO_RESULT     = "temp_result.xml"
@@ -58,7 +60,7 @@ class SberDSLProcessor: DSLProcessor() {
     var endpoint_: simpleString = {DEFAULT_URL}
     var login_: simpleString = {EMPTY_ATOM}
     var pass_: simpleString = {EMPTY_ATOM}
-    var default_description_: simpleString = {"Лом черных или цветных металлов"}
+    var default_description_: Str1Int = {"хознужды}"}
 
     var binding_id_: simpleString = {EMPTY_ATOM}
 
@@ -105,6 +107,7 @@ class SberDSLProcessor: DSLProcessor() {
                 var amount: simpleInt = {0}
                 var currency: simpleInt = {643}
                 var orderNumber: simpleInt = {0}
+                var clientId: simpleInt = {0}
                 val Lst = a.key.Param as MutableList<KeyValue>
                 var TEMPLATE_P2P_REGISTER: simpleString = {
                     """
@@ -116,7 +119,7 @@ class SberDSLProcessor: DSLProcessor() {
                         <amount>${amount()}</amount>
                         <currency>${currency()}</currency>
                         <orderNumber>${orderNumber()}</orderNumber>
-                        <orderDescription>${default_description_()}</orderDescription>
+                        <orderDescription>${default_description_(clientId())}</orderDescription>
                         <returnUrl>avs.com.ru</returnUrl>
                         <failUrl>https://avs.com.ru</failUrl>
                         <sessionTimeoutSecs>300</sessionTimeoutSecs>
@@ -137,9 +140,10 @@ class SberDSLProcessor: DSLProcessor() {
                 Lst.forEach { A ->
                     run {
                         when (A.Key) {
-                            "amount" -> amount = { A.Value.toString().toInt() }
-                            "currency" -> currency = { A.Value.toString().toInt() }
-                            "orderNumber" -> orderNumber = { A.Value.toString().toInt() }
+                            "amount"        -> amount        = { A.Value.toString().toInt() }
+                            "currency"      -> currency      = { A.Value.toString().toInt() }
+                            "orderNumber"   -> orderNumber   = { A.Value.toString().toInt() }
+                            "clientId"      -> clientId      = { A.Value.toString().toInt() }
                         }
                     }
                 }
@@ -171,6 +175,7 @@ class SberDSLProcessor: DSLProcessor() {
             "pass" -> mapper.put(R, pass)
             "registerp2p" -> mapper.put(R, registerp2p)
             "enabled" -> mapper.put(R, enable)
+            "binding_id" -> mapper.put(R, binding_id)
         }
     }
 
