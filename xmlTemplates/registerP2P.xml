@@ -1,0 +1,63 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:p2p="http://engine.paymentgate.ru/webservices/p2p">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <p2p:registerP2P>
+            <arg0 language="?">
+                <amount>?</amount>
+                <currency>?</currency>
+                <orderNumber>?</orderNumber>
+                <!--Optional:-->
+                <orderDescription>?</orderDescription>
+                <returnUrl>?</returnUrl>
+                <!--Optional:-->
+                <failUrl>?</failUrl>
+                <!--Optional:-->
+                <sessionTimeoutSecs>?</sessionTimeoutSecs>
+                <!--Optional:-->
+                <sessionExpiredDate>?</sessionExpiredDate>
+                <!--Optional:-->
+                <email>?</email>
+                <!--Zero or more repetitions:-->
+                <params name="?" value="?"/>
+                <!--Optional:-->
+                <clientId>?</clientId>
+                <!--Optional:-->
+                <bindingId>?</bindingId>
+                <!--Optional:-->
+                <transactionTypeIndicator>?</transactionTypeIndicator>
+                <!--Optional:-->
+                <features>
+                    <!--Zero or more repetitions:-->
+                    <feature>?</feature>
+                </features>
+                <!--Optional:-->
+                <debitMdOrder>?</debitMdOrder>
+                <!--Optional:-->
+                <creditBindingId>?</creditBindingId>
+                <!--Optional:-->
+                <dynamicCallbackUrl>?</dynamicCallbackUrl>
+                <!--Optional:-->
+                <sbpRecipientParams bankId="?" phone="?" lastName="?" firstName="?" middleName="?"/>
+                <!--Optional:-->
+                <sbpSenderParams account="?"/>
+                <!--Optional:-->
+                <billingPayerData>
+                    <!--Optional:-->
+                    <billingAddressLine1>?</billingAddressLine1>
+                    <!--Optional:-->
+                    <billingAddressLine2>?</billingAddressLine2>
+                    <!--Optional:-->
+                    <billingAddressLine3>?</billingAddressLine3>
+                    <!--Optional:-->
+                    <billingCity>?</billingCity>
+                    <!--Optional:-->
+                    <billingCountry>?</billingCountry>
+                    <!--Optional:-->
+                    <billingPostalCode>?</billingPostalCode>
+                    <!--Optional:-->
+                    <billingState>?</billingState>
+                </billingPayerData>
+            </arg0>
+        </p2p:registerP2P>
+    </soapenv:Body>
+</soapenv:Envelope>
