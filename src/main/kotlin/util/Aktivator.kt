@@ -9,7 +9,7 @@ class Aktivator {
                 val startTime = System.nanoTime()
                 var counter = 0
                 val i= 159183
-                HTTPClient.sendGet("http://192.168.0.126:15000/psa/psa/gettest?id=$i")
+               // HTTPClient.sendGet("http://192.168.0.126:15000/psa/psa/gettest?id=$i")
                 activate()
                 val endTime = System.nanoTime()
                 val duration = endTime - startTime
@@ -20,7 +20,7 @@ class Aktivator {
         fun activate(){
             val startTime = System.nanoTime()
             var counter = 0
-            for (i in 159959..161248){
+            for (i in 164978..165160){
                 println("${counter++} STEP, activate id $i")
                 HTTPClient.sendGet("http://192.168.0.2:15000/psa/psa/gettest?id=$i")
             }
