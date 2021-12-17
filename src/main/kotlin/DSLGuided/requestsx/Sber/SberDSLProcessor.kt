@@ -168,8 +168,6 @@ class SberDSLProcessor: DSLProcessor() {
                 if (HOOKED.equals(TRUE_ATOM))
                     if (HOOK_ORDERNUMBER().length>0)
                         orderNumber = {HOOK_ORDERNUMBER().toInt()}
-
-
                 var TEMPLATE_P2P_REGISTER: simpleString = {
                     """
                     ${JUST_HEADER()}
@@ -203,6 +201,13 @@ class SberDSLProcessor: DSLProcessor() {
         }
     }
 
+    val perfomp2pBybinding: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "perfomp2pBybinding") {
+
+            }
+        }
+    }
     fun constructDSL4registerP2p(PsaID: Int): String{
         var param = ArrayList<Any?>()
         param.add(PsaID)
@@ -308,6 +313,9 @@ class SberDSLProcessor: DSLProcessor() {
             "binding_id"    -> mapper.put(R, binding_id)
             "HOOK"          -> mapper.put(R, HOOK)
             "REJECT_NEW"    -> mapper.put(R, REJECT_NEW)
+            "perfomp2pBybinding"    -> mapper.put(R, perfomp2pBybinding)
+
+
         }
     }
 
