@@ -1,1 +1,5 @@
 need to realize on the fly map parm on httpcleint
+
+registerP2P
+performP2PByBinding
+getP2PStatus

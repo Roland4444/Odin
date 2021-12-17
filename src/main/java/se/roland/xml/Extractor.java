@@ -37,7 +37,7 @@ public class Extractor implements Serializable {
 
     public String extractTagValue(String input, String TagName) {
         int pStart = input.indexOf(TagName);
-        if (pStart == -1) return null;
+        if (pStart == -1) return "";
         int offset = 0;
         int addOffset = 0;
         while (input.charAt(pStart + (offset++)) != '>') {
