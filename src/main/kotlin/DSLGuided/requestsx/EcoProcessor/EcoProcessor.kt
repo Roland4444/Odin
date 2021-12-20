@@ -9,7 +9,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellUtil
-import org.apache.poi.xssf.usermodel.XSSFFont
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileInputStream
@@ -54,7 +53,7 @@ class EcoProcessor:  DSLProcessor() {
     var DateRange: String = ""
     var CacheMetalInfo: HashMap<String, LinkedList<String>> = HashMap()
     lateinit var PSASearchProcessor: PSASearchProcessor
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         DateRange = QuarterMap.get(quarter)!!.replace("year", year.toString(), true)
@@ -227,7 +226,7 @@ class EcoProcessor:  DSLProcessor() {
         department.forEach { departMatch.append("'$it',") }
         departMatch.append("''")
         val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::department{$departMatch},::datarange{$DateRange}."
-        PSASearchProcessor.render(search6)
+        PSASearchProcessor.r(search6)
         val res = PSASearchProcessor.getPSA()
         var position = 1
         var psacounter = 0

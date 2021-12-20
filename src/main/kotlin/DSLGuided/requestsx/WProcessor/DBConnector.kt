@@ -16,7 +16,7 @@ class DBConnector : DSLProcessor() {
         fun main(args: Array<String>) {
             val dsl =        "'dbconnector'=>::dblogin{root},::dbpass{'123'},::db{jdbc:mysql://192.126.0.121/psa},::enabled{'false'},::timedbreconnect{1}."
             val psaConnector = PSAConnector()
-            psaConnector.render(dsl)
+            psaConnector.r(dsl)
         }
     }
     var login: String=""
@@ -26,7 +26,7 @@ class DBConnector : DSLProcessor() {
     var executor: Executor? = null
     lateinit var watcher: Watcher
     ///var ExecutorFree: Boolean = true
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }

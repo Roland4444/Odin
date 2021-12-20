@@ -5,15 +5,23 @@ import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
+import se.roland.abstractions.timeBasedUUID.generate
+import se.roland.crypto.Gost3411Hash.getBytesFromBase64
+import se.roland.crypto.RSA_Encryption
 import se.roland.transport.SAAJ
 import se.roland.xml.Extractor
 import se.roland.xml.Transform
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.Error
 import java.nio.file.Files
+import java.security.KeyFactory
+import java.security.PublicKey
+import java.security.spec.X509EncodedKeySpec
 import java.sql.ResultSet
-import kotlin.collections.ArrayList
+import java.text.SimpleDateFormat
+import java.util.*
+import javax.crypto.Cipher
+
 
 ////////////Пример DSL для SberDSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
@@ -31,7 +39,7 @@ class SberDSLProcessor: DSLProcessor() {
     val DEFAULT_URL             = "DEFAULT"
     val TEMP_FILE_TO_TRANSFORM  = "temp_trans.xml"
     val TEMP_FILE_TO_RESULT     = "temp_result.xml"
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key) }
@@ -59,6 +67,7 @@ class SberDSLProcessor: DSLProcessor() {
     """.trimIndent()
 
     }
+    var LAST_RESPONCE       :simpleString   ={EMPTY_ATOM}
     val NEW_ATOM        = "NEW"
     val REJECTED_ATOM   = "REJECTED"
     var endpoint_           : simpleString   = {DEFAULT_URL}
@@ -71,6 +80,11 @@ class SberDSLProcessor: DSLProcessor() {
     var headersecurity      : simpleString   = {EMPTY_ATOM}
     var HOOK_ORDERNUMBER    : simpleString   = {EMPTY_ATOM}
     var REJECT_NEW_         : simpleString   = {FALSE_ATOM}
+    var bibdingId_          : simpleString   = {EMPTY_ATOM}
+    var PUBLIC_KEY          : simpleString   = {EMPTY_ATOM}
+    var PRIVATE_KEY         : simpleString   = {EMPTY_ATOM}
+    var SETOKEN             : simpleString   = {EMPTY_ATOM}
+
 
     val endpoint: RoleHandler = {
         mapper.forEach { a->
@@ -118,7 +132,7 @@ class SberDSLProcessor: DSLProcessor() {
         mapper.forEach { a ->
             if (a.key.Name == "registerp2p") {
                 val psaid = a.key.Param.toString().toInt()
-                render(constructDSL4registerP2p(psaid))
+                r(constructDSL4registerP2p(psaid))
             }
         }
     }
@@ -201,13 +215,144 @@ class SberDSLProcessor: DSLProcessor() {
         }
     }
 
-    val perfomp2pBybinding: RoleHandler = {
+    val KEY: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "perfomp2pBybinding") {
+            if (a.key.Name == "KEY") {
+                var Arr = a.key.Param as MutableList<KeyValue>
+                Arr.forEach{a->
+                    when (a.Key){
+                        "public"-> PUBLIC_KEY = {String(Saver.Saver.readBytes(a.Value as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
+                        .replace("ENDRSAPRIVATEKEY", "END RSA PRIVATE KEY")
+                        .replace("BEGINPUBLICKEY", "BEGIN PUBLIC KEY")
+                        .replace("ENDPUBLICKEY", "END PUBLIC KEY")
+                        .replace("-----BEGIN PUBLIC KEY-----\n", "")
+                        .replace("-----END PUBLIC KEY-----", "")
+                        }
+
+                        "private"-> PRIVATE_KEY = {String(Saver.Saver.readBytes(a.Value as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
+                            .replace("ENDRSAPRIVATEKEY", "END RSA PRIVATE KEY")
+                            .replace("BEGINPUBLICKEY", "BEGIN PUBLIC KEY")
+                            .replace("ENDPUBLICKEY", "END PUBLIC KEY")
+                            .replace("-----BEGIN RSA PRIVATE KEY-----\n", "")
+                            .replace("-----END RSA PRIVATE KEY-----", "")
+                        }
+                    }
+                }
+                println("PUBLIC KEy::${PUBLIC_KEY()}")
+                println("PRIVATE_KEY::${PRIVATE_KEY()}")
 
             }
         }
     }
+
+    val bindingId: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "bindingId") {
+                bibdingId_ = {a.key.Param as String}
+
+
+
+            }
+        }
+    }
+    fun getKey(key: String): PublicKey? {
+        try {
+
+            val X509publicKey = X509EncodedKeySpec(getBytesFromBase64(key))
+            val kf = KeyFactory.getInstance("RSA")
+            return kf.generatePublic(X509publicKey)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun encrypt2(publicKey: String, TextToEncrypt: String): String{
+        val publicKey = PUBLIC_KEY()
+        val privateKey =PRIVATE_KEY()
+        println("Original Text  : " + TextToEncrypt)
+        val pubKeyPEM: String =
+            publicKey.replace("-----BEGIN PUBLIC KEY-----\n", "").replace("-----END PUBLIC KEY-----", "")
+        println("PUBLIC KEY::$pubKeyPEM")
+        // Base64 decode the data
+        // Base64 decode the data
+        val encodedPublicKey: ByteArray = getBytesFromBase64(pubKeyPEM)
+        val spec = X509EncodedKeySpec(encodedPublicKey)
+        val kf = KeyFactory.getInstance("RSA")
+        println(kf.generatePublic(spec))
+        // Encryption
+        val cipherTextArray = RSA_Encryption.encrypt(RSA_Encryption.plainText, kf.generatePublic(spec))
+        val encryptedText = Base64.getEncoder().encodeToString(cipherTextArray)
+        println("ENCRYPTED:: $encryptedText")
+        return  encryptedText
+    }
+    // Encryption
+
+    fun encrypt(plainText: String, publicKey: PublicKey?): String? {
+        val encryptCipher = Cipher.getInstance("RSA")
+        encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
+        val cipherText = encryptCipher.doFinal(plainText.toByteArray())
+        return Base64.getEncoder().encodeToString(cipherText)
+    }
+
+    fun seToken(TimeStamp: String, UUID: String, PAN: String, MdOrder: String): String? {
+        var Template_SeTOKEN: simpleString = {
+            "$TimeStamp/$UUID/$PAN///$MdOrder".trimIndent()
+        }
+        SETOKEN = {Template_SeTOKEN()}
+        println("Template_SeTOKEN::${Template_SeTOKEN()}")
+        return encrypt2(Template_SeTOKEN(), PUBLIC_KEY())///getKey(PUBLIC_KEY()))
+    }
+
+    val timestamp: simpleString = {
+       // 2019-05-09T15:18:06+03:00
+        val timeStamp = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().time)
+        timeStamp.toString().replace("_","T")+"+03:00"
+    }
+
+    val perfomP2P: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "perfomP2P") {
+                println("\n\n\n\n\n\nperfomP2P!!!!!!!!!!1")
+                val Lst = a.key.Param as MutableList<KeyValue>
+                var orderId: simpleString   = {""}
+                var PAN    : simpleString   = {""}
+                Lst.forEach { A ->
+                    run {
+                        when (A.Key) {
+                            "orderId"        -> orderId      = { A.Value.toString() }
+                            "PAN"            -> PAN          = { A.Value.toString() }
+                        }
+                    }
+                }
+                var TEMPLATE_P2P_PERFORM: simpleString = {
+                    """
+                    ${JUST_HEADER()}
+                    ${headersecurity()}
+                    <soapenv:Body>
+                    <p2p:performP2PByBinding>
+                    <arg0 language="ru">
+                    <orderId>${orderId()}</orderId>
+                    <fromCard>
+                    <bindingId>${binding_id_()}</bindingId>
+                    </fromCard>
+                    <toCard>
+                    <seToken>${seToken(timestamp(), generate(), PAN(), orderId() )}</seToken>
+                    </toCard>
+                    </arg0>
+                    </p2p:performP2PByBinding>
+                    </soapenv:Body>
+                    </soapenv:Envelope>""".trimIndent()
+                }
+                println("TEMPLATE P2P::"+TEMPLATE_P2P_PERFORM())
+                println(send(TEMPLATE_P2P_PERFORM()))
+            }
+        }
+    }
+
+
+
+
     fun constructDSL4registerP2p(PsaID: Int): String{
         var param = ArrayList<Any?>()
         param.add(PsaID)
@@ -238,7 +383,8 @@ class SberDSLProcessor: DSLProcessor() {
         fos.write(transform.transform(ToSend.toByteArray()))
         fos.close()
         TRANSPORT.send(TEMP_FILE_TO_TRANSFORM, TEMP_FILE_TO_RESULT)
-        return String(Files.readAllBytes(File(TEMP_FILE_TO_RESULT).toPath()))
+        LAST_RESPONCE = {String(Files.readAllBytes(File(TEMP_FILE_TO_RESULT).toPath()))}
+        return LAST_RESPONCE()
     }
 
     fun String.error_code(): String{
@@ -305,15 +451,18 @@ class SberDSLProcessor: DSLProcessor() {
     }
     fun appendRole(R: Role){
         when (R?.Name){
-            "endpoint"      -> mapper.put(R, endpoint)
-            "login"         -> mapper.put(R, login)
-            "pass"          -> mapper.put(R, pass)
-            "registerp2p"   -> mapper.put(R, registerp2p)
-            "enabled"       -> mapper.put(R, enable)
-            "binding_id"    -> mapper.put(R, binding_id)
-            "HOOK"          -> mapper.put(R, HOOK)
-            "REJECT_NEW"    -> mapper.put(R, REJECT_NEW)
-            "perfomp2pBybinding"    -> mapper.put(R, perfomp2pBybinding)
+            "endpoint"              ->  mapper.put(R, endpoint)
+            "login"                 ->  mapper.put(R, login)
+            "pass"                  ->  mapper.put(R, pass)
+            "registerp2p"           ->  mapper.put(R, registerp2p)
+            "enabled"               ->  mapper.put(R, enable)
+            "binding_id"            ->  mapper.put(R, binding_id)
+            "HOOK"                  ->  mapper.put(R, HOOK)
+            "REJECT_NEW"            ->  mapper.put(R, REJECT_NEW)
+            "perfomP2P"    ->  mapper.put(R, perfomP2P)
+            "bindingId"             ->  mapper.put(R, bindingId)
+            "KEY"                   ->  mapper.put(R, KEY)
+
 
 
         }

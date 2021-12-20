@@ -5,7 +5,7 @@ import DSLGuided.requestsx.RoleHandler
 import abstractions.Role
 
 class PaymentProcessor:  DSLProcessor() {
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }

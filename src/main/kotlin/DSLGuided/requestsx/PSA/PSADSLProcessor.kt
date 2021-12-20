@@ -32,21 +32,21 @@ typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price
 class PSADSLProcessor  : DSLProcessor() {
     companion object {
         fun deletePSA(DSL: String, PSAProc: PSADSLProcessor){
-            PSAProc.render(DSL)
+            PSAProc.r(DSL)
         }
         fun activatePSA(DSL: String, PSAProc: PSADSLProcessor, UUID: String){
-            PSAProc.render(DSL)
+            PSAProc.r(DSL)
             PSAProc.activatePSA(UUID)
         }
         fun processColorPSA(inputJSON: String, uuid: String, DSL: String, PSAProc: PSADSLProcessor) {
-            PSAProc.render(DSL)
+            PSAProc.r(DSL)
             PSAProc.processfarg(uuid, inputJSON)
             PSAProc.activatePSA(uuid)
 
         }
         fun createdraftPSA(params: HashMap<String, Any>, DSL: String, PSAProc: PSADSLProcessor): Unit {
             println("into create draft psa")
-            PSAProc.render(DSL)
+            PSAProc.r(DSL)
             PSAProc.LOG("into create draft psa")
             val f: psaDraftSection = PSAProc.createdraftsection
             val Brutto = params.get("Brutto")
@@ -73,7 +73,7 @@ class PSADSLProcessor  : DSLProcessor() {
 
 
         fun completePSA(params: HashMap<String, String>, DSL: String, PSAProc: PSADSLProcessor): Unit {
-            PSAProc.render(DSL)
+            PSAProc.r(DSL)
             println("\n\n\nIN COMPLETE PSA!!!")
             val m = PSAProc.completePSA
             val mwp = PSAProc.completePSAwithPrice
@@ -145,7 +145,7 @@ class PSADSLProcessor  : DSLProcessor() {
 
     var external_searchdsl = EMPTY_ATOM
     lateinit var psearch: PSASearchProcessor
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         parseRoles(DSL)
         clearhooked()
         loadRoles(parseRoles(DSL))
@@ -186,7 +186,7 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
         println("date => $date")
         val buildSearchDSL = "'search'=>::sql{'SELECT * FROM psa '},::department{'${name}',''},::datarange{'${year}-01-01':'${java.sql.Date.valueOf(date)}'}."
         println("PREPARED DSL=> $buildSearchDSL")
-        psearch.render(buildSearchDSL)
+        psearch.r(buildSearchDSL)
         val res = psearch.getPSA()
         var numberpsa = 0;
         while (res?.next() == true) {
@@ -207,7 +207,7 @@ UPDATE `psa` SET `number`=? WHERE `uuid`='$UUID' """
         println("date => $date")
         val buildSearchDSL = "'search'=>::sql{'SELECT * FROM psa '},::section{'${Section}'},::department{'${name}',''},::datarange{'${year}-01-01':'${java.sql.Date.valueOf(date)}'}."
         println("PREPARED DSL for search=> $buildSearchDSL")
-        psearch.render(buildSearchDSL)
+        psearch.r(buildSearchDSL)
         external_searchdsl = buildSearchDSL
         val res = psearch.getPSA()
         var numberpsa = 0;

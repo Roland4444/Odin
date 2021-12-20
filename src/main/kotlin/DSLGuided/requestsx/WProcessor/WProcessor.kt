@@ -17,15 +17,15 @@ import java.util.*
 class WProcessor : DSLProcessor()  {
     companion object {
         fun saveImages(DSL: String, WProc: WProcessor, Arr1: ByteArray, Arr2: ByteArray,Department: String, Date: String, WaybillID: String){
-            WProc.render(DSL)
+            WProc.r(DSL)
             WProc.saveImages(Arr1, Arr2, Department, Date, WaybillID)
         }
         fun resend(DSL: String, WProc: WProcessor, Params: HashMap<String, String>){
-            WProc.render(DSL)
+            WProc.r(DSL)
             WProc.resenddata(Params)
         }
         fun getTransfers(DSL: String, WProc: WProcessor, DepId: String): LinkedList<Any>? {
-            WProc.render(DSL)
+            WProc.r(DSL)
             return WProc.getResultinLinkedList(DepId)
         }
     }
@@ -39,7 +39,7 @@ class WProcessor : DSLProcessor()  {
     val i_ ="_"
     val appendix = ".jpg"
     lateinit var dbconnector: DBConnector
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }

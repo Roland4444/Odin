@@ -9,7 +9,7 @@ class SMSDSLProcessorTest : TestCase() {
     fun testGetSendto() {
         val dsl: String = "'sms'=>::login{'avs'}, ::pass{'7BBAP7nkTCA4L3r'},::sendto{'89608607763','89996013370',  '89171998113'},::enabled{'false'}.  в sendto должно быть минимум два отправителя"
         val smsDSL: SMSDSLProcessor = SMSDSLProcessor()
-        val f: StringHandler = smsDSL.render(dsl) as StringHandler
+        val f: StringHandler = smsDSL.r(dsl) as StringHandler
         smsDSL.add(2)
         print(smsDSL.str("aaa"))
         val nsg:String = f(msg)

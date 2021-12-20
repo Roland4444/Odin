@@ -70,12 +70,12 @@ class DSL {
 
     @Throws(IOException::class)
     fun initDSL() {
-        dslProcessors?.get("psaconnector")?.render(getDSLforObject("psaconnector", "server"))
+        dslProcessors?.get("psaconnector")?.r(getDSLforObject("psaconnector", "server"))
         val psearch = dslProcessors?.get("psasearch") as PSASearchProcessor
         val pconnector = dslProcessors!!.get("psaconnector") as PSAConnector
         psearch.psaconnector= pconnector
         PSADSLProcessor!!.psearch  = PSASearchProcessor!!
-        dslProcessors?.get("dbconnector")?.render(getDSLforObject("dbconnector", "server"))
+        dslProcessors?.get("dbconnector")?.r(getDSLforObject("dbconnector", "server"))
         WProcessor!!.dbconnector=DBConnector!!
         HelperDBUpdate!!.dbconnector=DBConnector!!
     }

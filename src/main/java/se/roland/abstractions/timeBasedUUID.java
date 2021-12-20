@@ -9,4 +9,8 @@ public class timeBasedUUID {
         NoArgGenerator timeBasedGenerator = Generators.timeBasedGenerator();
         return timeBasedGenerator.generate().toString();
     }
+    public static int generateInt(){
+        return (int) Math.round(Math.random()*10000);
+    }
+
 }

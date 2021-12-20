@@ -12,7 +12,7 @@ import java.time.Duration
 class SMSDSLProcessor : DSLProcessor() {
     companion object {
         fun sendSMS(msg: String, DSL: String, SMSProc: SMSDSLProcessor): String{
-            val f: StringHandler = SMSProc.render(DSL) as StringHandler
+            val f: StringHandler = SMSProc.r(DSL) as StringHandler
             return  f(msg)
         }
     }
@@ -56,7 +56,7 @@ class SMSDSLProcessor : DSLProcessor() {
 
     val add: DumbHandler={it+2}
     val str: StringHandler={ (it); }
-    override fun render(DSL: String) :Any{
+    override fun r(DSL: String) :Any{
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }

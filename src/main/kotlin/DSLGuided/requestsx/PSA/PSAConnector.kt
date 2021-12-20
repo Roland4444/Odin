@@ -14,7 +14,7 @@ class PSAConnector  : DSLProcessor() {
         fun main(args: Array<String>) {
             val dsl =        "'psaconnector'=>::psalogin{root},::psapass{'Pf,dtybt010203'},::db{jdbc:mysql://localhost/psa},::enabled{'false'},::timedbreconnect{1}."
             val psaConnector = PSAConnector()
-            psaConnector.render(dsl)
+            psaConnector.r(dsl)
 
 ////        Thread.sleep(10)
         }
@@ -27,7 +27,7 @@ class PSAConnector  : DSLProcessor() {
     var executor: Executor? = null
     lateinit var watcher: Watcher
     ///var ExecutorFree: Boolean = true
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }

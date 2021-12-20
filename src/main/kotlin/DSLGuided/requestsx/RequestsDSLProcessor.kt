@@ -21,7 +21,7 @@ class RequestsDSLProcessor() : DSLProcessor() {
     val add: DumbHandler={it+2}
     val add2: DumbHandler2 = { i: Int, i1: Int -> i+i1}
 
-    override fun render(DSL: String): String {
+    override fun r(DSL: String): String {
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         if (mapper.size==0)

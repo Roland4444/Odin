@@ -14,7 +14,7 @@ import java.sql.SQLException
 class HelperDBUpdate:  DSLProcessor() {
     companion object{
         fun fullupdate(Helper: HelperDBUpdate, DSL: String, JSON1: ParcedJSON, JSON2:ParcedJSON){
-            Helper.render(DSL)
+            Helper.r(DSL)
             Helper.fullupdate(JSON1, JSON2)
         }
 
@@ -26,7 +26,7 @@ class HelperDBUpdate:  DSLProcessor() {
     var hockDeleting_: Boolean = false
     var ProductionMode_ : Boolean = false
 
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         return "OK"

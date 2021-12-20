@@ -22,7 +22,7 @@ class PSASearchProcessor  : DSLProcessor() {
     companion object {
         @Throws(Exception::class)
         fun search(input: String, PSASearch: PSASearchProcessor): String {
-            PSASearch.render(input)
+            PSASearch.r(input)
             return PSASearch.createJSONResponce(PSASearch.getPSA())
         }
         fun search(input: String, PSASearch: PSASearchProcessor, depsRestricted: String): String {
@@ -33,7 +33,7 @@ class PSASearchProcessor  : DSLProcessor() {
             val appendDep = "},::department{'"+departname+"',''},::limit{200}."
             val finishDSL = input.replace("}.", appendDep)
             print("final string dsl =>$finishDSL")
-            PSASearch.render(finishDSL)
+            PSASearch.r(finishDSL)
             return PSASearch.createJSONResponce(PSASearch.getPSA())
         }
     }
@@ -66,7 +66,7 @@ class PSASearchProcessor  : DSLProcessor() {
         first = true
     }
 
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         reset()
         parseRoles(DSL)
         loadRoles(parseRoles(DSL))
@@ -375,7 +375,7 @@ class PSASearchProcessor  : DSLProcessor() {
         println("date => $date")
         val buildSearchDSL = "'search'=>::sql{'SELECT * FROM psa '},::section{'${Section}'},::department{'${name}',''},::datarange{'${year}-01-01':'${java.sql.Date.valueOf(date)}'}."
         println("PREPARED DSL for search=> $buildSearchDSL")
-        render(buildSearchDSL)
+        r(buildSearchDSL)
         val res = getPSA()
         var numberpsa = 0;
         while (res?.next() == true) {

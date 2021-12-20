@@ -6,7 +6,7 @@ import DSLGuided.requestsx.RoleHandler
 import abstractions.Role
 
 class SQLDump: DSLProcessor() {
-    override fun render(DSL: String): Any {
+    override fun r(DSL: String): Any {
         TODO("Not yet implemented")
     }
 

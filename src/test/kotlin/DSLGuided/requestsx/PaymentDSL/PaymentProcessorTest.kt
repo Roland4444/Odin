@@ -11,7 +11,7 @@ class PaymentProcessorTest : TestCase() {
 
         val PaymentProcessor = PaymentProcessor()
         val echourl = "http://192.168.0.126:4567/echo2";
-        PaymentProcessor.render(dsl)
+        PaymentProcessor.r(dsl)
         assertEquals("https://xn--80aqu.xn--g1axi.xn--p1ai", PaymentProcessor.rooturl_)
         assertEquals("KJDsdlkfjlds1321", PaymentProcessor.key_)
         assertEquals("29f662a8-72ad-496a-a456-acde0673549f", PaymentProcessor.BasicLicenceId)
@@ -31,7 +31,7 @@ class PaymentProcessorTest : TestCase() {
         val stringpayId = "759027"
         val PaymentProcessor = PaymentProcessor()
         val echourl = "http://192.168.0.126:4567/echo2";
-        PaymentProcessor.render(dsl)
+        PaymentProcessor.r(dsl)
         assertEquals("https://xn--80aqu.xn--g1axi.xn--p1ai", PaymentProcessor.rooturl_)
         assertEquals("KJDsdlkfjlds1321", PaymentProcessor.key_)
         assertEquals("29f662a8-72ad-496a-a456-acde0673549f", PaymentProcessor.BasicLicenceId)
