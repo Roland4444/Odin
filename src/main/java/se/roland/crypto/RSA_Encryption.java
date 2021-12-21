@@ -1,6 +1,7 @@
 package se.roland.crypto;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Random;
@@ -15,7 +16,7 @@ import javax.crypto.Cipher;
 public class RSA_Encryption
 {
     public  static String plainText = "Plain text which need to be encrypted by Java RSA Encryption in ECB Mode";
-
+    public static final String saveToFile = "key.bin";
     public static void main(String[] args) throws Exception
     {
         // Get an instance of the RSA key generator
@@ -24,10 +25,20 @@ public class RSA_Encryption
 
         // Generate the KeyPair
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
-
+        KeySave KS = new KeySave(keyPair);
+        if (!new File(saveToFile).exists())
+            Saver.Saver.write(Saver.Saver.savedToBLOB(KS), saveToFile);
         // Get the public and private key
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
+
+        if (new File(saveToFile).exists()){
+            KS = (KeySave) Saver.Saver.restored(Saver.Saver.readBytes(saveToFile));
+            publicKey = KS.keyPair.getPublic();
+            privateKey = KS.keyPair.getPrivate();
+            System.out.println("RESTORED!!");
+        }
+        System.out.println("PUBLCI KEY::"+ publicKey.toString());
 
         System.out.println("Original Text  : "+plainText);
 

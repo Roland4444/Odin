@@ -246,7 +246,8 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         println("STRING TO REQUEST::$StrRequest")
         Sber.r(StrRequest)
         val orderId = Sber.order_id_(Sber.LAST_RESPONCE())
-        val dslTopay = "'sber'=>::perfomP2P{'orderId':${orderId}, 'PAN':'4111111111111111'}."
+
+        val dslTopay = "'sber'=>::perfomP2P{'orderId':${orderId}, 'PAN':'0111111111111111'}."
         println("PAY!!!!")
         Sber.r(dslTopay)
         assertNotNull(Sber.LAST_RESPONCE)
@@ -293,8 +294,6 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         println("Original Text  : " + RSA_Encryption.plainText)
         // Encryption
         // Encryption
-
-
 
         val pubKeyPEM: String =
             publicKey.replace("-----BEGIN PUBLIC KEY-----\n", "").replace("-----END PUBLIC KEY-----", "")
@@ -358,6 +357,34 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         Sber.seToken(Timestamp, UUID, PAN,orderID)
         assertEquals(DataToEncrypt, Sber.SETOKEN())
         assertEquals(EtalonEncrypted, Sber.seToken(Timestamp, UUID, PAN,orderID))
+    }
+
+    fun testPerformP2p2() {
+
+        val psaid = 148233
+        val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
+        var psa = PSADSLProcessor()
+        val psaconnstr =
+            "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr =
+            "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
+        psaconnector.r(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector = psaconnector
+        psa.psearch = PSASearchProcessor
+        psa.r(psastr)
+        val Sber = SberDSLProcessor()
+        Sber.PSADSLProcessor = psa
+        assertNotNull(Sber.constructDSL4registerP2p(psaid))
+        println(Sber.constructDSL4registerP2p(psaid))
+
+        val DSL4SberInitial =
+            "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
+        Sber.r(DSL4SberInitial)
+        Sber.send(String(Saver.Saver.readBytes("G.xml")))
+
+
+        println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }
 
 }

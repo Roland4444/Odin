@@ -305,9 +305,14 @@ class SberDSLProcessor: DSLProcessor() {
     }
 
     val timestamp: simpleString = {
-       // 2019-05-09T15:18:06+03:00
+
         val timeStamp = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().time)
-        timeStamp.toString().replace("_","T")+"+03:00"
+        println("TIMESTAMP::${timeStamp.toString()}")
+        timeStamp.toString().replace("_","T")+"+04:00"
+//        val ret = "2021-12-21T16:22:06+03:00"
+//        println("TIMESTAMP::$ret")
+//        ret
+
     }
 
     val perfomP2P: RoleHandler = {
@@ -325,7 +330,9 @@ class SberDSLProcessor: DSLProcessor() {
                         }
                     }
                 }
-                var TEMPLATE_P2P_PERFORM: simpleString = {
+                var TEMPLATE_P2P_PERFORM: simpleString = {/////}
+
+
                     """
                     ${JUST_HEADER()}
                     ${headersecurity()}
@@ -336,9 +343,7 @@ class SberDSLProcessor: DSLProcessor() {
                     <fromCard>
                     <bindingId>${binding_id_()}</bindingId>
                     </fromCard>
-                    <toCard>
-                    <seToken>${seToken(timestamp(), generate(), PAN(), orderId() )}</seToken>
-                    </toCard>
+                    <toCard><seToken>${seToken(timestamp(), generate(), PAN(), orderId() )}</seToken></toCard>
                     </arg0>
                     </p2p:performP2PByBinding>
                     </soapenv:Body>
