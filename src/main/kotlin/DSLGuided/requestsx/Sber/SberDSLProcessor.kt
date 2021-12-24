@@ -5,7 +5,6 @@ import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
-import se.roland.abstractions.timeBasedUUID.generate
 import se.roland.crypto.Gost3411Hash.getBytesFromBase64
 import se.roland.crypto.RSA_Encryption
 import se.roland.transport.SAAJ
@@ -31,8 +30,84 @@ typealias simpleString = () -> String
 typealias Str1Int = (A: Int) -> String
 typealias simpleInt = () -> Int
 class SberDSLProcessor: DSLProcessor() {
+    companion object{
+        @JvmStatic
+        fun main(args: Array<String>) {
+            println("SEK RULEZ ANYTIME")
+            val S = SberDSLProcessor()
+            println(S.DIRECT_SETOKEN())
+        }
+    }
     /////для первичного платежа
     /////'sber'=>::registerp2p{'amount':400, 'currency':643, 'orderNumber':555}.
+
+    val DIRECT_ORDER_ID: simpleString = {
+        "cbbd4e6d-2f35-7bfc-a90f-5aa72823c181"
+    }
+
+    val DIRECT_TIMESTAMP: simpleString = {
+        "2021-12-24T17:11:06+03:00"
+    }
+
+    val DIRECT_SETOKEN: simpleString ={
+"${DIRECT_TIMESTAMP()}/6cc2cc38-3677-7330-9b6b-54b62823c181/4111111111111111///${DIRECT_ORDER_ID()}"
+    }
+    val SIGNED_SETOKEN: simpleString = {
+        "Se/PHZChFyQneNOH900bxbtxfiRi7hBpnt8/enyNYWisGWzi99xACdYtOb4i+RI3pquv28nIA1JpAKbfDecdNJ1Oln1vRQ+20jpPyRtTW+aMjr587SWvjLK1hQcfD8eiZscNY3M2EpBHWCv+HAGEDXvroTcz3sfSSrQOEdilzv9nFvhDV0IqPcerXnltEiUGgBvYvmkGAKGo/TPP9Zo+RzgPiWq5FY0rnWK8ZfslWMOeq7XgYX37D9tvkYvpZZw8VvMkazYF56WF2ZEJglEU1dPF/SxvB6oJoKqCPeHteq/OPTnxfgRgENQbbnx1CdKwi8NV34Mtz6IDClhnjAnAEQ=="
+    }
+    val DIRECT: simpleString = {
+        """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:p2p="http://engine.paymentgate.ru/webservices/p2p" xmlns:env="env">
+	<soapenv:Header>
+		<wsse:Security env:mustUnderstand="1" soapenv:mustUnderstand="1" 
+			xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+			xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+			<wsse:UsernameToken wsu:Id="UsernameToken-UUID">
+				<wsse:Username>test_AVS-api</wsse:Username>
+				<wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">test_AVS</wsse:Password>
+		</wsse:UsernameToken></wsse:Security>
+	</soapenv:Header>
+		<soapenv:Body>
+			<p2p:performP2PByBinding> 
+				<arg0 language="ru"> 
+					<orderId>${DIRECT_ORDER_ID()}</orderId> 
+					<fromCard>
+						<bindingId>6cc2cc38-3677-7330-9b6b-54b62823c181</bindingId>
+					</fromCard> 
+					<toCard>
+						<seToken>${SIGNED_SETOKEN()}</seToken> 
+					</toCard> 
+				</arg0> 
+			</p2p:performP2PByBinding>
+		</soapenv:Body>
+		</soapenv:Envelope>
+        """.trimIndent()
+    }
+
+val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:p2p=\"http://engine.paymentgate.ru/webservices/p2p\" xmlns:env=\"env\">\n" +
+        "\t<soapenv:Header>\n" +
+        "\t\t<wsse:Security env:mustUnderstand=\"1\" soapenv:mustUnderstand=\"1\" \n" +
+        "\t\t\txmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"\n" +
+        "\t\t\txmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">\n" +
+        "\t\t\t<wsse:UsernameToken wsu:Id=\"UsernameToken-UUID\">\n" +
+        "\t\t\t\t<wsse:Username>test_AVS-api</wsse:Username>\n" +
+        "\t\t\t\t<wsse:Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText\">test_AVS</wsse:Password>\n" +
+        "\t\t</wsse:UsernameToken></wsse:Security>\n" +
+        "\t</soapenv:Header>\n" +
+        "\t\t<soapenv:Body>\n" +
+        "\t\t\t<p2p:performP2PByBinding> \n" +
+        "\t\t\t\t<arg0 language=\"ru\"> \n" +
+        "\t\t\t\t\t<orderId>8563aa00-6b32-7168-8264-91ac2823c181</orderId> \n" +
+        "\t\t\t\t\t<fromCard>\n" +
+        "\t\t\t\t\t\t<bindingId>6cc2cc38-3677-7330-9b6b-54b62823c181</bindingId>\n" +
+        "\t\t\t\t\t</fromCard> \n" +
+        "\t\t\t\t\t<toCard>\n" +
+        "\t\t\t\t\t\t<seToken>AkHYc4kCTl84YNymdx+sx1L0k5ue0rOXCyX2SFl4M4hmdXreEJV8Veqb/DiLAchvgX+LzXfh9OknHoI+vgsaqnZRmvW9+oqJsKE/jXspJ37Z5p3mahqGvhNFxpQV6Z0gLfe9f/enicbHYV3zVaKLqrz75j/vBnLIebenRo1k7XpL4gnCHaHa0l7mVeaMQhOic4sRXhLpUPRZ3Tn3EX2rdpZhs1Pi43SryaNF8Jx3WBUu3X/0vxEv6eg9MgCRvfhc9fMiTY1k6iM3gV4Skt6gHBsunRONSbHP9JkV1XUnz/PElWEN75vTikn81OgNMXI5NvY86e4HHgWdV+yQKS145Q==</seToken> \n" +
+        "\t\t\t\t\t</toCard> \n" +
+        "\t\t\t\t</arg0> \n" +
+        "\t\t\t</p2p:performP2PByBinding>\n" +
+        "\t\t</soapenv:Body>\n" +
+        "\t</soapenv:Envelope>"
+
     val Extraktor = Extractor()
     lateinit var TRANSPORT: SAAJ
     lateinit var PSADSLProcessor: PSADSLProcessor
@@ -67,9 +142,9 @@ class SberDSLProcessor: DSLProcessor() {
     """.trimIndent()
 
     }
-    var LAST_RESPONCE       :simpleString   ={EMPTY_ATOM}
-    val NEW_ATOM        = "NEW"
-    val REJECTED_ATOM   = "REJECTED"
+    var LAST_RESPONCE       :simpleString    ={EMPTY_ATOM}
+    val NEW_ATOM                             = "NEW"
+    val REJECTED_ATOM                        = "REJECTED"
     var endpoint_           : simpleString   = {DEFAULT_URL}
     var login_              : simpleString   = {EMPTY_ATOM}
     var pass_               : simpleString   = {EMPTY_ATOM}
@@ -80,7 +155,6 @@ class SberDSLProcessor: DSLProcessor() {
     var headersecurity      : simpleString   = {EMPTY_ATOM}
     var HOOK_ORDERNUMBER    : simpleString   = {EMPTY_ATOM}
     var REJECT_NEW_         : simpleString   = {FALSE_ATOM}
-    var bibdingId_          : simpleString   = {EMPTY_ATOM}
     var PUBLIC_KEY          : simpleString   = {EMPTY_ATOM}
     var PRIVATE_KEY         : simpleString   = {EMPTY_ATOM}
     var SETOKEN             : simpleString   = {EMPTY_ATOM}
@@ -193,17 +267,17 @@ class SberDSLProcessor: DSLProcessor() {
                         <currency>${currency()}</currency>
                         <orderNumber>${orderNumber()}</orderNumber>
                         <orderDescription>${default_description_(clientId())}</orderDescription>
-                        <returnUrl>avs.com.ru</returnUrl>
+                        <returnUrl>https://avs.com.ru</returnUrl>
                         <failUrl>https://avs.com.ru</failUrl>
-                        <sessionTimeoutSecs>300</sessionTimeoutSecs>
+                        <sessionTimeoutSecs>600</sessionTimeoutSecs>
                         <email>metal@avs.com.ru</email>
                         <params name="mark" value="1"/>
                         <transactionTypeIndicator>A</transactionTypeIndicator>
                         <features>
-                            <feature>WITHOUT_FROM_CARD</feature>
+                            <feature></feature>
                         </features>
-                        <creditBindingId>${binding_id_()}</creditBindingId>
-                        <sbpSenderParams account="?"/>
+                        <bindingId>${binding_id_()}</bindingId>
+                        <creditBindingId></creditBindingId>
                     </arg0>
                 </p2p:registerP2P>
             </soapenv:Body>
@@ -248,7 +322,7 @@ class SberDSLProcessor: DSLProcessor() {
     val bindingId: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "bindingId") {
-                bibdingId_ = {a.key.Param as String}
+                binding_id_ = {a.key.Param as String}
 
 
 
@@ -309,9 +383,9 @@ class SberDSLProcessor: DSLProcessor() {
         val timeStamp = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().time)
         println("TIMESTAMP::${timeStamp.toString()}")
         timeStamp.toString().replace("_","T")+"+04:00"
-//        val ret = "2021-12-21T16:22:06+03:00"
-//        println("TIMESTAMP::$ret")
-//        ret
+        val ret = "2021-12-24T16:06:06+03:00"
+        println("TIMESTAMP::$ret")
+        ret
 
     }
 
@@ -330,6 +404,7 @@ class SberDSLProcessor: DSLProcessor() {
                         }
                     }
                 }
+                println("BINDING ID::${binding_id_()}")
                 var TEMPLATE_P2P_PERFORM: simpleString = {/////}
 
 
@@ -343,7 +418,7 @@ class SberDSLProcessor: DSLProcessor() {
                     <fromCard>
                     <bindingId>${binding_id_()}</bindingId>
                     </fromCard>
-                    <toCard><seToken>${seToken(timestamp(), generate(), PAN(), orderId() )}</seToken></toCard>
+                    <toCard><seToken>${seToken(timestamp(), binding_id_(), PAN(), orderId() )}</seToken></toCard>
                     </arg0>
                     </p2p:performP2PByBinding>
                     </soapenv:Body>

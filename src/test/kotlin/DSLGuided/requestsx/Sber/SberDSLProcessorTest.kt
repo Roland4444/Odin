@@ -15,6 +15,31 @@ import kotlin.test.assertNotEquals
 
 
 class SberDSLProcessorTest : TestCase() {
+    val PREPARED = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:p2p="http://engine.paymentgate.ru/webservices/p2p" xmlns:env="env">
+	<soapenv:Header>
+		<wsse:Security env:mustUnderstand="1" soapenv:mustUnderstand="1" 
+			xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+			xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+			<wsse:UsernameToken wsu:Id="UsernameToken-UUID">
+				<wsse:Username>test_AVS-api</wsse:Username>
+				<wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">test_AVS</wsse:Password>
+		</wsse:UsernameToken></wsse:Security>
+	</soapenv:Header>
+		<soapenv:Body>
+			<p2p:performP2PByBinding> 
+				<arg0 language="ru"> 
+					<orderId>8563aa00-6b32-7168-8264-91ac2823c181</orderId> 
+					<fromCard>
+						<bindingId>6cc2cc38-3677-7330-9b6b-54b62823c181</bindingId>
+					</fromCard> 
+					<toCard>
+						<seToken>AkHYc4kCTl84YNymdx+sx1L0k5ue0rOXCyX2SFl4M4hmdXreEJV8Veqb/DiLAchvgX+LzXfh9OknHoI+vgsaqnZRmvW9+oqJsKE/jXspJ37Z5p3mahqGvhNFxpQV6Z0gLfe9f/enicbHYV3zVaKLqrz75j/vBnLIebenRo1k7XpL4gnCHaHa0l7mVeaMQhOic4sRXhLpUPRZ3Tn3EX2rdpZhs1Pi43SryaNF8Jx3WBUu3X/0vxEv6eg9MgCRvfhc9fMiTY1k6iM3gV4Skt6gHBsunRONSbHP9JkV1XUnz/PElWEN75vTikn81OgNMXI5NvY86e4HHgWdV+yQKS145Q==</seToken> 
+					</toCard> 
+				</arg0> 
+			</p2p:performP2PByBinding>
+		</soapenv:Body>
+	</soapenv:Envelope>
+    """
     val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
     val psaconnector = PSAConnector()
     fun testRender() {
@@ -162,7 +187,7 @@ class SberDSLProcessorTest : TestCase() {
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         val DSL4SberInitial = "'sber'=>::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{456464634-5464654654-65776657}."
         Sber.r(DSL4SberInitial)
-        assertEquals("456464634-5464654654-65776657", Sber.bibdingId_())
+        assertEquals("456464634-5464654654-65776657", Sber.binding_id_())
     }
 
     fun testKEY(){
@@ -197,7 +222,7 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
                 "TULRzD+hLeo9vIpC0vIIGUyxDWtOWi0yDf4MYisUKmgbYya+Z5oODANHUCiJuMMuuH7ot6hJPxZ61LE0FQP6pxo+r1cezGekwlc8\n" +
                 "NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRnNEwIDAQAB\n" +
                 "-----END PUBLIC KEY-----"
-        assertEquals("6cc2cc38-3677-7330-9b6b-54b62823c181", Sber.bibdingId_())
+        assertEquals("6cc2cc38-3677-7330-9b6b-54b62823c181", Sber.binding_id_())
         assertEquals(KEY_ETALON, Sber.PUBLIC_KEY())
     }
 
@@ -242,6 +267,7 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         val DSL4SberInitial =
           "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
         Sber.r(DSL4SberInitial)
+        assertEquals("6cc2cc38-3677-7330-9b6b-54b62823c181", Sber.binding_id_())
         val StrRequest = Sber.constructDSL4registerP2p(145780)
         println("STRING TO REQUEST::$StrRequest")
         Sber.r(StrRequest)
@@ -249,8 +275,37 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
 
         val dslTopay = "'sber'=>::perfomP2P{'orderId':${orderId}, 'PAN':'0111111111111111'}."
         println("PAY!!!!")
-        Sber.r(dslTopay)
+      ////  Sber.r(dslTopay)
         assertNotNull(Sber.LAST_RESPONCE)
+
+        println("RESPONCE::::${Sber.LAST_RESPONCE()}")
+    }
+
+
+
+    fun testPerformDirect() {
+
+        val psaid = 148233
+        val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
+        var psa = PSADSLProcessor()
+        val psaconnstr =
+            "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr =
+            "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
+        psaconnector.r(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector = psaconnector
+        psa.psearch = PSASearchProcessor
+        psa.r(psastr)
+        val Sber = SberDSLProcessor()
+        Sber.PSADSLProcessor = psa
+        assertNotNull(Sber.constructDSL4registerP2p(psaid))
+        println(Sber.constructDSL4registerP2p(psaid))
+
+        val DSL4SberInitial =
+            "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
+        Sber.r(DSL4SberInitial)
+        Sber.send(Sber.DIRECT())
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }
@@ -381,7 +436,7 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         val DSL4SberInitial =
             "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
         Sber.r(DSL4SberInitial)
-        Sber.send(String(Saver.Saver.readBytes("G.xml")))
+        Sber.send(String(Saver.Saver.readBytes("goxml.xml")))
 
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
