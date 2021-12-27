@@ -240,7 +240,7 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
 
     fun testPerformP2p() {
 
-        val psaid = 148233
+        val psaid = 29128
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa = PSADSLProcessor()
         val psaconnstr =
@@ -261,7 +261,7 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
           "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
         Sber.r(DSL4SberInitial)
         assertEquals("6cc2cc38-3677-7330-9b6b-54b62823c181", Sber.binding_id_())
-        val StrRequest = Sber.constructDSL4registerP2p(145780)
+        val StrRequest = Sber.constructDSL4registerP2p(29128)
         println("STRING TO REQUEST::$StrRequest")
         Sber.r(StrRequest)
         val orderId = Sber.order_id_(Sber.LAST_RESPONCE())
@@ -270,6 +270,7 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         println("PAY!!!!")
         Sber.r(dslTopay)
         assertNotNull(Sber.LAST_RESPONCE)
+        assertEquals("0", Sber.Extraktor.extractAttribute(Sber.LAST_RESPONCE().toByteArray(), "errorCode"))
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }
@@ -360,7 +361,6 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
             "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
         Sber.r(DSL4SberInitial)
         Sber.send(String(Saver.Saver.readBytes("goxml.xml")))
-
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }

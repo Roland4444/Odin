@@ -143,9 +143,12 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
     """.trimIndent()
 
     }
-    var LAST_RESPONCE       :simpleString    ={EMPTY_ATOM}
-    val NEW_ATOM                             = "NEW"
-    val REJECTED_ATOM                        = "REJECTED"
+    var LAST_RESPONCE                        = {EMPTY_ATOM}
+    val NEW_ATOM                             = "New"
+    val REJECTED_ATOM                        = "Rejected"
+    val IN_PROGRESS_ATOM                     = "InProgress"
+    val COMPLETED_ATOM                       = "Completed"
+    val PAY_ERROR_ATOM                       = "PayError"
     var endpoint_           : simpleString   = {DEFAULT_URL}
     var login_              : simpleString   = {EMPTY_ATOM}
     var pass_               : simpleString   = {EMPTY_ATOM}
@@ -369,7 +372,7 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         }
         SETOKEN = {Template_SeTOKEN()}
         println("Template_SeTOKEN::${Template_SeTOKEN()}")
-        val ENC =  Base64.getEncoder().encodeToString(encrypt_____(Template_SeTOKEN(), ))
+        val ENC =  Base64.getEncoder().encodeToString(encrypt_____(Template_SeTOKEN()))
         return  ENC
         //encrypt2(Template_SeTOKEN(), PUBLIC_KEY())///getKey(PUBLIC_KEY()))
     }
@@ -426,12 +429,37 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                     """.trimIndent()
                 }
                 println("TEMPLATE P2P::"+TEMPLATE_P2P_PERFORM())
-                println(send(TEMPLATE_P2P_PERFORM()))
+                val R = send(TEMPLATE_P2P_PERFORM())
+                println(R)
+                changeStatusInDB(R, orderId())
             }
         }
     }
 
+    fun changeStatusInDB(Responce: String, OrderId: String): String{
+        var param = ArrayList<Any?>()
+        param.add(OrderId)
+        when (Responce.error_code()){
+            "0"     -> {
+                println("changing status to $IN_PROGRESS_ATOM")
+                param.add(IN_PROGRESS_ATOM)
+            }
+            else    -> {
+                println("changing status to $REJECTED_ATOM")
+                param.add(REJECTED_ATOM)
+            }
+        }
+        var prepared = PSADSLProcessor.psearch.psaconnector.executor!!.conn.prepareStatement(
+            "UPDATE `psa`.`payments` SET `status`=?  WHERE `document_id`=? "
+        );
+        prepared.setString(1, param.get(1).toString())
+        prepared.setString(2, param.get(0).toString())
 
+        println("prepared SQL=>  $prepared")
+        if (prepared != null)
+            prepared.execute()
+       return Responce
+    }
 
 
     fun constructDSL4registerP2p(PsaID: Int): String{
@@ -452,7 +480,7 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         };
         if (HOOKED().equals(TRUE_ATOM))
             if (HOOK_ORDERNUMBER().length>0){
-                println("\n\n\n\nin cionstruct DSL; HOOK SEKTION to ${HOOK_ORDERNUMBER()}")
+                println("\n\n\n\nin construct DSL; HOOK SEKTION to ${HOOK_ORDERNUMBER()}")
                 orderNumber = HOOK_ORDERNUMBER().toInt()
             }
         return "'sber'=>::registerp2p{'amount':$amount,'currency':643,'orderNumber':$orderNumber,'clientId':$clientId}.";
@@ -512,7 +540,7 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         param.add(orderNumber)
 
         if (REJECT_NEW_().equals(TRUE_ATOM))
-            if (getPaymentStatus(orderNumber).uppercase().equals(NEW_ATOM))
+            if (getPaymentStatus(orderNumber).equals(NEW_ATOM))
                 return ""
         var prepared = PSADSLProcessor.psearch.psaconnector.executor!!.conn.prepareStatement(
             "UPDATE `psa`.`payments` SET `document_id`='${Responce.order_id()}', `status`='${MAP_STATUS.get(Responce.error_code().toInt())}' WHERE `id`='$orderNumber' "
