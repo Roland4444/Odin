@@ -6,7 +6,6 @@ import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
 import se.roland.crypto.Gost3411Hash.getBytesFromBase64
-import se.roland.crypto.RSA_Encryption
 import se.roland.transport.SAAJ
 import se.roland.xml.Extractor
 import se.roland.xml.Transform
@@ -343,35 +342,10 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         return null
     }
 
-    fun encrypt2(publicKey: String, TextToEncrypt: String): String{
-        val publicKey = PUBLIC_KEY()
-        val privateKey =PRIVATE_KEY()
-        println("Original Text  : " + TextToEncrypt)
-        val pubKeyPEM: String =
-            publicKey.replace("-----BEGIN PUBLIC KEY-----\n", "").replace("-----END PUBLIC KEY-----", "")
-        println("PUBLIC KEY::$pubKeyPEM")
-        // Base64 decode the data
-        // Base64 decode the data
-        val encodedPublicKey: ByteArray = getBytesFromBase64(pubKeyPEM)
-        val spec = X509EncodedKeySpec(encodedPublicKey)
-        val kf = KeyFactory.getInstance("RSA")
-        println(kf.generatePublic(spec))
-        // Encryption
-        val cipherTextArray = RSA_Encryption.encrypt(RSA_Encryption.plainText, kf.generatePublic(spec))
-        val encryptedText = Base64.getEncoder().encodeToString(cipherTextArray)
-        println("ENCRYPTED:: $encryptedText")
-        return  encryptedText
-    }
+
     // Encryption
 
-    fun encrypt(plainText: String, publicKey: PublicKey?): String? {
-        val encryptCipher = Cipher.getInstance("RSA")
-        encryptCipher.init(Cipher.PUBLIC_KEY, publicKey)
-        val cipherText = encryptCipher.doFinal(plainText.toByteArray())
-        return Base64.getEncoder().encodeToString(cipherText)
-    }
-
-    fun encrypt_____(data: String, publicKey: String): ByteArray? {
+    fun encrypt_____(data: String): ByteArray? {
         val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
         cipher.init(1, this.getPublicKey(PUBLIC_KEY()))
         return cipher.doFinal(data.toByteArray())
@@ -399,7 +373,7 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         }
         SETOKEN = {Template_SeTOKEN()}
         println("Template_SeTOKEN::${Template_SeTOKEN()}")
-        val ENC =  Base64.getEncoder().encodeToString(encrypt_____(Template_SeTOKEN(), PUBLIC_KEY()))
+        val ENC =  Base64.getEncoder().encodeToString(encrypt_____(Template_SeTOKEN(), ))
         return  ENC
         //encrypt2(Template_SeTOKEN(), PUBLIC_KEY())///getKey(PUBLIC_KEY()))
     }

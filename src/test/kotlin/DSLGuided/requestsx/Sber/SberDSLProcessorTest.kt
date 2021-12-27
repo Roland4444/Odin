@@ -5,13 +5,6 @@ import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.PSA.PSASearchProcessor
 import junit.framework.TestCase
 import se.roland.abstractions.timeBasedUUID.generateInt
-import se.roland.crypto.Gost3411Hash.getBytesFromBase64
-import se.roland.crypto.RSA_Encryption
-import java.security.KeyFactory
-import java.security.KeyPairGenerator
-import java.security.spec.X509EncodedKeySpec
-import java.util.*
-import kotlin.test.assertNotEquals
 
 
 class SberDSLProcessorTest : TestCase() {
@@ -308,76 +301,6 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         Sber.send(Sber.DIRECT())
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
-    }
-
-    fun testKeys(){
-        val psaid = 148233
-        val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
-        var psa = PSADSLProcessor()
-        val psaconnstr =
-            "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
-        val psastr =
-            "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
-        psaconnector.r(psaconnstr)
-        val PSASearchProcessor = PSASearchProcessor()
-        PSASearchProcessor.psaconnector = psaconnector
-        psa.psearch = PSASearchProcessor
-        psa.r(psastr)
-        val Sber = SberDSLProcessor()
-        Sber.PSADSLProcessor = psa
-        assertNotNull(Sber.constructDSL4registerP2p(psaid))
-        println(Sber.constructDSL4registerP2p(psaid))
-
-        val DSL4SberInitial =
-            "'sber'=>::KEY{'public':'pub.key.test','private':'priv.key.test'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
-        Sber.r(DSL4SberInitial)
-        assertNotEquals(Sber.EMPTY_ATOM, Sber.PUBLIC_KEY())
-        assertNotEquals(Sber.EMPTY_ATOM, Sber.PRIVATE_KEY())
-        assertEquals("Hello", Sber.PUBLIC_KEY())
-        assertEquals("hello", Sber.PRIVATE_KEY())
-
-        val DSL4SberInitial2 =
-            "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
-        val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-        Sber.r(DSL4SberInitial2)
-        // Get the public and private key
-
-        // Get the public and private key
-        val publicKey = Sber.PUBLIC_KEY()
-        val privateKey = Sber.PRIVATE_KEY()
-
-        println("Original Text  : " + RSA_Encryption.plainText)
-        // Encryption
-        // Encryption
-
-        val pubKeyPEM: String =
-            publicKey.replace("-----BEGIN PUBLIC KEY-----\n", "").replace("-----END PUBLIC KEY-----", "")
-        val privKeyPEM: String =
-            privateKey.replace("-----BEGIN PUBLIC KEY-----\n", "").replace("-----END PUBLIC KEY-----", "")
-        println("PUBLIC KEY::$pubKeyPEM")
-        // Base64 decode the data
-
-
-        // Base64 decode the data
-        val encodedPublicKey: ByteArray = getBytesFromBase64(pubKeyPEM)
-        val encodedPrivKey: ByteArray = getBytesFromBase64(privKeyPEM)
-
-        val spec = X509EncodedKeySpec(encodedPublicKey)
-        val kf = KeyFactory.getInstance("RSA")
-        println(kf.generatePublic(spec))
-
-        val spec2 = X509EncodedKeySpec(encodedPrivKey)
-        println(kf.generatePrivate(spec2))
-
-
-        // Encryption
-        val cipherTextArray = RSA_Encryption.encrypt(RSA_Encryption.plainText, kf.generatePublic(spec))
-        val encryptedText = Base64.getEncoder().encodeToString(cipherTextArray)
-        println("ENCRYPTED:: $encryptedText")
-        // Decryption
-        val decryptedText = RSA_Encryption.decrypt(cipherTextArray, kf.generatePrivate(spec2))
-        println("DeCrypted Text : $decryptedText")
-
     }
 
     fun testse(){
