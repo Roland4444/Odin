@@ -14,7 +14,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.security.KeyFactory
+import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
+import java.security.spec.InvalidKeySpecException
 import java.security.spec.X509EncodedKeySpec
 import java.sql.ResultSet
 import java.text.SimpleDateFormat
@@ -364,9 +366,31 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
 
     fun encrypt(plainText: String, publicKey: PublicKey?): String? {
         val encryptCipher = Cipher.getInstance("RSA")
-        encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey)
+        encryptCipher.init(Cipher.PUBLIC_KEY, publicKey)
         val cipherText = encryptCipher.doFinal(plainText.toByteArray())
         return Base64.getEncoder().encodeToString(cipherText)
+    }
+
+    fun encrypt_____(data: String, publicKey: String): ByteArray? {
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+        cipher.init(1, this.getPublicKey(PUBLIC_KEY()))
+        return cipher.doFinal(data.toByteArray())
+    }
+
+
+    private fun getPublicKey(base64PublicKey: String): PublicKey? {
+        var publicKey: PublicKey? = null
+        try {
+            val keySpec = X509EncodedKeySpec(Base64.getDecoder().decode(base64PublicKey.toByteArray()))
+            val keyFactory = KeyFactory.getInstance("RSA")
+            publicKey = keyFactory.generatePublic(keySpec)
+            return publicKey
+        } catch (var5: NoSuchAlgorithmException) {
+            var5.printStackTrace()
+        } catch (var6: InvalidKeySpecException) {
+            var6.printStackTrace()
+        }
+        return publicKey
     }
 
     fun seToken(TimeStamp: String, UUID: String, PAN: String, MdOrder: String): String? {
@@ -375,17 +399,26 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         }
         SETOKEN = {Template_SeTOKEN()}
         println("Template_SeTOKEN::${Template_SeTOKEN()}")
-        return encrypt2(Template_SeTOKEN(), PUBLIC_KEY())///getKey(PUBLIC_KEY()))
+        val ENC =  Base64.getEncoder().encodeToString(encrypt_____(Template_SeTOKEN(), PUBLIC_KEY()))
+        return  ENC
+        //encrypt2(Template_SeTOKEN(), PUBLIC_KEY())///getKey(PUBLIC_KEY()))
     }
+
+
+            open fun encrypt(data: String, publicKey: String, F : Boolean): ByteArray? {
+                val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+                cipher.init(1, getPublicKey(publicKey))
+                return cipher.doFinal(data.toByteArray())
+            }
 
     val timestamp: simpleString = {
 
         val timeStamp = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().time)
         println("TIMESTAMP::${timeStamp.toString()}")
         timeStamp.toString().replace("_","T")+"+04:00"
-        val ret = "2021-12-24T16:06:06+03:00"
-        println("TIMESTAMP::$ret")
-        ret
+//        val ret = "2021-12-27T08:50:06+03:00"
+//        println("TIMESTAMP::$ret")
+//        ret
 
     }
 
@@ -412,17 +445,20 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                     ${JUST_HEADER()}
                     ${headersecurity()}
                     <soapenv:Body>
-                    <p2p:performP2PByBinding>
-                    <arg0 language="ru">
-                    <orderId>${orderId()}</orderId>
-                    <fromCard>
-                    <bindingId>${binding_id_()}</bindingId>
-                    </fromCard>
-                    <toCard><seToken>${seToken(timestamp(), binding_id_(), PAN(), orderId() )}</seToken></toCard>
-                    </arg0>
-                    </p2p:performP2PByBinding>
-                    </soapenv:Body>
-                    </soapenv:Envelope>""".trimIndent()
+			        <p2p:performP2PByBinding> 
+				    <arg0 language="ru"> 
+					<orderId>${orderId()}</orderId> 
+					<fromCard>
+						<bindingId>${binding_id_()}</bindingId>
+					</fromCard> 
+					<toCard>
+						<seToken>${seToken(timestamp(), binding_id_(), PAN(), orderId() )}</seToken> 
+					</toCard> 
+				    </arg0> 
+			        </p2p:performP2PByBinding>
+		            </soapenv:Body>
+		            </soapenv:Envelope>                  
+                    """.trimIndent()
                 }
                 println("TEMPLATE P2P::"+TEMPLATE_P2P_PERFORM())
                 println(send(TEMPLATE_P2P_PERFORM()))

@@ -273,9 +273,9 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         Sber.r(StrRequest)
         val orderId = Sber.order_id_(Sber.LAST_RESPONCE())
 
-        val dslTopay = "'sber'=>::perfomP2P{'orderId':${orderId}, 'PAN':'0111111111111111'}."
+        val dslTopay = "'sber'=>::perfomP2P{'orderId':${orderId}, 'PAN':'4111111111111111'}."
         println("PAY!!!!")
-      ////  Sber.r(dslTopay)
+        Sber.r(dslTopay)
         assertNotNull(Sber.LAST_RESPONCE)
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
@@ -414,7 +414,7 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
         assertEquals(EtalonEncrypted, Sber.seToken(Timestamp, UUID, PAN,orderID))
     }
 
-    fun testPerformP2p2() {
+    fun PerformP2p2() {
 
         val psaid = 148233
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
@@ -441,5 +441,7 @@ NrKq3XeeNgu4kWFXNTBSwAcNAizIvEY4wrqc4ARR3nTlwAxkye9bTNVNROMMiMtu1ERGyRFjI7wnSmRn
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }
+
+
 
 }

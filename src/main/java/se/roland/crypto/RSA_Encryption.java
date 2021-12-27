@@ -58,7 +58,7 @@ public class RSA_Encryption
         Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-512ANDMGF1PADDING");
 
         //Initialize Cipher for ENCRYPT_MODE
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        cipher.init(Cipher.PUBLIC_KEY, publicKey);
 
         //Perform Encryption
         byte[] cipherText = cipher.doFinal(plainText.getBytes()) ;
