@@ -322,12 +322,8 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
 
     val bindingId: RoleHandler = {
         mapper.forEach { a ->
-            if (a.key.Name == "bindingId") {
+            if (a.key.Name == "bindingId")
                 binding_id_ = {a.key.Param as String}
-
-
-
-            }
         }
     }
     fun getKey(key: String): PublicKey? {
@@ -379,11 +375,6 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
     }
 
 
-            open fun encrypt(data: String, publicKey: String, F : Boolean): ByteArray? {
-                val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-                cipher.init(1, getPublicKey(publicKey))
-                return cipher.doFinal(data.toByteArray())
-            }
 
     val timestamp: simpleString = {
 
@@ -549,7 +540,7 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
             "binding_id"            ->  mapper.put(R, binding_id)
             "HOOK"                  ->  mapper.put(R, HOOK)
             "REJECT_NEW"            ->  mapper.put(R, REJECT_NEW)
-            "perfomP2P"    ->  mapper.put(R, perfomP2P)
+            "perfomP2P"             ->  mapper.put(R, perfomP2P)
             "bindingId"             ->  mapper.put(R, bindingId)
             "KEY"                   ->  mapper.put(R, KEY)
 
