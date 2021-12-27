@@ -5,6 +5,7 @@ import DSLGuided.requestsx.PSA.PSAConnector
 import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.PSA.PSASearchProcessor
 import DSLGuided.requestsx.SMS.SMSDSLProcessor
+import DSLGuided.requestsx.Sber.SberDSLProcessor
 import DSLGuided.requestsx.WProcessor.DBConnector
 import DSLGuided.requestsx.WProcessor.WProcessor
 import java.io.BufferedReader
@@ -48,6 +49,7 @@ class DSL {
     var urltoDSLProc: HashMap<String, String>? = null
     var WProcessor: WProcessor? = null
     var DBConnector: DBConnector? = null
+    var SberDSLProcessor: SberDSLProcessor? = null
     fun prepareDSLProcessors() {
         HelperDBUpdate = HelperDBUpdate()
         RequestsDSLProcessor = RequestsDSLProcessor()
@@ -57,6 +59,7 @@ class DSL {
         PSASearchProcessor = PSASearchProcessor()
         WProcessor = WProcessor()
         DBConnector = DBConnector()
+        SberDSLProcessor = SberDSLProcessor()
         dslProcessors = HashMap()
         dslProcessors!!["helperdbupdate"] = HelperDBUpdate!!
         dslProcessors!!["requests"] = RequestsDSLProcessor!!
@@ -66,6 +69,7 @@ class DSL {
         dslProcessors!!["psasearch"] = PSASearchProcessor!!
         dslProcessors!!["wprocessor"] = WProcessor!!
         dslProcessors!!["dbconnector"] = DBConnector!!
+        dslProcessors!!["sberdsl"] = SberDSLProcessor!!
     }
 
     @Throws(IOException::class)
@@ -78,6 +82,9 @@ class DSL {
         dslProcessors?.get("dbconnector")?.r(getDSLforObject("dbconnector", "server"))
         WProcessor!!.dbconnector=DBConnector!!
         HelperDBUpdate!!.dbconnector=DBConnector!!
+        SberDSLProcessor!!.PSADSLProcessor = PSADSLProcessor!!
+        dslProcessors?.get("sberdsl")?.r(getDSLforObject("sberdsl", "server"))
+
     }
 
     fun prepareMap() {
