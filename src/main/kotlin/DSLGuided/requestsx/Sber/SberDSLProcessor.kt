@@ -38,6 +38,14 @@ class SberDSLProcessor: DSLProcessor() {
             val S = SberDSLProcessor()
             println(S.DIRECT_SETOKEN())
         }
+
+        fun registerPayment(DSL: String, Sber: SberDSLProcessor, PsaID: String): String{
+            Sber.r(DSL)
+            val DSLSTR = Sber.constructDSL4registerP2p(PsaID.toInt())
+            println("CONSTRUCTED DSL FOR $PsaID:: $DSLSTR")
+            Sber.r(DSLSTR)
+            return Sber.error_message_(Sber.LAST_RESPONCE())
+        }
     }
     /////для первичного платежа
     /////'sber'=>::registerp2p{'amount':400, 'currency':643, 'orderNumber':555}.
@@ -124,6 +132,14 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         }
         TRANSPORT= SAAJ(endpoint_())
         return "OK"
+    }
+
+    fun String.error_message(): String{
+        return Extraktor.extractAttribute(this.toByteArray(), "errorMessage")
+    }
+
+    fun error_message_(input: String): String{
+        return input.error_message()
     }
 
     var TEMPLATE_HS: simpleString = {"""
