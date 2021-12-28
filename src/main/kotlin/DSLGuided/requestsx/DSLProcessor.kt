@@ -6,6 +6,7 @@ typealias DumbHandler = (Param:Int) -> Int
 typealias StringHandler = (Param:String) -> String
 typealias DumbHandler2 = (Param:Int, Param2: Int) -> Int
 abstract class DSLProcessor() {
+
     val TRUE_ATOM = "true"
     val FALSE_ATOM = "false"
     val OK = "OK"
