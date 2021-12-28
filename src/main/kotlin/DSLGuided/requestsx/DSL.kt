@@ -15,6 +15,18 @@ import java.io.IOException
 import java.util.*
 class DSL {
     companion object{
+        val HelperDBUpdate_ATOM         = "helperdbupdate"
+        val RequestsDSLProcessor_ATOM   = "requests"
+        val SMSDSLProcessor_ATOM        = "sms"
+        val PSADSLProcessor_ATOM        = "psa"
+        val PSAConnector_ATOM           = "psaconnector"
+        val PSASearchProcessor_ATOM     = "psasearch"
+        val WProcessor_ATOM             = "wprocessor"
+        val DBConnector_ATOM            = "dbconnector"
+        val SberDSLProcessor_ATOM       = "sber"
+        val SERVER_ATOM                 = "server"
+
+
         fun getDSLforObject(nameObject: String, User: String): String {
             val f = File("rules" + File.separator + User + ".rules")
             if (!f.exists()) return ""
@@ -50,26 +62,17 @@ class DSL {
     var WProcessor: WProcessor? = null
     var DBConnector: DBConnector? = null
     var SberDSLProcessor: SberDSLProcessor? = null
-    val HelperDBUpdate_ATOM         = "helperdbupdate"
-    val RequestsDSLProcessor_ATOM   = "requests"
-    val SMSDSLProcessor_ATOM        = "sms"
-    val PSADSLProcessor_ATOM        = "psa"
-    val PSAConnector_ATOM           = "psaconnector"
-    val PSASearchProcessor_ATOM     = "psasearch"
-    val WProcessor_ATOM             = "wprocessor"
-    val DBConnector_ATOM            = "dbconnector"
-    val SberDSLProcessor_ATOM       = "sber"
-    val SERVER_ATOM                 = "server"
+
     fun prepareDSLProcessors() {
-        HelperDBUpdate = HelperDBUpdate()
-        RequestsDSLProcessor = RequestsDSLProcessor()
-        SMSDSLProcessor = SMSDSLProcessor()
-        PSADSLProcessor = PSADSLProcessor()
-        PSAConnector = PSAConnector()
-        PSASearchProcessor = PSASearchProcessor()
-        WProcessor = WProcessor()
-        DBConnector = DBConnector()
-        SberDSLProcessor = SberDSLProcessor()
+        HelperDBUpdate          = HelperDBUpdate()
+        RequestsDSLProcessor    = RequestsDSLProcessor()
+        SMSDSLProcessor         = SMSDSLProcessor()
+        PSADSLProcessor         = PSADSLProcessor()
+        PSAConnector            = PSAConnector()
+        PSASearchProcessor      = PSASearchProcessor()
+        WProcessor              = WProcessor()
+        DBConnector             = DBConnector()
+        SberDSLProcessor        = SberDSLProcessor()
         dslProcessors.add(KeyValue(HelperDBUpdate_ATOM, HelperDBUpdate!!))
         dslProcessors.add(KeyValue(RequestsDSLProcessor_ATOM, RequestsDSLProcessor!!))
         dslProcessors.add(KeyValue(SMSDSLProcessor_ATOM, SMSDSLProcessor!!))
@@ -85,14 +88,10 @@ class DSL {
         val A  = dslProcessors.stream().filter { A -> A.Key.equals(NameProc)}.toArray()
         return (A[0] as KeyValue).Value as DSLProcessor
     }
-
-
-
     fun initDSL() {
-
         getDSLProc(PSAConnector_ATOM)?.r(getDSLforObject(PSAConnector_ATOM, SERVER_ATOM))
-        val psearch = getDSLProc(PSAConnector_ATOM) as PSASearchProcessor
-        val pconnector = getDSLProc(PSASearchProcessor_ATOM) as PSAConnector
+        val psearch = getDSLProc(PSASearchProcessor_ATOM) as PSASearchProcessor
+        val pconnector = getDSLProc(PSAConnector_ATOM) as PSAConnector
         psearch.psaconnector= pconnector
         PSADSLProcessor!!.psearch  = PSASearchProcessor!!
         getDSLProc(DBConnector_ATOM)?.r(getDSLforObject(DBConnector_ATOM, SERVER_ATOM))
@@ -100,7 +99,6 @@ class DSL {
         HelperDBUpdate!!.dbconnector=DBConnector!!
         SberDSLProcessor!!.PSADSLProcessor = PSADSLProcessor!!
         getDSLProc(SberDSLProcessor_ATOM).r(getDSLforObject(SberDSLProcessor_ATOM, SERVER_ATOM))
-
     }
 
     fun prepareMap() {

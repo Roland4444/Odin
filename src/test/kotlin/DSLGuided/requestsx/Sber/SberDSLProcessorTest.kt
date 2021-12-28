@@ -274,7 +274,7 @@ class SberDSLProcessorTest : TestCase() {
     fun testPerformDirect() {
 
         val psaid = 148233
-        val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
+        val test = ""
         var psa = PSADSLProcessor()
         val psaconnstr =
             "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."

@@ -107,9 +107,8 @@ class PSASearchProcessor  : DSLProcessor() {
         param.add(input)
         val res: ResultSet =
             psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`department` WHERE `name` = ?;", param)
-        if (res.next()) {
+        if (res.next())
             return res.getString("id")
-        };
         return ""
     }
 
