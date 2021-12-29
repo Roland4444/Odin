@@ -4,6 +4,7 @@ import DSLGuided.requestsx.PSA.PSAConnector
 import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.PSA.PSASearchProcessor
 import junit.framework.TestCase
+import se.roland.abstractions.timeBasedUUID.generate
 import se.roland.abstractions.timeBasedUUID.generateInt
 
 
@@ -355,6 +356,45 @@ class SberDSLProcessorTest : TestCase() {
             "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'${generateInt()}'}."
         Sber.r(DSL4SberInitial)
         Sber.send(String(Saver.Saver.readBytes("goxml.xml")))
+
+        println("RESPONCE::::${Sber.LAST_RESPONCE()}")
+    }
+
+    fun teststatus(){
+        val psaid = 29128
+        val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
+        var psa = PSADSLProcessor()
+        val psaconnstr =
+            "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr =
+            "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
+        psaconnector.r(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector = psaconnector
+        psa.psearch = PSASearchProcessor
+        psa.r(psastr)
+        val Sber = SberDSLProcessor()
+        Sber.PSADSLProcessor = psa
+        assertNotNull(Sber.constructDSL4registerP2p(psaid))
+        println(Sber.constructDSL4registerP2p(psaid))
+        val ordernumber =  generateInt()
+        val DSL4SberInitial =
+            "'sber'=>::KEY{'public':'pub.key','private':'priv.key'},::endpoint{$test},::login{test_AVS-api},::pass{test_AVS},::REJECT_NEW{true},::bindingId{6cc2cc38-3677-7330-9b6b-54b62823c181},::HOOK{true,'ordernumber':'$ordernumber'}."
+        Sber.r(DSL4SberInitial)
+
+        assertEquals("6cc2cc38-3677-7330-9b6b-54b62823c181", Sber.binding_id_())
+        val StrRequest = Sber.constructDSL4registerP2p(29128)
+        println("STRING TO REQUEST::$StrRequest")
+        Sber.default_description_ = {"SEK"}
+        Sber.r(StrRequest)
+        val orderId = Sber.order_id_(Sber.LAST_RESPONCE())
+        println("LAST RESPONCE:: ${Sber.LAST_RESPONCE()}")
+        assertEquals("Успешно", Sber.error_message_(Sber.LAST_RESPONCE()))
+        val dslTostatus = "'sber'=>::getstatus{'orderId':'$orderId', 'orderNumber':'$ordernumber'}."
+        println("status!!!!")
+        Sber.r(dslTostatus)
+        assertNotNull(Sber.LAST_RESPONCE)
+        assertEquals("0", Sber.Extraktor.extractAttribute(Sber.LAST_RESPONCE().toByteArray(), "errorCode"))
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }

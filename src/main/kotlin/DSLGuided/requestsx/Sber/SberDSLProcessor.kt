@@ -406,6 +406,45 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
 
     }
 
+    val getstatus: RoleHandler = {
+        mapper.forEach{a ->
+            if (a.key.Name == "getstatus"){
+                val Lst = a.key.Param as MutableList<KeyValue>
+                var orderId: simpleString   = {""}
+                var orderNumber    : simpleString   = {""}
+                Lst.forEach { A ->
+                    run {
+                        when (A.Key) {
+                            "orderId"        -> orderId      = { A.Value.toString() }
+                            "orderNumber"    -> orderNumber  = { A.Value.toString() }
+                        }
+                    }
+                }
+
+                var TEMPLATE_4_STATUS: simpleString = {
+                   """
+                    ${JUST_HEADER()}
+                    ${headersecurity()}
+                          <soapenv:Body>
+                             <p2p:getP2PStatus>
+                                <arg0 language="?">
+                                   <orderId>${orderId()}</orderId>
+                                   <orderNumber>${orderNumber()}</orderNumber>
+                                </arg0>
+                             </p2p:getP2PStatus>
+                          </soapenv:Body>
+                       </soapenv:Envelope>
+                   """.trimIndent()
+                }
+                println("TEMPLATE 2STATUS::"+TEMPLATE_4_STATUS())
+                val R = send(TEMPLATE_4_STATUS())
+                println(R)
+
+            }
+
+        }
+    }
+
     val perfomP2P: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "perfomP2P") {
@@ -587,6 +626,7 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
             "perfomP2P"             ->  mapper.put(R, perfomP2P)
             "bindingId"             ->  mapper.put(R, bindingId)
             "KEY"                   ->  mapper.put(R, KEY)
+            "getstatus"             ->  mapper.put(R, getstatus)
 
 
 
