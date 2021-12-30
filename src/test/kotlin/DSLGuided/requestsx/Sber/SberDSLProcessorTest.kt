@@ -418,7 +418,7 @@ class SberDSLProcessorTest : TestCase() {
         assertEquals(false, Sber.checkpsaymentExists("765347564753675"))
         assertEquals(true, Sber.checkpsaymentExists("29128"))
         var I = 0
-        for (i in 300..100000){
+        for (i in 306..100000){
             if (!Sber.checkpsaymentExists("$i")) {
                 println("I::$i")
                 I=i
