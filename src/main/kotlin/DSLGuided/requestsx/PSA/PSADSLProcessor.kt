@@ -12,11 +12,12 @@ import se.roland.util.Department
 import se.roland.util.GLOBAL.LOG
 import se.roland.util.HTTPClient
 import se.roland.util.HTTPClient.sendPost
+import se.roland.util.Utils
 import java.io.IOException
+import java.math.BigDecimal
 import java.sql.*
 import java.time.LocalDate
 import java.util.*
-import kotlin.collections.ArrayList
 
 typealias psaDraftSection = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String, Section: String) -> Unit
 typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
@@ -337,6 +338,28 @@ INSERT INTO `weighing` (
         if (prepared != null) {
             prepared.execute()
         }
+    }
+
+    fun calculateNetto(brutto: Float, tara: Float, clogging: Float): Float {
+        val sub = brutto - tara
+        val percentage = (clogging / 100.00 * sub).toFloat()
+        val netto = sub - percentage
+        return Utils.trimApply(netto.toString()).toFloat()
+    }
+
+    fun getSummfromPSaID(psaId: String): Float {
+        val P = ArrayList<Any>()
+        P.add(psaId)
+        var FloatSumm = 0.0f
+        var prepared = psearch.psaconnector.executor!!.executePreparedSelect(
+            " SELECT * from `psa`.`weighing` where  `psa_id` = ?;", P  )
+        while (prepared.next()) {
+            val TRASH = prepared.getFloat("sor")
+            val Brutto = prepared.getFloat("brutto")
+            val Tare = prepared.getFloat("tare")
+            FloatSumm += calculateNetto(Brutto, Tare, TRASH)
+        }
+        return Utils.trimApply(FloatSumm.toString()).toFloat()
     }
 
     fun deletePSAviaUUID(uuid: String){

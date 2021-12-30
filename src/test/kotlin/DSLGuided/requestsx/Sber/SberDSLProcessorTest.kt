@@ -275,7 +275,7 @@ class SberDSLProcessorTest : TestCase() {
     fun testPerformDirect() {
 
         val psaid = 148233
-        val test = ""
+        val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa = PSADSLProcessor()
         val psaconnstr =
             "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
@@ -397,6 +397,38 @@ class SberDSLProcessorTest : TestCase() {
         assertEquals("0", Sber.Extraktor.extractAttribute(Sber.LAST_RESPONCE().toByteArray(), "errorCode"))
 
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
+    }
+
+    fun testCreatePayment(){
+        val psaid = 29128
+        val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
+        var psa = PSADSLProcessor()
+        val psaconnstr =
+            "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        val psastr =
+            "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
+        psaconnector.r(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector = psaconnector
+        psa.psearch = PSASearchProcessor
+        psa.r(psastr)
+        val Sber = SberDSLProcessor()
+        Sber.PSADSLProcessor = psa
+
+        assertEquals(false, Sber.checkpsaymentExists("765347564753675"))
+        assertEquals(true, Sber.checkpsaymentExists("29128"))
+        var I = 0
+        for (i in 300..100000){
+            if (!Sber.checkpsaymentExists("$i")) {
+                println("I::$i")
+                I=i
+                break
+            }
+        }
+        Sber.createPayment(I)
+        assertEquals(true, Sber.checkpsaymentExists(I.toString()))
+        print("Created PAyment @ psaId= $I")
+        29128
     }
 
 

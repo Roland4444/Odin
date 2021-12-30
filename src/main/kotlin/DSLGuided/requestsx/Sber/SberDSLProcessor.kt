@@ -21,6 +21,7 @@ import java.sql.ResultSet
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.Cipher
+import kotlin.collections.ArrayList
 
 
 ////////////Пример DSL для SberDSLProcessor'a
@@ -133,6 +134,8 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         TRANSPORT= SAAJ(endpoint_())
         return "OK"
     }
+
+
 
     fun String.error_message(): String{
         return Extraktor.extractAttribute(this.toByteArray(), "errorMessage")
@@ -491,6 +494,14 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         }
     }
 
+    fun checkpsaymentExists(PsaId: String): Boolean{
+        val Arr = ArrayList<Any>()
+        Arr.add(PsaId)
+        val res: ResultSet = PSADSLProcessor.psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`payments` WHERE `psa_id` = ?;", Arr)
+        return res.next()
+
+    }
+
     fun changeStatusInDB(Responce: String, OrderId: String): String{
         var param = ArrayList<Any?>()
         param.add(OrderId)
@@ -516,6 +527,22 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
        return Responce
     }
 
+    fun createPayment(psaId: Int){
+        val psa = PSADSLProcessor.psearch.getWViaPSAId(psaId.toString());
+        if (!psa.next()) {
+            println("PSA with ID $psaId not exists!")
+            return
+        }
+        val prepared = PSADSLProcessor.psearch.psaconnector.executor!!.conn.prepareStatement(
+                """INSERT INTO `psa`.`payments` (
+`id`,`psa_id`,`amount`,`status`,`send_confirm`, `paymentprovider`)
+                                VALUES
+(NULL,   $psaId,  ${PSADSLProcessor.getSummfromPSaID(psaId.toString())},   
+                        '$NEW_ATOM',    0,             'sber');                                
+                """  );
+        print("prepared to create Payment::$prepared")
+        prepared.execute()
+    }
 
     fun constructDSL4registerP2p(PsaID: Int): String{
         var param = ArrayList<Any?>()
@@ -523,16 +550,19 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         var amount = 0
         var orderNumber = 0
         var clientId = 0
-
         val res: ResultSet = PSADSLProcessor.psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`payments` WHERE `psa_id` = ?;", param)
         if (res.next()) {
             amount = (res.getFloat("amount")*100).toInt()
             orderNumber = res.getInt("id")
         };
+        else  {
+            createPayment(PsaID)
+            return constructDSL4registerP2p(PsaID)
+        }
+
         val res2: ResultSet = PSADSLProcessor.psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`psa` WHERE `id` = ?;", param)
-        if (res2.next()) {
+        if (res2.next())
             clientId = res2.getInt("passport_id")
-        };
         if (HOOKED().equals(TRUE_ATOM))
             if (HOOK_ORDERNUMBER().length>0){
                 println("\n\n\n\nin construct DSL; HOOK SEKTION to ${HOOK_ORDERNUMBER()}")
