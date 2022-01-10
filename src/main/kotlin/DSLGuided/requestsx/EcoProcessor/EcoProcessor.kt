@@ -87,9 +87,7 @@ class EcoProcessor:  DSLProcessor() {
         return "OK"
     }
 
-    override fun parseRoles(DSL: String): List<Role> {
-        return parser.parseRoles(DSL!!)
-    }
+
 
     val quartermap: RoleHandler = {
         mapper.forEach { a ->

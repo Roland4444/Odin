@@ -12,9 +12,7 @@ class SQLDump: DSLProcessor() {
 
     lateinit var psaconnector: PSAConnector
 
-    override fun parseRoles(DSL: String): List<Role> {
-        TODO("Not yet implemented")
-    }
+
 
     val count: RoleHandler = {
         mapper.forEach { a ->

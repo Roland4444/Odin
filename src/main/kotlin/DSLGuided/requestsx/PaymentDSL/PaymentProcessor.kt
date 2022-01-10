@@ -12,9 +12,7 @@ class PaymentProcessor:  DSLProcessor() {
         return "OK"
     }
 
-    override fun parseRoles(DSL: String): List<Role> {
-        return parser.parseRoles(DSL!!)
-    }
+
     lateinit var ApiKey: String
     lateinit var BasicLicenceId: String
     lateinit var rooturl_: String

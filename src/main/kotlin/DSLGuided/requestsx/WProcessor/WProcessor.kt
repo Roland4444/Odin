@@ -204,9 +204,7 @@ class WProcessor : DSLProcessor()  {
         }
     }
 
-    override fun parseRoles(DSL: String): List<Role> {
-        return parser.parseRoles(DSL!!)
-    }
+
 
     fun loadRoles(D: List<Role>): Unit {
         mapper.clear()

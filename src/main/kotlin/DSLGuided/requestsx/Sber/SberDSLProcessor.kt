@@ -636,9 +636,6 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         return Responce
     }
 
-    override fun parseRoles(DSL: String): List<Role> {
-        return parser.parseRoles(DSL!!)
-    }
     fun loadRoles(D: List<Role>): Unit{
         mapper.clear()
         D.forEach { appendRole(it) }

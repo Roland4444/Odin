@@ -15,7 +15,9 @@ abstract class DSLProcessor() {
     var parser = ParseDSL()
     var mapper = mutableMapOf<Role, RoleHandler>()
     abstract fun r(DSL: String): Any
-    abstract fun parseRoles(DSL: String): List<Role>
+    fun parseRoles(DSL: String): List<Role> {
+        return parser.parseRoles(DSL!!)
+    }
     var outtemplate: String = """"""
     val enable: RoleHandler = {
         mapper.forEach {

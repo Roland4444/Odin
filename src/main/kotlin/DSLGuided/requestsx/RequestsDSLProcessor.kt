@@ -31,9 +31,7 @@ class RequestsDSLProcessor() : DSLProcessor() {
         return  outtemplate
     }
 
-    override fun parseRoles(DSL: String): List<Role> {
-        return parser.parseRoles(DSL!!)
-    }
+
     fun appendRole(R: Role){
         print("Adding role ${R.Name}\n")
         when (R?.Name){
