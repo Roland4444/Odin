@@ -3,7 +3,7 @@ package se.roland.util;
 import se.roland.abstractions.Call;
 
 public class Watcher extends Thread{
-    public int delay;
+    public float delay;
     public Call callback;
     public Watcher(int seconds){
         this.delay = seconds;
@@ -12,7 +12,7 @@ public class Watcher extends Thread{
     public void run() {
         while (true){
             try {
-                Thread.sleep(delay*1000);
+                Thread.sleep((int) (delay* 1000));
                 callback.doIt();
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -10,7 +10,7 @@ class SQLDump: DSLProcessor() {
         TODO("Not yet implemented")
     }
 
-    override fun appendRole(Role: Role): Any {
+    override fun appendRole(R: Role) {
         TODO("Not yet implemented")
     }
 
