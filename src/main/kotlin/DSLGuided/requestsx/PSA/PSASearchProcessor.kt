@@ -68,7 +68,6 @@ class PSASearchProcessor  : DSLProcessor() {
 
     override fun r(DSL: String): Any {
         reset()
-        parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         println("\n\n\nCALLING Handlers!\n\n\n")
         mapper.forEach { it.value.invoke(it.key) }
@@ -337,10 +336,7 @@ class PSASearchProcessor  : DSLProcessor() {
 
 
 
-    fun loadRoles(D: List<Role>): Unit {
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
+
 
     fun getPSAIdViaUUID(UUID: String): Int {
         var param = ArrayList<Any?>()
@@ -404,7 +400,7 @@ class PSASearchProcessor  : DSLProcessor() {
 
     
 
-    fun appendRole(R: Role) {
+    override fun appendRole(R: Role) {
         print("Adding role ${R.Name}\n")
         when (R?.Name) {
             "numberpsa" -> mapper.put(R, numberpsa)

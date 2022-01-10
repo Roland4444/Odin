@@ -307,12 +307,9 @@ class EcoProcessor:  DSLProcessor() {
         Book?.close()
     }
 
-    fun loadRoles(D: List<Role>): Unit{
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
 
-    fun appendRole(R: Role){
+
+    override fun appendRole(R: Role){
         when (R?.Name){
             "generatefor" -> mapper.put(R, generatefor)
             "enabled" -> mapper.put(R, enable)

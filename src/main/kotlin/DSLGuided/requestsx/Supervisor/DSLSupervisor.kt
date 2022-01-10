@@ -9,9 +9,14 @@ class DSLSupervisor: DSLProcessor() {
     var FILELOG: simpleString = {""}
     var DELAY                 = {1000}
     override fun r(DSL: String): Any {
-        TODO("Not yet implemented")
+        loadRoles(parseRoles(DSL))
+        mapper.forEach { it.value.invoke(it.key)  }
+        return "OK"
     }
 
+    override fun appendRole(Role: Role): Any {
+        TODO("Not yet implemented")
+    }
 
 
     val filelog: RoleHandler = {

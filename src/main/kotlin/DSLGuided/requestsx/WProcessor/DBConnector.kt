@@ -27,7 +27,6 @@ class DBConnector : DSLProcessor() {
     lateinit var watcher: Watcher
     ///var ExecutorFree: Boolean = true
     override fun r(DSL: String): Any {
-        parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         recharge()
@@ -76,12 +75,9 @@ class DBConnector : DSLProcessor() {
     }
 
 
-    fun loadRoles(D: List<Role>): Unit{
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
 
-    fun appendRole(R: Role){
+
+    override fun appendRole(R: Role){
         when (R?.Name){
             "db" -> mapper.put(R, db)
             "enabled" -> mapper.put(R, enable)

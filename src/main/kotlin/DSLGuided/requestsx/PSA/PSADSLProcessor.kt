@@ -147,7 +147,6 @@ class PSADSLProcessor  : DSLProcessor() {
     var external_searchdsl = EMPTY_ATOM
     lateinit var psearch: PSASearchProcessor
     override fun r(DSL: String): Any {
-        parseRoles(DSL)
         clearhooked()
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
@@ -1312,7 +1311,6 @@ VALUES
             }
         }
     }
-
     val default1: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "default1")
@@ -1327,17 +1325,7 @@ VALUES
         }
     }
 
-
-
-
-
-
-    fun loadRoles(D: List<Role>): Unit{
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
-
-    fun appendRole(R: Role){
+    override fun appendRole(R: Role){
         when (R?.Name){
             "psa"           -> mapper.put(R, psa)
             "db"            -> mapper.put(R, db)

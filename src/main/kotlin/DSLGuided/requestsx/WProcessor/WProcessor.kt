@@ -40,7 +40,6 @@ class WProcessor : DSLProcessor()  {
     val appendix = ".jpg"
     lateinit var dbconnector: DBConnector
     override fun r(DSL: String): Any {
-        parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         return "OK"
@@ -204,14 +203,7 @@ class WProcessor : DSLProcessor()  {
         }
     }
 
-
-
-    fun loadRoles(D: List<Role>): Unit {
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
-
-    fun appendRole(R: Role) {
+    override fun appendRole(R: Role) {
         print("Adding role ${R.Name}\n")
         when (R?.Name) {
             "pathtoimgs" -> mapper.put(R, pathtoimgs)

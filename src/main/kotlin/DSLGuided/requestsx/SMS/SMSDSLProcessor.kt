@@ -57,7 +57,6 @@ class SMSDSLProcessor : DSLProcessor() {
     val add: DumbHandler={it+2}
     val str: StringHandler={ (it); }
     override fun r(DSL: String) :Any{
-        parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         return renderfunc
@@ -86,11 +85,8 @@ class SMSDSLProcessor : DSLProcessor() {
         }
     }
 
-    fun loadRoles(D: List<Role>): Unit{
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
-    fun appendRole(R: Role){
+
+    override fun appendRole(R: Role){
         when (R?.Name){
             "login" -> mapper.put(R, login)
             "pass" -> mapper.put(R, pass)

@@ -22,7 +22,6 @@ class RequestsDSLProcessor() : DSLProcessor() {
     val add2: DumbHandler2 = { i: Int, i1: Int -> i+i1}
 
     override fun r(DSL: String): String {
-        parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         if (mapper.size==0)
             default()
@@ -32,7 +31,7 @@ class RequestsDSLProcessor() : DSLProcessor() {
     }
 
 
-    fun appendRole(R: Role){
+    override fun appendRole(R: Role){
         print("Adding role ${R.Name}\n")
         when (R?.Name){
             "full" -> mapper.put(R, marina)
@@ -40,10 +39,7 @@ class RequestsDSLProcessor() : DSLProcessor() {
             "guest" -> mapper.put(R, guest)
         }
     }
-    fun loadRoles(D: List<Role>): Unit{
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
+
     val test2: RoleHandler = {outtemplate += "xxx"}
 }
 

@@ -6,7 +6,6 @@ import abstractions.Role
 
 class PaymentProcessor:  DSLProcessor() {
     override fun r(DSL: String): Any {
-        parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
         return "OK"
@@ -49,11 +48,8 @@ class PaymentProcessor:  DSLProcessor() {
                 BasicLicenceId = a.key.Param as String
         }
     }
-    fun loadRoles(D: List<Role>): Unit{
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
-    fun appendRole(R: Role){
+
+    override fun appendRole(R: Role){
         when (R?.Name){
             "apikey" -> mapper.put(R, apikey)
             "rooturl" -> mapper.put(R, rooturl)

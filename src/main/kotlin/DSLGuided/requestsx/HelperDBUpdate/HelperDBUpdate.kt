@@ -32,11 +32,8 @@ class HelperDBUpdate:  DSLProcessor() {
         return "OK"
     }
 
-    fun loadRoles(D: List<Role>): Unit{
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
-    fun appendRole(R: Role){
+
+    override fun appendRole(R: Role){
         when (R?.Name){
             "hockDeleting" -> mapper.put(R, hockDeleting)
             "ProductionMode" -> mapper.put(R, ProductionMode)

@@ -10,6 +10,10 @@ class SQLDump: DSLProcessor() {
         TODO("Not yet implemented")
     }
 
+    override fun appendRole(Role: Role): Any {
+        TODO("Not yet implemented")
+    }
+
     lateinit var psaconnector: PSAConnector
 
 

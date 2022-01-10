@@ -125,7 +125,6 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
     val TEMP_FILE_TO_TRANSFORM  = "temp_trans.xml"
     val TEMP_FILE_TO_RESULT     = "temp_result.xml"
     override fun r(DSL: String): Any {
-        parseRoles(DSL)
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key) }
         headersecurity = {
@@ -636,11 +635,8 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
         return Responce
     }
 
-    fun loadRoles(D: List<Role>): Unit{
-        mapper.clear()
-        D.forEach { appendRole(it) }
-    }
-    fun appendRole(R: Role){
+
+    override fun appendRole(R: Role){
         when (R?.Name){
             "endpoint"              ->  mapper.put(R, endpoint)
             "login"                 ->  mapper.put(R, login)
