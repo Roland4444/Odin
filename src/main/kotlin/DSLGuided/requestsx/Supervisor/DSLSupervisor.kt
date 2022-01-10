@@ -12,15 +12,17 @@ import se.roland.util.Watcher
 import java.io.FileOutputStream
 
 class DSLSupervisor: DSLProcessor() {
-    var FILELOG: simpleString = {""}
+    var FILELOG: simpleString = {"initialsupervisor.log"}
     var DELAY                 = {100}
     var THRESHOLD             = {500}
     var ALERT_FILE            = {"THRESHOLD.log"}
     lateinit var WorkThread : Watcher
     val t = Memory()
     override fun r(DSL: String): Any {
+        println("SUPERVISOR setting up.......")
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
+        LOG( "SUPERVISOR setting up.......", FILELOG())
         WorkThread = Watcher(DELAY())
         WorkThread.callback = object : Call {
             override fun doIt() {
