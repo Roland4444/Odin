@@ -5,6 +5,7 @@ import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.PSA.PSASearchProcessor
 import DSLGuided.requestsx.SMS.SMSDSLProcessor
 import DSLGuided.requestsx.Sber.SberDSLProcessor
+import DSLGuided.requestsx.Supervisor.DSLSupervisor
 import DSLGuided.requestsx.WProcessor.DBConnector
 import DSLGuided.requestsx.WProcessor.WProcessor
 import abstractions.KeyValue
@@ -25,6 +26,7 @@ class DSL {
         val DBConnector_ATOM            = "dbconnector"
         val SberDSLProcessor_ATOM       = "sber"
         val SERVER_ATOM                 = "server"
+        val SUPERVISOR_ATOM             = "SW"
 
 
         fun getDSLforObject(nameObject: String, User: String): String {
@@ -62,6 +64,7 @@ class DSL {
     var WProcessor: WProcessor? = null
     var DBConnector: DBConnector? = null
     var SberDSLProcessor: SberDSLProcessor? = null
+    var DSLSupervisor: DSLSupervisor? = null
 
     fun prepareDSLProcessors() {
         HelperDBUpdate          = HelperDBUpdate()
@@ -73,6 +76,8 @@ class DSL {
         WProcessor              = WProcessor()
         DBConnector             = DBConnector()
         SberDSLProcessor        = SberDSLProcessor()
+        DSLSupervisor           = DSLSupervisor()
+        dslProcessors.add(KeyValue(SUPERVISOR_ATOM, DSLSupervisor!!))
         dslProcessors.add(KeyValue(HelperDBUpdate_ATOM, HelperDBUpdate!!))
         dslProcessors.add(KeyValue(RequestsDSLProcessor_ATOM, RequestsDSLProcessor!!))
         dslProcessors.add(KeyValue(SMSDSLProcessor_ATOM, SMSDSLProcessor!!))
@@ -99,6 +104,7 @@ class DSL {
         HelperDBUpdate!!.dbconnector=DBConnector!!
         SberDSLProcessor!!.PSADSLProcessor = PSADSLProcessor!!
         getDSLProc(SberDSLProcessor_ATOM).r(getDSLforObject(SberDSLProcessor_ATOM, SERVER_ATOM))
+        getDSLProc(SUPERVISOR_ATOM).r(getDSLforObject(SUPERVISOR_ATOM, SERVER_ATOM))
     }
 
     fun prepareMap() {
