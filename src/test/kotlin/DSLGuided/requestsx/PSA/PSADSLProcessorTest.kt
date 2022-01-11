@@ -1,15 +1,15 @@
 package DSLGuided.requestsx.PSA
+
+import DSLGuided.requestsx.DSL
+import DSLGuided.requestsx.PSA.PSADSLProcessor.Companion.createdraftPSA
 import junit.framework.TestCase
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import se.roland.abstractions.timeBasedUUID
 import se.roland.util.HTTPClient
+import java.io.File
 import java.nio.file.Files
-import java.util.ArrayList
-
-import java.util.HashMap
-import java.io.File as File
 
 class PSADSLProcessorTest : TestCase() {
     val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
@@ -749,7 +749,17 @@ class PSADSLProcessorTest : TestCase() {
         psa.splitpsa("89eaf9feb35b9d00c56abbeabda6f7ad")
     }
 
+    fun testcreatedraftPsa(){
+        var psa  = PSADSLProcessor()
+        val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
+        psaconnector.r(psaconnstr)
+        val PSASearchProcessor = PSASearchProcessor()
+        PSASearchProcessor.psaconnector= psaconnector
+        psa.psearch=PSASearchProcessor
+        val DSLP = "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}."
+        createdraftPSA(Saver.Saver.restored(Saver.Saver.readBytes("DUMP.D.BIN")) as java.util.HashMap<String, Any>, DSLP, psa!!)
 
+    }
 
 
     fun activateviauuid(){
