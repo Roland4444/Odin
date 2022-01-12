@@ -862,22 +862,22 @@ INSERT INTO `weighing` (
 
     fun setupUniqueClientAndActivate(UUID: String, Client: String, activate: Boolean){
         val R =       getUniqueClient(Client)
-        when (R.size){
-            0 -> {
-                when (DEFAULT1) {
-                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
-                }
-                return
-            };
-            2 -> {
-                val TYPE = R.first
-                val ID: Int= R.last.toString().toInt()
-                when (TYPE){
-                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
-                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
-                }
-            }
-        }
+//        when (R.size){
+//            0 -> {
+//                when (DEFAULT1) {
+//                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
+//                }
+//                return
+//            };
+//            2 -> {
+//                val TYPE = R.first
+//                val ID: Int= R.last.toString().toInt()
+//                when (TYPE){
+//                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
+//                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
+//                }
+//            }
+//        }
         if (activate)
             activatePSA(UUID)
     }

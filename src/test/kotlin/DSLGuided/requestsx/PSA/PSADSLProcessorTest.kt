@@ -763,7 +763,6 @@ class PSADSLProcessorTest : TestCase() {
         psa.psearch=PSASearchProcessor
         val DSLP = "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}."
         for (i in 0..10) {
-            Thread.sleep(1000)
             createdraftPSA(
                 Saver.Saver.restored(Saver.Saver.readBytes("DUMP.D.BIN")) as java.util.HashMap<String, Any>,
                 DSLP,
