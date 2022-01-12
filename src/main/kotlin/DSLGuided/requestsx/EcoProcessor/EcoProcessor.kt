@@ -20,6 +20,19 @@ import java.util.*
 /////"'eco'=>::generatefor{'quarter':4,'year':2019,'department':6},::enabled{'false'}."
 typealias MapUpdater = (Map: Map<String, Float>, Value:Float) -> Unit
 class EcoProcessor:  DSLProcessor() {
+    companion object {
+        fun process(DSL: String, EcoProc: EcoProcessor): String{
+            EcoProc.r(DSL)
+            EcoProc.process()
+            return "OK. Check ${EcoProc.Filename}"
+
+        }
+
+        fun testdelay(EcoProc: EcoProcessor): String{
+            Thread.sleep(15000)
+            return "OK. Check ${EcoProc.Filename}"
+        }
+    }
     val HeaderLst= mapOf(
                     0 to "Дата приема лома",
                     1 to "Наименование отхода",
@@ -52,7 +65,7 @@ class EcoProcessor:  DSLProcessor() {
     var department: Any = ""
     var DateRange: String = ""
     var CacheMetalInfo: HashMap<String, LinkedList<String>> = HashMap()
-    lateinit var PSASearchProcessor: PSASearchProcessor
+    lateinit var psearch: PSASearchProcessor
     override fun r(DSL: String): Any {
         loadRoles(parseRoles(DSL))
         mapper.forEach { it.value.invoke(it.key)  }
@@ -128,7 +141,7 @@ class EcoProcessor:  DSLProcessor() {
     }
 
     fun loadCacheMetalInfo() {
-        val res = PSASearchProcessor.getMetalInfo()
+        val res = psearch.getMetalInfo()
         while (res.next()) {
             var Lst = LinkedList<String>()
             Lst.add(res.getString("waste"))
@@ -217,15 +230,15 @@ class EcoProcessor:  DSLProcessor() {
 
     }
 
-    fun process(){
+    fun process(): String{
         loadCacheMetalInfo()
         var departMatch = StringBuilder()
         val department = department as ArrayList<*>
         department.forEach { departMatch.append("'$it',") }
         departMatch.append("''")
         val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::department{$departMatch},::datarange{$DateRange}."
-        PSASearchProcessor.r(search6)
-        val res = PSASearchProcessor.getPSA()
+        psearch.r(search6)
+        val res = psearch.getPSA()
         var position = 1
         var psacounter = 0
         var Sheet = Book.createSheet()
@@ -234,13 +247,14 @@ class EcoProcessor:  DSLProcessor() {
         while (res!!.next()){
             val id = res.getString("id")
             val date = res.getString("date")
-            val WBlock = genKeyValue(PSASearchProcessor.getWViaPSAId(id))
+            val WBlock = genKeyValue(psearch.getWViaPSAId(id))
             val Client = res.getString("client")
             println("PROCESS PSA#${psacounter++}")
             position = writeToDocumentPSA(date, Client, position, Sheet, WBlock)
         }
         writeResult(SheetSummary)
         finalizeBook()
+        return "OK"
     }
 
     fun mergingAreas(Position: Int, sheet: Sheet, Arr: List<KeyValue>){
@@ -252,7 +266,7 @@ class EcoProcessor:  DSLProcessor() {
     //desc, fkko, dangerclass
     fun getMetalInfo(Name: String): LinkedList<String> {
         var Res = LinkedList<String>()
-        var prepared =  PSASearchProcessor.psaconnector.executor!!.conn.prepareStatement("SELECT * FROM `psa`.`metal` WHERE `title` = ?;")
+        var prepared =  psearch.psaconnector.executor!!.conn.prepareStatement("SELECT * FROM `psa`.`metal` WHERE `title` = ?;")
         prepared.setString(1, Name)
         val rs: ResultSet? = prepared?.executeQuery()
         if (rs!!.next()) {

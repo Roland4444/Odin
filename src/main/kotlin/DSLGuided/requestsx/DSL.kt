@@ -1,4 +1,5 @@
 package DSLGuided.requestsx
+import DSLGuided.requestsx.EcoProcessor.EcoProcessor
 import DSLGuided.requestsx.HelperDBUpdate.HelperDBUpdate
 import DSLGuided.requestsx.PSA.PSAConnector
 import DSLGuided.requestsx.PSA.PSADSLProcessor
@@ -27,7 +28,7 @@ class DSL {
         val SberDSLProcessor_ATOM       = "sber"
         val SERVER_ATOM                 = "server"
         val SUPERVISOR_ATOM             = "SW"
-
+        val ECOPROCESSOR_ATOM           = "eco"
 
         fun getDSLforObject(nameObject: String, User: String): String {
             val f = File("rules" + File.separator + User + ".rules")
@@ -65,6 +66,7 @@ class DSL {
     var DBConnector: DBConnector? = null
     var SberDSLProcessor: SberDSLProcessor? = null
     var DSLSupervisor: DSLSupervisor? = null
+    var EcoProcessor: EcoProcessor? = null
 
     fun prepareDSLProcessors() {
         HelperDBUpdate          = HelperDBUpdate()
@@ -77,6 +79,8 @@ class DSL {
         DBConnector             = DBConnector()
         SberDSLProcessor        = SberDSLProcessor()
         DSLSupervisor           = DSLSupervisor()
+        EcoProcessor            = EcoProcessor()
+        dslProcessors.add(KeyValue(ECOPROCESSOR_ATOM, EcoProcessor!!))
         dslProcessors.add(KeyValue(SUPERVISOR_ATOM, DSLSupervisor!!))
         dslProcessors.add(KeyValue(HelperDBUpdate_ATOM, HelperDBUpdate!!))
         dslProcessors.add(KeyValue(RequestsDSLProcessor_ATOM, RequestsDSLProcessor!!))
@@ -105,6 +109,7 @@ class DSL {
         SberDSLProcessor!!.PSADSLProcessor = PSADSLProcessor!!
         getDSLProc(SberDSLProcessor_ATOM).r(getDSLforObject(SberDSLProcessor_ATOM, SERVER_ATOM))
         getDSLProc(SUPERVISOR_ATOM).r(getDSLforObject(SUPERVISOR_ATOM, SERVER_ATOM))
+        EcoProcessor!!.psearch=PSASearchProcessor!!
     }
 
     fun prepareMap() {
