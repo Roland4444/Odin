@@ -854,30 +854,28 @@ INSERT INTO `weighing` (
                 STr.append(res.getString("mname"))
             return STr.toString()
         }
-
-
         return ""
 
     }
 
     fun setupUniqueClientAndActivate(UUID: String, Client: String, activate: Boolean){
         val R =       getUniqueClient(Client)
-//        when (R.size){
-//            0 -> {
-//                when (DEFAULT1) {
-//                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
-//                }
-//                return
-//            };
-//            2 -> {
-//                val TYPE = R.first
-//                val ID: Int= R.last.toString().toInt()
-//                when (TYPE){
-//                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
-//                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
-//                }
-//            }
-//        }
+        when (R.size){
+            0 -> {
+                when (DEFAULT1) {
+                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
+                }
+                return
+            };
+            2 -> {
+                val TYPE = R.first
+                val ID: Int= R.last.toString().toInt()
+                when (TYPE){
+                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
+                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
+                }
+            }
+        }
         if (activate)
             activatePSA(UUID)
     }
@@ -901,20 +899,13 @@ INSERT INTO `weighing` (
         R = perfomResultSet(res, COMPANY_ATOM);
         if ((R.size)>0)
             return R;
-        res = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `number` LIKE ?;", param)
-        R = perfomResultSet(res, PERSON_ATOM);
-        if ((R.size)>0)
-            return R;
+//        res = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `number` LIKE ?;", param)
+//        R = perfomResultSet(res, PERSON_ATOM);
+//        if ((R.size)>0)
+//            return R;
         res = psearch.psaconnector.executor!!.executePreparedSelect(
             "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
             processPassportField(input, 4, false)
-        )
-        R = perfomResultSet(res, PERSON_ATOM);
-        if ((R.size)>0)
-            return R;
-        res = psearch.psaconnector.executor!!.executePreparedSelect(
-            "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
-            processPassportField(input, 2, true)
         )
         R = perfomResultSet(res, PERSON_ATOM);
         if ((R.size)>0)
@@ -926,12 +917,19 @@ INSERT INTO `weighing` (
         R = perfomResultSet(res, PERSON_ATOM);
         if ((R.size)>0)
             return R;
-        R=checkViaFIO(input)
+        res = psearch.psaconnector.executor!!.executePreparedSelect(
+            "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
+            processPassportField(input, 2, true)
+        )
+        R = perfomResultSet(res, PERSON_ATOM);
         if ((R.size)>0)
             return R;
-        return LinkedList<Any>()
+//        R=checkViaFIO(input)
+//        if ((R.size)>0)
+//            return R;
+        return EMPRTY_LST
     }
-
+    val EMPRTY_LST = LinkedList<Any>()
     fun processPassportField(input: String, seriesLength: Int, ignoreDigits: Boolean): java.util.ArrayList<Any>? {
         val res = java.util.ArrayList<Any>()
         val sb_series = StringBuilder()
