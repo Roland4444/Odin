@@ -575,20 +575,22 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         }
 
         if (Client==null) {
-                println("Sett Client 1(null)")
-                updateClient(uuid, getClientName(1)!!, 1)
-                RES_Check =  1
+            println("Sett Client 1(null)")
+            updateClient(uuid, getClientName(1)!!, 1)
+            RES_Check =  1
+            return
         }
-        else
         if (Client.equals("")) {
-                println("Sett Client 1(len=0)")
-                updateClient(uuid, getClientName(1)!!, 1)
-                RES_Check =  2
+            println("Sett Client 1(len=0)")
+            updateClient(uuid, getClientName(1)!!, 1)
+            RES_Check =  2
+            return
         }
         if (Client.toString().length==0) {
-                println("Sett Client 1(len=0)")
-                updateClient(uuid, getClientName(1)!!, 1)
-                RES_Check =  3
+            println("Sett Client 1(len=0)")
+            updateClient(uuid, getClientName(1)!!, 1)
+            RES_Check =  3
+            return
         }
 
         if (Client!=null){
