@@ -13,17 +13,19 @@ import se.roland.util.GLOBAL.LOG
 import se.roland.util.HTTPClient
 import se.roland.util.HTTPClient.sendPost
 import se.roland.util.Utils
+import se.roland.util.Utils.processPassportField
 import java.io.IOException
-import java.math.BigDecimal
 import java.sql.*
+import java.sql.Array
 import java.time.LocalDate
 import java.util.*
+import kotlin.collections.ArrayList
 
 typealias psaDraftSection = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String, Section: String) -> Unit
 typealias psaDraft = (Brutto: String, Sor: String, Metal: String, DepId:String, PlateNumber: String, UUID: String, Type: String) -> Unit
 typealias completePSA = (Tara: String, Sor: String, UUID: String) -> Unit
 typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price: String, ClientPrice: String) -> Unit
-
+typealias DSLString= String
 ////////////Пример DSL для PSADSLProcessor'a
 ///////////      login, pass,                                  db PSA                                           URL service (get request)          название параметра для url service получения номера ПСА
 //                                                                                                                                                                                  подключаться к БД
@@ -738,7 +740,7 @@ INSERT INTO `weighing` (
         return this.substring(this.indexOf(I)+I.length+1)
     }
 
-    fun checkViaFIO(input: String): LinkedList<Any>{
+    fun checkViaFIO(input: String): DSLString{
         val param: java.util.ArrayList<Any> = java.util.ArrayList<Any>()
         param.add("%${F_(input)}%")
         param.add("%${I_(input)}%")
@@ -747,20 +749,19 @@ INSERT INTO `weighing` (
         return perfomResultSet(res, PERSON_ATOM)
     }
 
-    var ARR_TO_RESULT = LinkedList<Any>()
+    val EMPTY_LST = LinkedList<Any>()
+    var EMPTY_RESULT ="'psa'=>::result{}."
+    fun resultStr(TYPE: String, Id: Int): String{
+        return "'psa'=>::result{'TYPE':'$TYPE','ID':$Id}."
+    }
 
-
-    fun perfomResultSet(RS: ResultSet, TYPE: String): LinkedList<Any>{
-        var R = LinkedList<Any>()
-        val Empty = LinkedList<Any>()
+    fun perfomResultSet(RS: ResultSet, TYPE: String): DSLString{
         if (RS.next()){
-            R.addFirst(TYPE)
-            R.add(RS.getInt("id"))
             if (RS.next())
-                return  Empty;
-            return R;
+                return EMPTY_RESULT;
+            return resultStr(TYPE,RS.getInt("id"));
         }
-        return Empty;
+        return EMPTY_RESULT;
     }
 
     @Throws(SQLException::class)
@@ -861,23 +862,23 @@ INSERT INTO `weighing` (
     }
 
     fun setupUniqueClientAndActivate(UUID: String, Client: String, activate: Boolean){
-        val R =       getUniqueClient(Client)
-        when (R.size){
-            0 -> {
-                when (DEFAULT1) {
-                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
-                }
-                return
-            };
-            2 -> {
-                val TYPE = R.first
-                val ID: Int= R.last.toString().toInt()
-                when (TYPE){
-                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
-                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
-                }
-            }
-        }
+        val R =  getUniqueClient(Client)
+//        when (R.size){
+//            0 -> {
+//                when (DEFAULT1) {
+//                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
+//                }
+//                return
+//            };
+//            2 -> {
+//                val TYPE = R.first
+//                val ID: Int= R.last.toString().toInt()
+//                when (TYPE){
+//                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
+//                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
+//                }
+//            }
+//        }
         if (activate)
             activatePSA(UUID)
     }
@@ -890,49 +891,97 @@ INSERT INTO `weighing` (
         LOG(MSG, FILENAME_LOG)
     }
 
-    fun getUniqueClient(input: String): LinkedList<Any>{
+
+    fun getUniqueClient(input: String): DSLString{
         val param: java.util.ArrayList<Any> = java.util.ArrayList<Any>()
         param.add("%$input%")
         var res: ResultSet = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`company` WHERE `inn` LIKE ?;", param)
         var R = perfomResultSet(res, COMPANY_ATOM);
-        if ((R.size)>0)
+        if (!(R.equals(EMPTY_RESULT)))
             return R;
         res = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`company` WHERE `name` LIKE ?;", param)
         R = perfomResultSet(res, COMPANY_ATOM);
-        if ((R.size)>0)
+        if (!(R.equals(EMPTY_RESULT)))
             return R;
         res = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `number` LIKE ?;", param)
         R = perfomResultSet(res, PERSON_ATOM);
-        if ((R.size)>0)
+        if (!(R.equals(EMPTY_RESULT)))
+            return R;
+        res = psearch.psaconnector.executor!!.executePreparedSelect(
+            "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
+            processPassportField(input, 4, false)
+        )
+//        R = perfomResultSet(res, PERSON_ATOM);
+//        if (!(R.equals(EMPTY_RESULT)))
+//            return R;
+//        res = psearch.psaconnector.executor!!.executePreparedSelect(
+//            "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
+//            processPassportField(input, 2, true)
+//        )
+//        R = perfomResultSet(res, PERSON_ATOM);
+//        if (!(R.equals(EMPTY_RESULT)))
+//            return R;
+//        res = psearch.psaconnector.executor!!.executePreparedSelect(
+//            "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
+//            processPassportField(input, 3, true)
+//        )
+//        R = perfomResultSet(res, PERSON_ATOM);
+//        if (!(R.equals(EMPTY_RESULT)))
+//            return R;
+//        R=checkViaFIO(input)
+//        if (!(R.equals(EMPTY_RESULT)))
+//            return R;
+        return EMPTY_RESULT
+    }
+
+
+    fun getUniqueClient___(input: String): DSLString{
+        val param: java.util.ArrayList<Any> = java.util.ArrayList<Any>()
+        param.add("%$input%")
+        var res: ResultSet = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`company` WHERE `inn` LIKE ?;", param)
+        var R = perfomResultSet(res, COMPANY_ATOM);
+        if (!(R.equals(EMPTY_RESULT)))
+            return R;
+        res = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`company` WHERE `name` LIKE ?;", param)
+        R = perfomResultSet(res, COMPANY_ATOM);
+        if (!(R.equals(EMPTY_RESULT)))
+            return R;
+        res = psearch.psaconnector.executor!!.executePreparedSelect("SELECT * FROM `psa`.`passport` WHERE `number` LIKE ?;", param)
+        R = perfomResultSet(res, PERSON_ATOM);
+        if (!(R.equals(EMPTY_RESULT)))
             return R;
         res = psearch.psaconnector.executor!!.executePreparedSelect(
             "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
             processPassportField(input, 4, false)
         )
         R = perfomResultSet(res, PERSON_ATOM);
-        if ((R.size)>0)
+        if (!(R.equals(EMPTY_RESULT)))
             return R;
         res = psearch.psaconnector.executor!!.executePreparedSelect(
             "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
             processPassportField(input, 2, true)
         )
         R = perfomResultSet(res, PERSON_ATOM);
-        if ((R.size)>0)
+        if (!(R.equals(EMPTY_RESULT)))
             return R;
         res = psearch.psaconnector.executor!!.executePreparedSelect(
             "SELECT * FROM `psa`.`passport` WHERE `series` LIKE ? AND `number` LIKE ?;",
             processPassportField(input, 3, true)
         )
         R = perfomResultSet(res, PERSON_ATOM);
-        if ((R.size)>0)
+        if (!(R.equals(EMPTY_RESULT)))
             return R;
         R=checkViaFIO(input)
-        if ((R.size)>0)
+        if (!(R.equals(EMPTY_RESULT)))
             return R;
-        return LinkedList<Any>()
+        return EMPTY_RESULT
     }
 
-    fun processPassportField(input: String, seriesLength: Int, ignoreDigits: Boolean): java.util.ArrayList<Any>? {
+
+
+
+
+    fun processPassportField__(input: String, seriesLength: Int, ignoreDigits: Boolean): java.util.ArrayList<Any>? {
         val res = java.util.ArrayList<Any>()
         val sb_series = StringBuilder()
         val sb_number = StringBuilder()

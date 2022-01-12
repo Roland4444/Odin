@@ -7,4 +7,5 @@ getP2PStatus
 
 
 Problem::
-setupUniqueClientAndActivate
+setupUniqueClientAndActivate  =>
+getUniqueClient
