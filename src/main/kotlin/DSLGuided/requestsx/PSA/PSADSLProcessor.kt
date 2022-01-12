@@ -108,7 +108,7 @@ class PSADSLProcessor  : DSLProcessor() {
 
         }
     }
-
+    var RES_Check = -100
     val EFFECT = "является действующим"
     val UNEFFECT = "ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ"
 
@@ -531,32 +531,73 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
         return true
     }
 
+    fun checksetupClient__(uuid: String, Client:Any?, aktivate: Boolean, checkExist: Boolean){
+        if (checkExist) {
+            if (NOT_UPDATE_CLIENT.equals(TRUE_ATOM))
+                if (checkClientExist(uuid))
+                    RES_Check = 0
+        }
+        when (Client) {
+            null -> {
+                println("Sett Client 1(null)")
+                updateClient(uuid, getClientName(1)!!, 1)
+                RES_Check =  1
+            }
+            "" -> {
+                println("Sett Client 1\"\"")
+                updateClient(uuid, getClientName(1)!!, 1)
+                RES_Check = 2
+            }
+        }
+        when (Client.toString().length) {
+            0 -> {
+                println("Sett Client 1(len=0)")
+                updateClient(uuid, getClientName(1)!!, 1)
+                RES_Check = 3
+            }
+        }
+
+        if (Client!=null){
+            val client: String = Client.toString()
+            println("FOUND CLIENT::$client")
+            LOG("FOUND CLIENT::$client")
+            setupUniqueClientAndActivate(uuid, client, aktivate)
+            RES_Check = 4
+        }
+
+    }
+
     fun checksetupClient(uuid: String, Client:Any?, aktivate: Boolean, checkExist: Boolean){
         if (checkExist) {
             if (NOT_UPDATE_CLIENT.equals(TRUE_ATOM))
                 if (checkClientExist(uuid))
-                    return
+                    RES_Check = 0
         }
 
         if (Client==null) {
-            println("Sett Client 1(null)")
-            updateClient(uuid, getClientName(1)!!, 1)
+                println("Sett Client 1(null)")
+                updateClient(uuid, getClientName(1)!!, 1)
+                RES_Check =  1
         }
-        if (Client!=null) {
-            if (Client.toString().length==0) {
+        else
+        if (Client.equals("")) {
                 println("Sett Client 1(len=0)")
                 updateClient(uuid, getClientName(1)!!, 1)
-            }
-            if (Client.toString().length>0){
-                val client: String = Client.toString()
-                println("FOUND CLIENT::$client")
-                LOG("FOUND CLIENT::$client")
-                setupUniqueClientAndActivate(uuid, client, aktivate)
-            }
-
+                RES_Check =  2
+        }
+        if (Client.toString().length==0) {
+                println("Sett Client 1(len=0)")
+                updateClient(uuid, getClientName(1)!!, 1)
+                RES_Check =  3
         }
 
-
+        if (Client!=null){
+            val client: String = Client.toString()
+            println("FOUND CLIENT::$client")
+            LOG("FOUND CLIENT::$client")
+            setupUniqueClientAndActivate(uuid, client, aktivate)
+            RES_Check = 4
+        }
 
     }
 
@@ -706,6 +747,9 @@ INSERT INTO `weighing` (
         return perfomResultSet(res, PERSON_ATOM)
     }
 
+    var ARR_TO_RESULT = LinkedList<Any>()
+
+
     fun perfomResultSet(RS: ResultSet, TYPE: String): LinkedList<Any>{
         var R = LinkedList<Any>()
         val Empty = LinkedList<Any>()
@@ -817,25 +861,25 @@ INSERT INTO `weighing` (
     }
 
     fun setupUniqueClientAndActivate(UUID: String, Client: String, activate: Boolean){
-//        val R = getUniqueClient(Client)
-//        when (R.size){
-//            0 -> {
-//                when (DEFAULT1) {
-//                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
-//                }
-//                return
-//            };
-//            2 -> {
-//                val TYPE = R.first
-//                val ID: Int= R.last.toString().toInt()
-//                when (TYPE){
-//                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
-//                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
-//                }
-//            }
-//        }
-//        if (activate)
-//            activatePSA(UUID)
+        val R =       getUniqueClient(Client)
+        when (R.size){
+            0 -> {
+                when (DEFAULT1) {
+                    TRUE_ATOM -> updateClient(UUID, getClientName(1)!!, 1)
+                }
+                return
+            };
+            2 -> {
+                val TYPE = R.first
+                val ID: Int= R.last.toString().toInt()
+                when (TYPE){
+                    PERSON_ATOM  -> {updateClient(UUID, getClientName(ID)!!, ID)};
+                    COMPANY_ATOM -> {updateCompany(UUID, getCompanyName(ID)!!, ID)};
+                }
+            }
+        }
+        if (activate)
+            activatePSA(UUID)
     }
 
     fun LOG(MSG: String){

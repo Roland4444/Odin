@@ -8,8 +8,10 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import se.roland.abstractions.timeBasedUUID
 import se.roland.util.HTTPClient
+import util.Aktivator
 import java.io.File
 import java.nio.file.Files
+import kotlin.test.assertNotEquals
 
 class PSADSLProcessorTest : TestCase() {
     val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
@@ -751,6 +753,8 @@ class PSADSLProcessorTest : TestCase() {
 
     fun testcreatedraftPsa(){
         val startTime = System.nanoTime()
+
+
         var psa  = PSADSLProcessor()
         val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         psaconnector.r(psaconnstr)
@@ -758,24 +762,21 @@ class PSADSLProcessorTest : TestCase() {
         PSASearchProcessor.psaconnector= psaconnector
         psa.psearch=PSASearchProcessor
         val DSLP = "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}."
-        psa.r(DSLP)
-        var i = 0
-        for (i in 0..20 ) {
-           ///// Thread.sleep(1000)
-            println("\n\n\n\n\n ::$i\n\n")
+        for (i in 0..10) {
+            Thread.sleep(1000)
             createdraftPSA(
                 Saver.Saver.restored(Saver.Saver.readBytes("DUMP.D.BIN")) as java.util.HashMap<String, Any>,
                 DSLP,
                 psa!!
             )
-
         }
+        assertNotEquals(-200, psa.RES_Check)
+        println("RES_CHECK::${psa.RES_Check}")
 
 
         val endTime = System.nanoTime()
         val duration = endTime - startTime
         println("time execution:: " + duration / 1000000000)
-
 
     }
 
