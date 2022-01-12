@@ -374,11 +374,11 @@ class PSADSLProcessorTest : TestCase() {
         PSASearchProcessor.psaconnector= psaconnector
         psa.psearch=PSASearchProcessor
         psa.r(psastr)
-        val FIO = "Краснов Кирилл Вадимович"
-        val R = psa.getUniqueClient(FIO)
-        assertEquals(2, R.size)
-        println(R.last)
-        assertEquals(28372, R.last)
+//        val FIO = "Краснов Кирилл Вадимович"
+//        val R = psa.getUniqueClient(FIO)
+//        assertEquals(2, R.size)
+//        println(R.last)
+//        assertEquals(28372, R.last)
     }
 
     fun testCalculateMegafon(){
