@@ -139,7 +139,7 @@ class EcoProcessor:  DSLProcessor() {
             val Brutto = input.getFloat("brutto")
             val Tare = input.getFloat("tare")
             val netto: Float = PSADSLProcessor.calculateNetto(Brutto,Tare, TRASH)
-            var keyValue = KeyValue(input.getString("metal_id"), netto)
+            var keyValue = KeyValue(input.getString("metal_id"), netto.toString())
             out.add(keyValue)
         }
         return out
