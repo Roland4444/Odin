@@ -96,7 +96,7 @@ class EcoProcessorTest : TestCase() {
         EcoProc.r(dsl)
         assertNotNull(EcoProc.DateRange)
         println(EcoProc.DateRange)
-        //EcoProc.process()
+        EcoProc.process()
     }
 
     fun testMap() {

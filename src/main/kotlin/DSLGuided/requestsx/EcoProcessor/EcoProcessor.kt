@@ -1,6 +1,7 @@
 package DSLGuided.requestsx.EcoProcessor
 
 import DSLGuided.requestsx.DSLProcessor
+import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.PSA.PSASearchProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
@@ -134,7 +135,11 @@ class EcoProcessor:  DSLProcessor() {
     fun genKeyValue(input: ResultSet): MutableList<KeyValue> {
         var out = mutableListOf<KeyValue>()
         while (input.next()){
-            var keyValue = KeyValue(input.getString("metal_id"), input.getString("brutto"))
+            val TRASH = input.getFloat("sor")
+            val Brutto = input.getFloat("brutto")
+            val Tare = input.getFloat("tare")
+            val netto: Float = PSADSLProcessor.calculateNetto(Brutto,Tare, TRASH)
+            var keyValue = KeyValue(input.getString("metal_id"), netto)
             out.add(keyValue)
         }
         return out

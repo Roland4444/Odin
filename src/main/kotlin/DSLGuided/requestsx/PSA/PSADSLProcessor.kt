@@ -32,6 +32,14 @@ typealias completePSAwithPrice = (Tara: String, Sor: String, UUID: String, Price
 
 class PSADSLProcessor  : DSLProcessor() {
     companion object {
+        fun calculateNetto(brutto: Float, tara: Float, clogging: Float): Float {
+            val sub = brutto - tara
+            val percentage = (clogging / 100.00 * sub).toFloat()
+            val netto = sub - percentage
+            return Utils.trimApply(netto.toString()).toFloat()
+        }
+
+
         fun deletePSA(DSL: String, PSAProc: PSADSLProcessor){
             PSAProc.r(DSL)
         }
