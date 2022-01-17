@@ -140,4 +140,19 @@ class EcoProcessorTest : TestCase() {
     }
 
 
+    fun testfiulename(){
+        val STR = "'eco'=>::filename{simp5.xlsx},::quartermap{'1':'year-01-01'/'year-01-31','2':'year-04-01'/'year-04-02','3':'year-07-01'/'year-07-04','4':'year-10-01'/'year-10-04'},::generatefor{'quarter':2,'year':2021,'department':['ПЗУ №2','ПЗУ №3']},::enabled{'true'}."
+        val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
+        val psaconnector = PSAConnector()
+        psaconnector.r(initDB)
+        var psasearch = PSASearchProcessor()
+        psasearch.psaconnector= psaconnector
+        val EcoProc = EcoProcessor()
+        EcoProc.psearch = psasearch
+        EcoProc.r(STR)
+        assertNotNull(EcoProc.DateRange)
+        println(EcoProc.DateRange)
+        EcoProc.process()
+    }
+
 }

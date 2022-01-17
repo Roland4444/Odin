@@ -161,6 +161,7 @@ class EcoProcessor:  DSLProcessor() {
             Lst.add(res.getString("waste"))
             Lst.add(res.getString("fkko"))
             Lst.add(res.getString("dangerclass"))
+            Lst.add(res.getString("title"))
             CacheMetalInfo.putIfAbsent(res.getString("id"), Lst)
         }
     }
@@ -286,9 +287,16 @@ class EcoProcessor:  DSLProcessor() {
         val rs: ResultSet? = prepared?.executeQuery()
         if (rs!!.next()) {
             Res.add(rs.getString("waste"))
+            println("RES1::SIZE"+ Res.size)
             Res.add(rs.getString("fkko"))
+            println("RES2::SIZE"+ Res.size)
+
             Res.add(rs.getString("dangerclass"))
-            Res.add(rs.getString("title"))
+            println("RES3::SIZE"+ Res.size)
+
+            Res.add(Name)
+            println("RES4::SIZE"+ Res.size)
+
         };
         CacheMetalInfo.putIfAbsent(Name, Res)
         return Res
