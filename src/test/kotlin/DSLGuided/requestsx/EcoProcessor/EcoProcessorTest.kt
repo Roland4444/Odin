@@ -83,6 +83,21 @@ class EcoProcessorTest : TestCase() {
         assertEquals("'year-01-01':'year-02-31'", EcoProc.QuarterMap.get(1) )
     }
 
+    fun testfilename(){
+        val dsl = "'eco'=>::filename{simp5.xlsx},::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::quartermap{'1':'year-01-01'/'year-02-31','2':''year-04-01'/'year-06-30'','3':''year-07-01'/'year-9-30'','4':''year-10-01'/'year-12-31''},::enabled{'true'}."
+        val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
+        val psaconnector = PSAConnector()
+        psaconnector.r(initDB)
+        var psasearch = PSASearchProcessor()
+        psasearch.psaconnector= psaconnector
+        val EcoProc = EcoProcessor()
+        EcoProc.psearch = psasearch
+        EcoProc.r(dsl)
+        assertEquals("'year-01-01':'year-02-31'", EcoProc.QuarterMap.get(1) )
+        assertEquals("simp5.xlsx", EcoProc.Filename )
+
+    }
+
     fun testprocesspatchedmapap() {
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()

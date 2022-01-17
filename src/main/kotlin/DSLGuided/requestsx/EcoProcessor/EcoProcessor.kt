@@ -131,6 +131,14 @@ class EcoProcessor:  DSLProcessor() {
         }
     }
 
+    val filename: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "filename")
+                Filename = a.key.Param as String
+
+        }
+    }
+
 //    fun createRows()
 
     fun genKeyValue(input: ResultSet): MutableList<KeyValue> {
@@ -334,9 +342,11 @@ class EcoProcessor:  DSLProcessor() {
 
     override fun appendRole(R: Role){
         when (R?.Name){
-            "generatefor" -> mapper.put(R, generatefor)
-            "enabled" -> mapper.put(R, enable)
-            "quartermap" -> mapper.put(R, quartermap)
+            "generatefor"   -> mapper.put(R, generatefor)
+            "enabled"       -> mapper.put(R, enable)
+            "quartermap"    -> mapper.put(R, quartermap)
+            "filename"      -> mapper.put(R, filename)
+
         }
     }
 }
