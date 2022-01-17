@@ -48,7 +48,8 @@ class EcoProcessor:  DSLProcessor() {
         2 to "Код по ФККО",
         3 to "Класс опасности отхода",
         4 to "Наличие отходов(кг)",
-        5 to "Клиент"
+        5 to "Клиент",
+        6 to "Metall"
     )
     val QuarterMap = mutableMapOf<Int, String>(1 to "'year-01-01':'year-03-31'",
                            2 to "'year-04-01':'year-06-30'",
@@ -160,7 +161,7 @@ class EcoProcessor:  DSLProcessor() {
         val row: Row = Sheet.createRow(0)
         val row2: Row = SheetSummary.createRow(0)
         val borderStyle: CellStyle = Book.createCellStyle()
-        for (i in 0..5) {
+        for (i in 0..6) {
             val a = row.createCell(i)
             a.setCellValue(HeaderLst.get(i))
             a.cellStyle=borderStyle
@@ -183,6 +184,7 @@ class EcoProcessor:  DSLProcessor() {
             val cell3 = row.createCell(3)
             val cell4 = row.createCell(4)
             val cell5 = row.createCell(5)
+            val cell6 = row.createCell(6)
             cell2.setCellValue(t.toString())
             val T: Double = (u.toDouble()/1000)
             cell4.setCellValue(u.toDouble())////"%.3f".format(T))
@@ -278,6 +280,7 @@ class EcoProcessor:  DSLProcessor() {
             Res.add(rs.getString("waste"))
             Res.add(rs.getString("fkko"))
             Res.add(rs.getString("dangerclass"))
+            Res.add(rs.getString("title"))
         };
         CacheMetalInfo.putIfAbsent(Name, Res)
         return Res
@@ -306,6 +309,7 @@ class EcoProcessor:  DSLProcessor() {
             val cell3=row.createCell(3); cell3.setCellValue(CacheMetalInfo.get(metalId)?.get(2))
             val cell4=row.createCell(4); cell4.setCellValue(it.Value as String)
             val cell5 =  row.createCell(5)
+            val cell6 =  row.createCell(6); cell6.setCellValue(CacheMetalInfo.get(metalId)?.get(3))
             CellUtil.setAlignment(cell5, Book, CellStyle.ALIGN_CENTER_SELECTION)
             cell5.setCellValue(Client)
             cell0.cellStyle=borderStyle
