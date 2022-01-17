@@ -68,6 +68,12 @@ class DSL {
     var DSLSupervisor: DSLSupervisor? = null
     var EcoProcessor: EcoProcessor? = null
 
+    fun getNewEcoProc(): EcoProcessor{
+        val Eco = EcoProcessor()
+        Eco.psearch = PSASearchProcessor!!
+        return Eco
+    }
+
     fun prepareDSLProcessors() {
         HelperDBUpdate          = HelperDBUpdate()
         RequestsDSLProcessor    = RequestsDSLProcessor()
