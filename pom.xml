@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.roland</groupId>
     <artifactId>Odin</artifactId>
-    <version>4.0.7-R5</version>
+    <version>4.0.7-R7</version>
     <properties>
         <sonar.host.url>http://192.168.0.159:9000</sonar.host.url>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
