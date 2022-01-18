@@ -314,16 +314,22 @@ class EcoProcessor:  DSLProcessor() {
             CellUtil.setAlignment(cell0, Book, CellStyle.ALIGN_CENTER_SELECTION)
             val FKKO = CacheMetalInfo.get(metalId)?.get(1)
             val W: Float = (it.Value as String).toFloat()
+            println("W=$W\n")
             val get = TotalMap.get(FKKO)
             if (get != null){
+                println("EXTRACTED FKKO:: $FKKO, GET:: $get")
                 TotalMap.put(FKKO!!, get+W)
+                println("PUT IN FKKO:: $FKKO, :: ${get+W}")
             }
-            else
+            else {
+                println("PUT IN FKKO:: $FKKO, :: $W")
+
                 TotalMap.put(FKKO!!, W)
+            }
             val cell1=row.createCell(1); cell1.setCellValue(CacheMetalInfo.get(metalId)?.get(0))
             val cell2=row.createCell(2); cell2.setCellValue(CacheMetalInfo.get(metalId)?.get(1))
             val cell3=row.createCell(3); cell3.setCellValue(CacheMetalInfo.get(metalId)?.get(2))
-            val cell4=row.createCell(4); cell4.setCellValue(it.Value as String)
+            val cell4=row.createCell(4); cell4.setCellValue(it.Value.toString().toDouble())
             val cell5 =  row.createCell(5)
             val cell6 =  row.createCell(6); cell6.setCellValue(CacheMetalInfo.get(metalId)?.get(3))
             CellUtil.setAlignment(cell5, Book, CellStyle.ALIGN_CENTER_SELECTION)
