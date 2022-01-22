@@ -6,6 +6,7 @@ import se.roland.abstractions.timeBasedUUID;
 import se.roland.xml.Extractor;
 import se.roland.xml.Injector;
 
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -284,55 +285,7 @@ public class InjectorTest {
     }
 
 
-    @Test
-    public void getTimeStamp() {
-        Injector inj = new Injector();
-        assertNotEquals(null, inj.generateTimeStamp());
-        System.out.println(inj.generateTimeStamp());
-        System.out.println("2019-01-01T08:46:57.7225950+04:00\n2019-01-11T14:40:57.2960000+04:00");
 
-    }
-
-    @Test
-    public void writeBindingID(){
-        Injector inj = new Injector();
-        String data =   """
-                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:p2p="http://engine.paymentgate.ru/webservices/p2p">
-                    <soapenv:Header/>
-                    <soapenv:Body>
-                        <p2p:performP2PByBinding>
-                            <arg0 language="?" ip="?" email="?" phone="?" type="?" threeDSMethodNotificationUrl="?">
-                                <orderId>?</orderId>
-                                <!--Optional:-->
-                                <fromCard>                                  
-                                </fromCard>
-                                <toCard>                              
-                                </toCard>                                
-                            </arg0>
-                        </p2p:performP2PByBinding>
-                    </soapenv:Body>
-                </soapenv:Envelope>
-                """;
-        String etalon = """
-                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:p2p="http://engine.paymentgate.ru/webservices/p2p">
-                    <soapenv:Header/>
-                    <soapenv:Body>
-                        <p2p:performP2PByBinding>
-                            <arg0 language="?" ip="?" email="?" phone="?" type="?" threeDSMethodNotificationUrl="?">
-                                <orderId>?</orderId>
-                                <!--Optional:-->
-                                <fromCard>                                  
-                                </fromCard>
-                                <toCard><pan>6666</pan></toCard>                                
-                            </arg0>
-                        </p2p:performP2PByBinding>
-                    </soapenv:Body>
-                </soapenv:Envelope>
-                """;
-        String result = inj.injectTagDirect(data, "toCard", "<pan>6666</pan>");
-        assertEquals(etalon, result);
-
-    }
 
 
     @Test

@@ -9,7 +9,7 @@ import java.time.Duration
 class SMSNotify {
 companion object {
     @JvmStatic
-    fun sendSMS(login: String, pass: String, number: String, message: String, ): String {
+    fun sendSMS(login: String, pass: String, number: String, message: String ): String {
         val req = "https://smsc.ru/sys/send.php?login=$login&psw=$pass&phones=$number&mes=${message.replace(" ", "%20")}"
         val request = HttpRequest.newBuilder()
             .uri(URI.create(req))

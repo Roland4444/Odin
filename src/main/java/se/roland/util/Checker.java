@@ -25,18 +25,18 @@ public class Checker implements Serializable {
     
     public static boolean checkdigit(char input){
         var result = false;
-        result = switch (input){
-            case  '0' -> true;
-            case  '1' -> true;
-            case  '2' -> true;
-            case  '3' -> true;
-            case  '4' -> true;
-            case  '5' -> true;
-            case  '6' -> true;
-            case  '7' -> true;
-            case  '8' -> true;
-            case  '9' -> true;
-            default -> false;
+        switch (input){
+            case  '0' : result = true; break;
+            case  '1' : result = true; break;
+            case  '2' : result = true; break;
+            case  '3' : result = true; break;
+            case  '4' : result = true; break;
+            case  '5' : result = true; break;
+            case  '6' : result = true; break;
+            case  '7' : result = true; break;
+            case  '8' : result = true; break;
+            case  '9' : result = true; break;
+            default : result   = false;  break;
         };
         return result;
     }

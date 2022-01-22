@@ -141,19 +141,6 @@ public class ExtractorTest {
         assertEquals("trusted", ext.extractTagValue(data, "tns:stu"));
     }
 
-    @Test
-    public void parserespobe(){
-        String responce = """
-                <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-                <soap:Body><ns1:registerP2PResponse xmlns:ns1="http://engine.paymentgate.ru/webservices/p2p">
-                <return xmlns:ns2="http://engine.paymentgate.ru/webservices/p2p" errorCode="1" 
-                errorMessage="Заказ с таким номером уже обработан"/></ns1:registerP2PResponse></soap:Body></soap:Envelope>
-                """;
-        String etalon = "1";
-        String errorMessage_etalon  = "Заказ с таким номером уже обработан";
-        assertEquals(etalon, ext.extractAttribute(responce.getBytes(), "errorCode"));
-        assertEquals(errorMessage_etalon, ext.extractAttribute(responce.getBytes(), "errorMessage"));
 
-    }
 
 }
