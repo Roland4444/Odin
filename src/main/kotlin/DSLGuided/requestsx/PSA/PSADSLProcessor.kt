@@ -578,8 +578,10 @@ NULL,   ?,          ?,       ?,              ?,           ?,             ?,     
     fun checksetupClient(uuid: String, Client:Any?, aktivate: Boolean, checkExist: Boolean){
         if (checkExist) {
             if (NOT_UPDATE_CLIENT.equals(TRUE_ATOM))
-                if (checkClientExist(uuid))
+                if (checkClientExist(uuid)) {
                     RES_Check = 0
+                    return
+                }
         }
 
         if (Client==null) {
