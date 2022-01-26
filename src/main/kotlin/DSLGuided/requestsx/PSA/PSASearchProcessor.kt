@@ -1,8 +1,9 @@
 package DSLGuided.requestsx.PSA
 
+import DSL.abstractions.KeyValue
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
-import abstractions.KeyValue
+//import abstractions.KeyValue
 import abstractions.Role
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
@@ -280,8 +281,8 @@ class PSASearchProcessor  : DSLProcessor() {
         mapper.forEach { a ->
             if (a.key.Name == "datarange") {
                 val keyvalue: KeyValue = a.key.Param as KeyValue
-                searchFrom = keyvalue.Key
-                searchTo = keyvalue.Value as String
+                searchFrom = keyvalue.Key()
+                searchTo = keyvalue.Value() as String
                 params()
                 val appendix = "( `psa`.`date` between '${searchFrom}' and '${searchTo}')"
                 initialString.append(appendix)
@@ -294,8 +295,8 @@ class PSASearchProcessor  : DSLProcessor() {
         mapper.forEach { a ->
             if (a.key.Name == "date") {
                 val keyvalue: KeyValue = a.key.Param as KeyValue
-                searchFrom = keyvalue.Key
-                searchTo = keyvalue.Value as String
+                searchFrom = keyvalue.Key()
+                searchTo = keyvalue.Value() as String
                 params()
                 val appendix = "( `date` between '${searchFrom}' and '${searchTo}')"
                 initialString.append(appendix)

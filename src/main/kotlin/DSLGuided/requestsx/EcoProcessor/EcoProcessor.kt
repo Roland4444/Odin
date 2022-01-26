@@ -1,10 +1,11 @@
 package DSLGuided.requestsx.EcoProcessor
 
+import DSL.abstractions.KeyValue
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.PSA.PSASearchProcessor
 import DSLGuided.requestsx.RoleHandler
-import abstractions.KeyValue
+//import abstractions.KeyValue
 import abstractions.Role
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.*
@@ -110,7 +111,7 @@ class EcoProcessor:  DSLProcessor() {
                 val Lst = a.key.Param as MutableList<KeyValue>
                 QuarterMap.clear()
                 Lst.forEach {
-                    QuarterMap.put(it.Key.toInt(), it.Value.toString().replace("/",":"))
+                    QuarterMap.put(it.Key().toInt(), it.Value().toString().replace("/",":"))
                 }
             }
         }
@@ -121,10 +122,10 @@ class EcoProcessor:  DSLProcessor() {
             if (a.key.Name == "generatefor") {
                 val Lst = a.key.Param as MutableList<KeyValue>
                 Lst.forEach {
-                    when (it.Key) {
-                        "quarter" -> quarter = it.Value as Int
-                        "year" -> year = it.Value as Int
-                        "department" -> department = it.Value
+                    when (it.Key()) {
+                        "quarter" -> quarter = it.Value() as Int
+                        "year" -> year = it.Value() as Int
+                        "department" -> department = it.Value()
                     }
                 }
             }
@@ -307,13 +308,13 @@ class EcoProcessor:  DSLProcessor() {
 //        val r = Sheet.createRow(Position)
 //        r.createCell(2).setCellValue("test")
         Arr.forEach {
-            val metalId = it.Key
+            val metalId = it.Key()
             val row: Row = Sheet.createRow(i+Position)
             val cell0 =  row.createCell(0)
             cell0.setCellValue(Data)
             CellUtil.setAlignment(cell0, Book, CellStyle.ALIGN_CENTER_SELECTION)
             val FKKO = CacheMetalInfo.get(metalId)?.get(1)
-            val W: Float = (it.Value as String).toFloat()
+            val W: Float = (it.Value() as String).toFloat()
             println("W=$W\n")
             val get = TotalMap.get(FKKO)
             if (get != null){
@@ -329,7 +330,7 @@ class EcoProcessor:  DSLProcessor() {
             val cell1=row.createCell(1); cell1.setCellValue(CacheMetalInfo.get(metalId)?.get(0))
             val cell2=row.createCell(2); cell2.setCellValue(CacheMetalInfo.get(metalId)?.get(1))
             val cell3=row.createCell(3); cell3.setCellValue(CacheMetalInfo.get(metalId)?.get(2))
-            val cell4=row.createCell(4); cell4.setCellValue(it.Value.toString().toDouble())
+            val cell4=row.createCell(4); cell4.setCellValue(it.Value().toString().toDouble())
             val cell5 =  row.createCell(5)
             val cell6 =  row.createCell(6); cell6.setCellValue(CacheMetalInfo.get(metalId)?.get(3))
             CellUtil.setAlignment(cell5, Book, CellStyle.ALIGN_CENTER_SELECTION)

@@ -1,6 +1,6 @@
 package se.roland.util;
 
-import abstractions.KeyValue;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -13,6 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
+import DSL.abstractions.KeyValue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -53,12 +54,12 @@ public class HTTPClient {
 
     }
 
-    public static  String sendPost(@NotNull KeyValue param, String url) throws IOException {
+    public static  String sendPost( KeyValue param, String url) throws IOException {
         System.out.println("\n\n\nSENDING POST TO::"+url);
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost httppost = new HttpPost(url);
         List<NameValuePair> params__ = new ArrayList<NameValuePair>(1);  //map(a->a.getKey().replace("::","").replace(" ","_")).
-        params__.add(new BasicNameValuePair(param.getKey(), String.valueOf(param.getValue())));
+        params__.add(new BasicNameValuePair(param.Key(), String.valueOf(param.Value())));
         httppost.setEntity(new UrlEncodedFormEntity(params__, "UTF-8"));
         HttpResponse response = httpclient.execute(httppost);
         var resp = EntityUtils.toString(response.getEntity());

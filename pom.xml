@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.roland</groupId>
     <artifactId>Odin</artifactId>
-    <version>4.0.7-R7</version>
+    <version>5.0.0</version>
     <properties>
         <sonar.host.url>http://192.168.0.159:9000</sonar.host.url>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
@@ -121,10 +121,30 @@
             <artifactId>jna</artifactId>
             <version>4.5.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala3-library_3</artifactId>
+            <version>3.1.2-RC1-bin-20220120-246ee6a-NIGHTLY</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>

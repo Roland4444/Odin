@@ -1,8 +1,9 @@
 package DSLGuided.requestsx.PSA
 
+import DSL.abstractions.KeyValue
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
-import abstractions.KeyValue
+//import abstractions.KeyValue
 import abstractions.Role
 import fr.roland.DB.Executor
 import se.roland.abstractions.Call
@@ -99,10 +100,10 @@ class PSAConnector  : DSLProcessor() {
     fun processPSASection(input: MutableList<Any>) {
         input.forEach {
             val f: KeyValue = it as KeyValue
-            println("""KEY VALUE ${f.Key}::${f.Value}""")
-            when ((it as KeyValue).Key) {
-                "login" -> login = it.Value as String;
-                "pass" -> pass = it.Value as String;
+            println("""KEY VALUE ${f.Key()}::${f.Value()}""")
+            when ((it as KeyValue).Key()) {
+                "login" -> login = it.Value() as String;
+                "pass" -> pass = it.Value() as String;
 
             }
         }

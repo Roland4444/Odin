@@ -1,8 +1,9 @@
 package DSLGuided.requestsx.WProcessor
 
+import DSL.abstractions.KeyValue
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
-import abstractions.KeyValue
+//import abstractions.KeyValue
 import abstractions.Role
 import se.roland.util.HTTPClient
 import java.io.File
@@ -194,7 +195,7 @@ class WProcessor : DSLProcessor()  {
                 var Arr = a.key.Param as MutableList<Any>
                 Arr.forEach { a ->
                     when (a) {
-                        is KeyValue -> DepsMap.put(a.Key, a.Value.toString())
+                        is KeyValue -> DepsMap.put(a.Key(), a.Value().toString())
                         is String -> UseDepsMap = a;
                     }
                 }
