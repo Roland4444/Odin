@@ -1,6 +1,4 @@
 package DSLGuided.requestsx
-//import DSL.abstractions.KeyValue
-import DSL.abstractions.KeyValue
 import DSLGuided.requestsx.EcoProcessor.EcoProcessor
 import DSLGuided.requestsx.HelperDBUpdate.HelperDBUpdate
 import DSLGuided.requestsx.PSA.PSAConnector
@@ -11,6 +9,7 @@ import DSLGuided.requestsx.Sber.SberDSLProcessor
 import DSLGuided.requestsx.Supervisor.DSLSupervisor
 import DSLGuided.requestsx.WProcessor.DBConnector
 import DSLGuided.requestsx.WProcessor.WProcessor
+import abstractions.KeyValue
 //import abstractions.KeyValue
 import java.io.BufferedReader
 import java.io.File
@@ -102,8 +101,8 @@ class DSL {
     }
 
     fun getDSLProc(NameProc: String): DSLProcessor{
-        val A  = dslProcessors.stream().filter { A -> A.Key().equals(NameProc)}.toArray()
-        return (A[0] as KeyValue).Value() as DSLProcessor
+        val A  = dslProcessors.stream().filter { A -> A.Key.equals(NameProc)}.toArray()
+        return (A[0] as KeyValue).Value as DSLProcessor
     }
     fun initDSL() {
         getDSLProc(PSAConnector_ATOM)?.r(getDSLforObject(PSAConnector_ATOM, SERVER_ATOM))

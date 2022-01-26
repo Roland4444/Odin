@@ -1,9 +1,8 @@
 package DSLGuided.requestsx.PSA
 
-import DSL.abstractions.KeyValue
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
-//import abstractions.KeyValue
+import abstractions.KeyValue
 import abstractions.Role
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
@@ -1226,9 +1225,9 @@ VALUES
         println("into PSA section::")
         input.forEach{
             val f: KeyValue = it as KeyValue
-            when (it.Key()){
-                "login" -> login = it.Value() as String;
-                "pass"  -> pass  = it.Value() as String;
+            when (it.Key){
+                "login" -> login = it.Value as String;
+                "pass"  -> pass  = it.Value as String;
             }
         }
     }
@@ -1269,12 +1268,12 @@ VALUES
                 Arr.forEach { a ->
                     when (a) {
                         is KeyValue -> {
-                            if (a.Key().equals("section")) {
-                                HOOKSECTION = a.Value() as String
+                            if (a.Key.equals("section")) {
+                                HOOKSECTION = a.Value as String
                                 println("HOOK SECTION to=>$HOOKSECTION")
                             }
-                            if (a.Key().equals("uuid")) {
-                                HOOKUUID = a.Value() as String
+                            if (a.Key.equals("uuid")) {
+                                HOOKUUID = a.Value as String
                                 println("HOOK UUID to=>$HOOKUUID")
                             }
                         };
@@ -1316,8 +1315,8 @@ VALUES
                 Arr.forEach { a ->
                     when (a) {
                         is KeyValue -> {
-                            PSAID = a.Key()
-                            SECTION = a.Value() as String
+                            PSAID = a.Key
+                            SECTION = a.Value as String
                         }
                         is String -> {
                             println("A::$a")
@@ -1359,8 +1358,8 @@ VALUES
         mapper.forEach { a ->
             if (a.key.Name == "log") {
                 val K: KeyValue = a.key.Param as KeyValue
-                ENABLED_LOG = K.Key()
-                FILENAME_LOG = K.Value().toString()
+                ENABLED_LOG = K.Key
+                FILENAME_LOG = K.Value.toString()
             }
         }
     }

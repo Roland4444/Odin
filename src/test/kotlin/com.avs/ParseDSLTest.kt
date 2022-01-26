@@ -16,6 +16,7 @@ internal class ParseDSLTest {
     val param: String = "12,'Добрый день', 'таблицы':['касса','склад','приход'], '12 декабря'";
     val simple = "12,'Добрый день'"
     val parser = ParseDSL();
+    val SDSL = DSL.ParseDSL()
     @Test
     fun getDSLRulestoObject() {
         val readRole: Role = Role("read","", parser)
@@ -35,6 +36,12 @@ internal class ParseDSLTest {
 
     @Test
     fun testParseRole() {
+        val readRole: Role = Role("read","", parser)
+        assertEquals(readRole.toString(), parser.parseRole(input).toString())
+    }
+
+    @Test
+    fun testParseRoleSS() {
         val readRole: Role = Role("read","", parser)
         assertEquals(readRole.toString(), parser.parseRole(input).toString())
     }

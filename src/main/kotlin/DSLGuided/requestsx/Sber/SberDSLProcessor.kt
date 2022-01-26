@@ -1,10 +1,9 @@
 package DSLGuided.requestsx.Sber
 
-import DSL.abstractions.KeyValue
 import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.PSA.PSADSLProcessor
 import DSLGuided.requestsx.RoleHandler
-//import abstractions.KeyValue
+import abstractions.KeyValue
 import abstractions.Role
 import se.roland.crypto.Gost3411Hash.getBytesFromBase64
 import se.roland.transport.SAAJ
@@ -245,8 +244,8 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                 Arr.forEach { a ->
                     when (a) {
                         is KeyValue -> {
-                            if (a.Key().equals("ordernumber")) {
-                                HOOK_ORDERNUMBER = {a.Value() as String}
+                            if (a.Key.equals("ordernumber")) {
+                                HOOK_ORDERNUMBER = {a.Value as String}
                                 println("HOOK ordernumber to=>${HOOK_ORDERNUMBER()}")
                             }
 
@@ -268,11 +267,11 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                 val Lst = a.key.Param as MutableList<KeyValue>
                 Lst.forEach { A ->
                     run {
-                        when (A.Key()) {
-                            "amount"        -> amount        = { A.Value().toString().toInt() }
-                            "currency"      -> currency      = { A.Value().toString().toInt() }
-                            "orderNumber"   -> orderNumber   = { A.Value().toString().toInt() }
-                            "clientId"      -> clientId      = { A.Value().toString().toInt() }
+                        when (A.Key) {
+                            "amount"        -> amount        = { A.Value.toString().toInt() }
+                            "currency"      -> currency      = { A.Value.toString().toInt() }
+                            "orderNumber"   -> orderNumber   = { A.Value.toString().toInt() }
+                            "clientId"      -> clientId      = { A.Value.toString().toInt() }
                         }
                     }
                 }
@@ -317,8 +316,8 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
             if (a.key.Name == "KEY") {
                 var Arr = a.key.Param as MutableList<KeyValue>
                 Arr.forEach{a->
-                    when (a.Key()){
-                        "public"-> PUBLIC_KEY = {String(Saver.Saver.readBytes(a.Value() as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
+                    when (a.Key){
+                        "public"-> PUBLIC_KEY = {String(Saver.Saver.readBytes(a.Value as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
                         .replace("ENDRSAPRIVATEKEY", "END RSA PRIVATE KEY")
                         .replace("BEGINPUBLICKEY", "BEGIN PUBLIC KEY")
                         .replace("ENDPUBLICKEY", "END PUBLIC KEY")
@@ -326,7 +325,7 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                         .replace("-----END PUBLIC KEY-----", "")
                         }
 
-                        "private"-> PRIVATE_KEY = {String(Saver.Saver.readBytes(a.Value() as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
+                        "private"-> PRIVATE_KEY = {String(Saver.Saver.readBytes(a.Value as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
                             .replace("ENDRSAPRIVATEKEY", "END RSA PRIVATE KEY")
                             .replace("BEGINPUBLICKEY", "BEGIN PUBLIC KEY")
                             .replace("ENDPUBLICKEY", "END PUBLIC KEY")
@@ -417,9 +416,9 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                 var orderNumber    : simpleString   = {""}
                 Lst.forEach { A ->
                     run {
-                        when (A.Key()) {
-                            "orderId"        -> orderId      = { A.Value().toString() }
-                            "orderNumber"    -> orderNumber  = { A.Value().toString() }
+                        when (A.Key) {
+                            "orderId"        -> orderId      = { A.Value.toString() }
+                            "orderNumber"    -> orderNumber  = { A.Value.toString() }
                         }
                     }
                 }
@@ -457,9 +456,9 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                 var PAN    : simpleString   = {""}
                 Lst.forEach { A ->
                     run {
-                        when (A.Key()) {
-                            "orderId"        -> orderId      = { A.Value().toString() }
-                            "PAN"            -> PAN          = { A.Value().toString() }
+                        when (A.Key) {
+                            "orderId"        -> orderId      = { A.Value.toString() }
+                            "PAN"            -> PAN          = { A.Value.toString() }
                         }
                     }
                 }
