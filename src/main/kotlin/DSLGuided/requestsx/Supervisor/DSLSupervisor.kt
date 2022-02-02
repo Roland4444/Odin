@@ -4,9 +4,9 @@ import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import DSLGuided.requestsx.Sber.simpleString
 import abstractions.Role
-import io.javalin.Javalin
-import io.javalin.http.Context
-import io.javalin.http.Handler
+//import io.javalin.Javalin
+//import io.javalin.http.Context
+//import io.javalin.http.Handler
 import se.roland.abstractions.Call
 import se.roland.util.GLOBAL.LOG
 import se.roland.util.Memory
@@ -53,15 +53,15 @@ class DSLSupervisor: DSLProcessor() {
         }
         return SB.toString()
     }
-    val muHandler: Handler = object:Handler{
-        override fun handle(p0: Context) {
-            p0.html(getmemoryUsage())        }
-    }
-
-    val mvHandler: Handler = object:Handler{
-        override fun handle(p0: Context) {
-            p0.html(getmemoryWarnings())        }
-    }
+//    val muHandler: Handler = object:Handler{
+//        override fun handle(p0: Context) {
+//            p0.html(getmemoryUsage())        }
+//    }
+//
+//    val mvHandler: Handler = object:Handler{
+//        override fun handle(p0: Context) {
+//            p0.html(getmemoryWarnings())        }
+//    }
 
 
     fun getmemoryWarnings(): String{
@@ -77,10 +77,10 @@ class DSLSupervisor: DSLProcessor() {
         mapper.forEach { it.value.invoke(it.key)  }
         LOG( "SUPERVISOR setting up.......", FILELOG())
         WorkThread = Watcher(DELAY())
-        val app = Javalin.create().start(PORT())
-        app.get("/" , muHandler)
-        app.get("/mu" , muHandler)
-        app.get("/mw", mvHandler)
+//        val app = Javalin.create().start(PORT())
+//        app.get("/" , muHandler)
+//        app.get("/mu" , muHandler)
+//        app.get("/mw", mvHandler)
         WorkThread.callback = object : Call {
             override fun doIt() {
                     var FREE_MEM = t.getfreeMem() / 1024

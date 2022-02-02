@@ -66,7 +66,7 @@ class DSL {
     var WProcessor: WProcessor? = null
     var DBConnector: DBConnector? = null
     var SberDSLProcessor: SberDSLProcessor? = null
-    var DSLSupervisor: DSLSupervisor? = null
+ ///   var DSLSupervisor: DSLSupervisor? = null
     var EcoProcessor: EcoProcessor? = null
 
     fun getNewEcoProc(): EcoProcessor{
@@ -85,7 +85,7 @@ class DSL {
         WProcessor              = WProcessor()
         DBConnector             = DBConnector()
         SberDSLProcessor        = SberDSLProcessor()
-        DSLSupervisor           = DSLSupervisor()
+    /////    DSLSupervisor           = DSLSupervisor()
         EcoProcessor            = EcoProcessor()
         dslProcessors.add(KeyValue(ECOPROCESSOR_ATOM, EcoProcessor!!))
         dslProcessors.add(KeyValue(SUPERVISOR_ATOM, DSLSupervisor!!))
@@ -115,7 +115,7 @@ class DSL {
         HelperDBUpdate!!.dbconnector=DBConnector!!
         SberDSLProcessor!!.PSADSLProcessor = PSADSLProcessor!!
         getDSLProc(SberDSLProcessor_ATOM).r(getDSLforObject(SberDSLProcessor_ATOM, SERVER_ATOM))
-        getDSLProc(SUPERVISOR_ATOM).r(getDSLforObject(SUPERVISOR_ATOM, SERVER_ATOM))
+    ///    getDSLProc(SUPERVISOR_ATOM).r(getDSLforObject(SUPERVISOR_ATOM, SERVER_ATOM))
         EcoProcessor!!.psearch=PSASearchProcessor!!
     }
 
