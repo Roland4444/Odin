@@ -9,6 +9,7 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import se.roland.util.Checker.checkdigit
 import se.roland.util.Department
+import se.roland.util.GLOBAL
 import se.roland.util.GLOBAL.LOG
 import se.roland.util.HTTPClient
 import se.roland.util.HTTPClient.sendPost
@@ -119,7 +120,8 @@ class PSADSLProcessor  : DSLProcessor() {
     var RES_Check = -100
     val EFFECT = "является действующим"
     val UNEFFECT = "ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ"
-
+    var ENABLED_LOG        = FALSE_ATOM
+    var FILENAME_LOG       = EMPTY_ATOM
     val jsparser = JSONParser()
     var comment: String = ""
     val NONE               = "NONE"
@@ -149,8 +151,7 @@ class PSADSLProcessor  : DSLProcessor() {
     val PERSON_ATOM        = "P"
     val BLACK_ATOM         = "black"
     val COLOR_ATOM         = "color"
-    var ENABLED_LOG        = FALSE_ATOM
-    var FILENAME_LOG       = EMPTY_ATOM
+
 
     var external_searchdsl = EMPTY_ATOM
     lateinit var psearch: PSASearchProcessor
@@ -892,13 +893,7 @@ INSERT INTO `weighing` (
             activatePSA(UUID)
     }
 
-    fun LOG(MSG: String){
-        if (!ENABLED_LOG.equals(TRUE_ATOM))
-            return
-        if (FILENAME_LOG.equals(EMPTY_ATOM))
-            return
-        LOG(MSG, FILENAME_LOG)
-    }
+
 
     fun getUniqueClient(input: String): LinkedList<Any>{
         val param: java.util.ArrayList<Any> = java.util.ArrayList<Any>()
@@ -1354,15 +1349,6 @@ VALUES
         }
     }
 
-    val log: RoleHandler = {
-        mapper.forEach { a ->
-            if (a.key.Name == "log") {
-                val K: KeyValue = a.key.Param as KeyValue
-                ENABLED_LOG = K.Key
-                FILENAME_LOG = K.Value.toString()
-            }
-        }
-    }
     val default1: RoleHandler = {
         mapper.forEach { a ->
             if (a.key.Name == "default1")
@@ -1374,6 +1360,25 @@ VALUES
         mapper.forEach { a ->
             if (a.key.Name == "notupdate")
                 NOT_UPDATE_CLIENT = a.key.Param.toString()
+        }
+    }
+
+    fun LOG(MSG: String){
+        if (!ENABLED_LOG.equals(TRUE_ATOM))
+            return
+        if (FILENAME_LOG.equals(EMPTY_ATOM))
+            return
+        GLOBAL.LOG(MSG, FILENAME_LOG)
+    }
+
+
+    val log: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "log") {
+                val K: KeyValue = a.key.Param as KeyValue
+                ENABLED_LOG = K.Key
+                FILENAME_LOG = K.Value.toString()
+            }
         }
     }
 

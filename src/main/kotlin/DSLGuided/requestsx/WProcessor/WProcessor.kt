@@ -4,9 +4,11 @@ import DSLGuided.requestsx.DSLProcessor
 import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
+import se.roland.util.GLOBAL
 import se.roland.util.HTTPClient
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.StringBuilder
 import java.net.http.HttpClient
 import java.sql.ResultSet
 import java.text.DateFormat
@@ -29,6 +31,9 @@ class WProcessor : DSLProcessor()  {
             return WProc.getResultinLinkedList(DepId)
         }
     }
+    var ENABLED_LOG        = FALSE_ATOM
+    var FILENAME_LOG       = EMPTY_ATOM
+
     lateinit var pathtoimgs_ : String
     lateinit var addresstoresend_: String
     var UseDepsMap = FALSE_ATOM
@@ -147,8 +152,19 @@ class WProcessor : DSLProcessor()  {
         fos2.write(Arr2)
     }
 
+    fun LOG(MSG: String){
+        if (!ENABLED_LOG.equals(TRUE_ATOM))
+            return
+        if (FILENAME_LOG.equals(EMPTY_ATOM))
+            return
+        GLOBAL.LOG(MSG, FILENAME_LOG)
+    }
+
     fun resenddata(Params: HashMap<String, String>){
         println("\n\n\n\nRESENDING!!!!\n\n\n\n\n")
+        val LOGGING_RESENDED_DATA = StringBuilder()
+        Params.forEach { a -> LOGGING_RESENDED_DATA.append("${a.key}::${a.value}\n")}
+        LOG(LOGGING_RESENDED_DATA.toString())
         HTTPClient.sendPOST(Params, addresstoresend_)
     }
 
@@ -203,6 +219,17 @@ class WProcessor : DSLProcessor()  {
         }
     }
 
+
+    val log: RoleHandler = {
+        mapper.forEach { a ->
+            if (a.key.Name == "log") {
+                val K: KeyValue = a.key.Param as KeyValue
+                ENABLED_LOG = K.Key
+                FILENAME_LOG = K.Value.toString()
+            }
+        }
+    }
+
     override fun appendRole(R: Role) {
         print("Adding role ${R.Name}\n")
         when (R?.Name) {
@@ -212,6 +239,8 @@ class WProcessor : DSLProcessor()  {
             "testmode" -> mapper.put(R, testmode)
             "example" -> mapper.put(R, example)
             "usedepsmap" -> mapper.put(R, usedepsmap)
+            "log"           -> mapper.put(R, log)
+
         }
     }
 }

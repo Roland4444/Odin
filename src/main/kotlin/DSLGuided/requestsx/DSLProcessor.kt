@@ -1,6 +1,9 @@
 package DSLGuided.requestsx
+import abstractions.KeyValue
 import abstractions.Role
 import com.avs.ParseDSL
+import se.roland.util.GLOBAL
+
 typealias RoleHandler = (Role: Role) -> Unit
 typealias DumbHandler = (Param:Int) -> Int
 typealias StringHandler = (Param:String) -> String
@@ -11,6 +14,7 @@ abstract class DSLProcessor() {
     val FALSE_ATOM = "false"
     val OK = "OK"
     val EMPTY_ATOM = ""
+
     var enabled: String = "false"
     var parser = ParseDSL()
     var mapper = mutableMapOf<Role, RoleHandler>()
@@ -34,4 +38,9 @@ abstract class DSLProcessor() {
             }
         }
     }
+
+
+
+
+
 }
