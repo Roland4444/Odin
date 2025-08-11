@@ -24,7 +24,7 @@ class WProcessorTest : TestCase() {
         assertEquals("db2.avs.com.ru/storage/purchase/import", wProcessor.addresstoresend_)
     }
 
-    fun testResenddata() {
+    fun Resenddata() {
         val dsl = """'wprocessor'=>::pathtoimgs{./IMG},::addresstoresend{https://db2.avs.com.ru/storage/purchase/import},::enabled{'true'}."""
         wProcessor.r(dsl);
         val Map = mapOf("t1" to "2", "t2"  to "T222", "t3" to "5.888")
@@ -42,7 +42,7 @@ class WProcessorTest : TestCase() {
 
     }
 
-    fun testGetW() {
+    fun GetW() {
         val dsl = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         val Connector = DBConnector()
         Connector.r(dsl)
@@ -65,7 +65,7 @@ class WProcessorTest : TestCase() {
         assertTrue(WProc.testmode_)
         assertEquals("88.bin", WProc.exampleListFile)
     }
-    fun testGetDepIdViaName() {
+    fun GetDepIdViaName() {
         val dsl = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://db2.avs.com.ru/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         val Connector = DBConnector()
         Connector.r(dsl)

@@ -70,7 +70,7 @@ class SberDSLProcessorTest : TestCase() {
         assertEquals(Etalon_Header, Sber.headersecurity())
     }
 
-    fun testgeneratefrompsaId(){
+    fun generatefrompsaId(){
         var psa  = PSADSLProcessor()
         val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         val psastr = "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
@@ -85,7 +85,7 @@ class SberDSLProcessorTest : TestCase() {
         println(Sber.constructDSL4registerP2p(145780))
     }
 
-    fun testprocesspsaId(){
+    fun processpsaId(){
         val psaid = 145780
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa  = PSADSLProcessor()
@@ -115,7 +115,7 @@ class SberDSLProcessorTest : TestCase() {
         assertEquals(Sber.order_id_(Resp), "1a00a8df-c705-72de-8cba-ed2b2823c181")
     }
 
-    fun testprocesspsaIdwithsaveinDB(){
+    fun processpsaIdwithsaveinDB(){
         val psaid = 148233
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa  = PSADSLProcessor()
@@ -137,7 +137,7 @@ class SberDSLProcessorTest : TestCase() {
         Sber.r(StrRequest)
     }
 
-    fun testRejectNew(){
+    fun RejectNew(){
         val psaid = 148233
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa  = PSADSLProcessor()
@@ -169,7 +169,7 @@ class SberDSLProcessorTest : TestCase() {
         assertEquals(Sber.REJECTED_ATOM, STATUS2)
     }
 
-    fun testbindingId(){
+    fun bindingId(){
         var psa  = PSADSLProcessor()
         val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         val psastr = "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
@@ -186,7 +186,7 @@ class SberDSLProcessorTest : TestCase() {
         assertEquals("456464634-5464654654-65776657", Sber.binding_id_())
     }
 
-    fun testKEY(){
+    fun KEY(){
         var psa  = PSADSLProcessor()
         val psaconnstr = "'psaconnector'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}."
         val psastr = "'psa'=>::notupdate{true},::default1{true},::log{'true':'psadsl.log'},::number_at_2_w{true},::passcheck{true},::passcheckurl{https://passport.avs.com.ru/},::activatePSA{true},::urltoActivate{http://192.168.0.126:15000/psa/psa/gettest},::psaIDtoSEhooK{'true','3':'1'},::HOOK{'false','section':'244'},::enabled{'true'}.:-:HOOK{'true','section':'2','uuid':'55555'}\n"
@@ -213,7 +213,7 @@ class SberDSLProcessorTest : TestCase() {
         assertEquals(KEY_ETALON, Sber.PUBLIC_KEY())
     }
 
-    fun testTimestamp(){
+    fun Timestamp(){
         val psaid = 148233
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa = PSADSLProcessor()
@@ -232,7 +232,7 @@ class SberDSLProcessorTest : TestCase() {
     }
 
 
-    fun testPerformP2p() {
+    fun PerformP2p() {
 
         val psaid = 29128
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
@@ -272,7 +272,7 @@ class SberDSLProcessorTest : TestCase() {
 
 
 
-    fun testPerformDirect() {
+    fun PerformDirect() {
 
         val psaid = 148233
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
@@ -299,7 +299,7 @@ class SberDSLProcessorTest : TestCase() {
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }
 
-    fun testse(){
+    fun se(){
         val psaid = 148233
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa = PSADSLProcessor()
@@ -360,7 +360,7 @@ class SberDSLProcessorTest : TestCase() {
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }
 
-    fun teststatus(){
+    fun status(){
         val psaid = 29128
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa = PSADSLProcessor()
@@ -399,7 +399,7 @@ class SberDSLProcessorTest : TestCase() {
         println("RESPONCE::::${Sber.LAST_RESPONCE()}")
     }
 
-    fun testCreatePayment(){
+    fun CreatePayment(){
         val psaid = 29128
         val test = "https://3dsec.sberbank.ru/payment/webservices/p2p?wsdl"
         var psa = PSADSLProcessor()

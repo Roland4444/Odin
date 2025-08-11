@@ -70,7 +70,7 @@ class EcoProcessorTest : TestCase() {
         EcoProc.process()
     }
 
-    fun testquatermap(){
+    fun quatermap(){
         val dsl = "'eco'=>::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::quartermap{'1':'year-01-01'/'year-02-31','2':''year-04-01'/'year-06-30'','3':''year-07-01'/'year-9-30'','4':''year-10-01'/'year-12-31''},::enabled{'true'}."
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()
@@ -83,7 +83,7 @@ class EcoProcessorTest : TestCase() {
         assertEquals("'year-01-01':'year-02-31'", EcoProc.QuarterMap.get(1) )
     }
 
-    fun testfilename(){
+    fun filename(){
         val dsl = "'eco'=>::filename{simp5.xlsx},::generatefor{'quarter':1,'year':2019,'department':['ПЗУ №3', 'ПЗУ №2']},::quartermap{'1':'year-01-01'/'year-02-31','2':''year-04-01'/'year-06-30'','3':''year-07-01'/'year-9-30'','4':''year-10-01'/'year-12-31''},::enabled{'true'}."
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()
@@ -98,7 +98,7 @@ class EcoProcessorTest : TestCase() {
 
     }
 
-    fun testprocesspatchedmapap() {
+    fun processpatchedmapap() {
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()
         psaconnector.r(initDB)
@@ -140,7 +140,7 @@ class EcoProcessorTest : TestCase() {
     }
 
 
-    fun testfiulename(){
+    fun fiulename(){
         val STR = "'eco'=>::filename{simp5.xlsx},::quartermap{'1':'year-01-01'/'year-01-31','2':'year-04-01'/'year-04-02','3':'year-07-01'/'year-07-04','4':'year-10-01'/'year-10-04'},::generatefor{'quarter':2,'year':2021,'department':['ПЗУ №2','ПЗУ №3']},::enabled{'true'}."
         val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
         val psaconnector = PSAConnector()

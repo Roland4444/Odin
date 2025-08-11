@@ -9,6 +9,7 @@ import se.roland.crypto.Gost3411Hash.getBytesFromBase64
 import se.roland.transport.SAAJ
 import se.roland.xml.Extractor
 import se.roland.xml.Transform
+import util.*
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
@@ -317,7 +318,8 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                 var Arr = a.key.Param as MutableList<KeyValue>
                 Arr.forEach{a->
                     when (a.Key){
-                        "public"-> PUBLIC_KEY = {String(Saver.Saver.readBytes(a.Value as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
+                        "public"-> PUBLIC_KEY = {
+                            java.lang.String(Saver.readBytes(a.Value as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
                         .replace("ENDRSAPRIVATEKEY", "END RSA PRIVATE KEY")
                         .replace("BEGINPUBLICKEY", "BEGIN PUBLIC KEY")
                         .replace("ENDPUBLICKEY", "END PUBLIC KEY")
@@ -325,7 +327,8 @@ val STR = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/env
                         .replace("-----END PUBLIC KEY-----", "")
                         }
 
-                        "private"-> PRIVATE_KEY = {String(Saver.Saver.readBytes(a.Value as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
+                        "private"-> PRIVATE_KEY = {
+                            java.lang.String(Saver.readBytes(a.Value as String)).replace("BEGINRSAPRIVATEKEY", "BEGIN RSA PRIVATE KEY")
                             .replace("ENDRSAPRIVATEKEY", "END RSA PRIVATE KEY")
                             .replace("BEGINPUBLICKEY", "BEGIN PUBLIC KEY")
                             .replace("ENDPUBLICKEY", "END PUBLIC KEY")

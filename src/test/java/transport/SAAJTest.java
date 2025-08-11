@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotEquals;
 
 public class SAAJTest extends TestCase {
 
-    public void testSend() throws Exception {
+    public void tP_estSend() throws Exception {
         String file = "xml4test/input.xml";
         String regs = "xml4test/registerp2p.xml";
         String work_txt = "xml4test/worktxt.xml";

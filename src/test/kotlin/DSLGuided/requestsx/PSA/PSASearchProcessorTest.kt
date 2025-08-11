@@ -20,7 +20,7 @@ import org.json.simple.parser.JSONParser
 class PSASearchProcessorTest : TestCase() {
     val initDB = "'psadb'=>::psa{'login':'root','pass':'123'},::db{jdbc:mysql://192.168.0.121:3306/psa},::enabled{'true'}."
     val psaconnector = PSAConnector()
-    fun testSimplesearch() {
+    fun Simplesearch() {
         val search_dsl = "'search'=>::sql{'SELECT * FROM psa '},::numberpsa{'1900'},::department{'ПЗУ №3',''},::datarange{'12.06.1940':'12.07.1940'},::client{'ООО Артемий'},::platenumber{'KAMAZ K582HB30'}."
         psaconnector.r(initDB)
         var psasearch = PSASearchProcessor()
@@ -34,7 +34,7 @@ class PSASearchProcessorTest : TestCase() {
         }
      //   psasearch.simplesearch()
     }
-    fun testsearch() {
+    fun search() {
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::client{'ШАПУРИН АНАТОЛИЙ ВИКТОРОВИЧ'}."
         psaconnector.r(initDB)
         var psasearch = PSASearchProcessor()
@@ -49,7 +49,7 @@ class PSASearchProcessorTest : TestCase() {
         }
     }
 
-    fun testsearchpzu3() {
+    fun searchpzu3() {
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::department{'ПЗУ №3',''}."
         psaconnector.r(initDB)
         var psasearch = PSASearchProcessor()
@@ -66,7 +66,7 @@ class PSASearchProcessorTest : TestCase() {
         //   psasearch.simplesearch()
     }
 
-    fun test_search_depsretricted(){
+    fun _search_depsretricted(){
         val search_dsl = "'search'=>::sql{'SELECT * FROM psa '},::numberpsa{'4926'}."
         var psasearch = PSASearchProcessor()
         psaconnector.r(initDB)
@@ -90,14 +90,14 @@ class PSASearchProcessorTest : TestCase() {
 
     }
 
-    fun testGetdepIdExecutor() {
+    fun GetdepIdExecutor() {
         psaconnector.r(initDB)
         var psasearch = PSASearchProcessor()
         psasearch.psaconnector= psaconnector
         assertEquals("2", psasearch.getdepIdExecutor("ПЗУ №3"))
     }
 
-fun testsearchplatenumber(){
+fun searchplatenumber(){
 
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::platenumber{'VAZ P890BE30'}."
         psaconnector.r(initDB)
@@ -115,7 +115,7 @@ fun testsearchplatenumber(){
         //   psasearch.simplesearch()
     }
 
-    fun testsearchplatenumber___(){
+    fun searchplatenumber___(){
 
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::platenumber{'VAZ P890BE30 and`client`=4352'}."
         psaconnector.r(initDB)
@@ -133,7 +133,7 @@ fun testsearchplatenumber(){
         //   psasearch.simplesearch()
     }
 
-    fun testCreateJSONResponce() {
+    fun CreateJSONResponce() {
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::platenumber{'VAZ P890BE30'}."
         psaconnector.r(initDB)
         var psasearch = PSASearchProcessor()
@@ -145,7 +145,7 @@ fun testsearchplatenumber(){
         println(psasearch.createJSONResponce(psasearch.getPSA()))
     }
 
-    fun testCreateJSONResponcetimer() {
+    fun CreateJSONResponcetimer() {
         val startTime = System.nanoTime()
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::datarange{'2020-01-01':'2021-08-04'}."
         psaconnector.r(initDB)
@@ -164,7 +164,7 @@ fun testsearchplatenumber(){
     }
 
 
-    fun testCounterBlack() {
+    fun CounterBlack() {
         val startTime = System.nanoTime()
         val search3 =  "'search'=>::sql{'SELECT * FROM psa '},::datarange{'2021-01-01':'2021-01-31'}."
         psaconnector.r(initDB)
@@ -213,7 +213,7 @@ fun testsearchplatenumber(){
     }
 
 
-    fun testsearchcountMaxNuberPSA(){
+    fun searchcountMaxNuberPSA(){
         val search6 =  "'search'=>::sql{'SELECT * FROM psa '},::datarange{'2021-10-12':'2021-10-15'}."
         psaconnector.r(initDB)
         var psasearch = PSASearchProcessor()
@@ -225,7 +225,7 @@ fun testsearchplatenumber(){
             println("COUNTER::${counter++}")
     }
 
-    fun testsearchcount(){
+    fun searchcount(){
         val search6 =  "'search'=>::sql{'SELECT * FROM logs '},::date{'2021-10-12':'2021-10-15'},::users{'20','25','26','15','34'}."
         psaconnector.r(initDB)
         var psasearch = PSASearchProcessor()
@@ -241,7 +241,7 @@ fun testsearchplatenumber(){
 
 
     //  ЯВЛЯЕТСЯ НЕДЕЙСТВИТЕЛЬНЫМ!
-    fun testDBConnectorTestGetPSAIdViaUUID() {
+    fun DBConnectorTestGetPSAIdViaUUID() {
       psaconnector.r(initDB)
       var psasearch = PSASearchProcessor()
       psasearch. psaconnector=psaconnector

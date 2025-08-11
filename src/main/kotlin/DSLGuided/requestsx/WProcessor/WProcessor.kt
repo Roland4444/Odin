@@ -5,6 +5,7 @@ import DSLGuided.requestsx.RoleHandler
 import abstractions.KeyValue
 import abstractions.Role
 import se.roland.util.HTTPClient
+import util.Saver
 import java.io.File
 import java.io.FileOutputStream
 import java.net.http.HttpClient
@@ -102,7 +103,7 @@ class WProcessor : DSLProcessor()  {
 
     fun getResultinLinkedList(dep: String): LinkedList<Any>{
         if (testmode_)
-            return Saver.Saver.restored(Saver.Saver.readBytes(exampleListFile)) as LinkedList<Any>
+            return Saver.restored(Saver.readBytes(exampleListFile)) as LinkedList<Any>
         val input = getW(dep)
         var res = LinkedList<Any>()
         while (input!!.next()){

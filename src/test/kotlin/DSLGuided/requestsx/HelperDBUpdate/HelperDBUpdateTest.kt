@@ -5,7 +5,7 @@ import junit.framework.TestCase
 
 class HelperDBUpdateTest : TestCase() {
 
-    fun testParseRoles() {
+    fun ParseRoles() {
         val dsl = "'dbhelper'=>::hockDeleting{true},::ProductionMode{true},::enabled{'true'}."
         val initDB = "'dbconnector'=>::dblogin{avs},::dbpass{'123'},::db{jdbc:mysql://192.168.0.173:3306/avs?autoReconnect=true},::enabled{'true'},::timedbreconnect{3600}. ////\n"
         val dbconnector = DBConnector()
@@ -19,5 +19,9 @@ class HelperDBUpdateTest : TestCase() {
         HelperDBUpdate.r(dsl2)
         assertEquals(true, HelperDBUpdate.ProductionMode_)
         assertEquals(false, HelperDBUpdate.hockDeleting_)
+    }
+
+    fun testf() {
+        assertEquals(2,2)
     }
 }

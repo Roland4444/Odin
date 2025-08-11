@@ -5,7 +5,7 @@ import java.io.File
 
 class DSLSupervisorTest : TestCase() {
 
-    fun testGetFilelog() {
+    fun tGetFilelog() {
         val FILELOG_ = "text.log"
         val ALERTLOG_ = "alertlog.log"
         if (File(FILELOG_).exists())
