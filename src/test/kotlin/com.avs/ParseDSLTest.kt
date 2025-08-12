@@ -16,6 +16,11 @@ internal class ParseDSLTest {
     val param: String = "12,'Добрый день', 'таблицы':['касса','склад','приход'], '12 декабря'";
     val simple = "12,'Добрый день'"
     val parser = ParseDSL();
+
+
+    val input2: String = """'requests' => ::read{'2'}, ::write{'2'}, ::create{'2'}."""
+    val ainput: String = """'a' => ::href{'http://google.com'}, ::desc{'simple a'}."""
+
     @Test
     fun getDSLRulestoObject() {
         val readRole: Role = Role("read","", parser)
@@ -24,6 +29,26 @@ internal class ParseDSLTest {
         var Roles: MutableList<Role> = mutableListOf(readRole, writeRole, createRole)
         var ObjectRules : DSLRole = DSLRole("requests", Roles)
         assertEquals(ObjectRules, parser.getDSLRulesfromString(input))
+    }
+
+    @Test
+    fun getDSLRulestoObject2() {
+        val readRole: Role = Role("read","", parser)
+        val writeRole: Role = Role("write","", parser)
+        val createRole: Role = Role("create","", parser)
+        var Roles: MutableList<Role> = mutableListOf(readRole, writeRole, createRole)
+        var ObjectRules : DSLRole = DSLRole("requests", Roles)
+        assertEquals(ObjectRules, parser.getDSLRulesfromString(input2))
+    }
+
+    @Test
+    fun getDSLRulestoObject3() {
+        val readRole: Role = Role("href","http://google.com", parser)
+        val writeRole: Role = Role("desc","simple a", parser)
+        var Roles: MutableList<Role> = mutableListOf(readRole, writeRole)
+        var ObjectRules : DSLRole = DSLRole("a", Roles)
+        val roles = parser.getDSLRulesfromString(ainput)
+        assertEquals(ObjectRules, parser.getDSLRulesfromString(ainput))
     }
     @Test
     fun testbstr(){

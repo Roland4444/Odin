@@ -116,6 +116,8 @@ class ParseDSL : Serializable {
             Atom.None->{
                 return input
             }
+
+            else -> {}
         }
         return ""
     }

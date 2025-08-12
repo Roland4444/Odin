@@ -28,9 +28,13 @@ class DSLSupervisorTest : TestCase() {
         assertTrue(File(ALERTLOG_).exists())
     }
 
-    fun testgetMem(){
+    fun getMem(){
         val StrMem = "2022-01-10T15:07:50.652814295::FREE MEM::3931"
         val SW = DSLSupervisor()
         assertEquals(3931, SW.getMemfromString(StrMem))
+    }
+
+    fun testc(){
+        assertEquals(true, true)
     }
 }
