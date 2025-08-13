@@ -9,10 +9,15 @@ import java.io.Serializable
 class ParseDSL : Serializable {
     val checker = Checker()
     fun getDSLRulesfromString(input: String): DSLRole? {
-        val objectName: String = input.substring(input.indexOf("'")+1, input.lastIndexOf("'"))
+        val objectName: String = input.replace(" ","").substring(input.indexOf("'")+1, input.indexOf("=>")-2)//input.lastIndexOf("'"))
         println("""Loading rules for object <$objectName>""")
         return DSLRole(objectName, parseRoles(input))
     }
+//    fun getDSLRulesfromString(input: String): DSLRole? {
+//        val objectName: String = input.substring(input.indexOf("'")+1, input.lastIndexOf("'"))
+//        println("""Loading rules for object <$objectName>""")
+//        return DSLRole(objectName, parseRoles(input))
+//    }
     fun parseRole(input: String): Role? {
         if (input.indexOf("{") == -1) return null
         val rolename: String= input.substring(input.indexOf("::")+2, input.indexOf("{"))

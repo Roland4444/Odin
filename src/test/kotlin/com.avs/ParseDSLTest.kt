@@ -38,7 +38,7 @@ internal class ParseDSLTest {
         val createRole: Role = Role("create","", parser)
         var Roles: MutableList<Role> = mutableListOf(readRole, writeRole, createRole)
         var ObjectRules : DSLRole = DSLRole("requests", Roles)
-        assertEquals(ObjectRules, parser.getDSLRulesfromString(input2))
+        assertEquals(ObjectRules.toString(), parser.getDSLRulesfromString(input2).toString())
     }
 
     @Test
@@ -48,7 +48,7 @@ internal class ParseDSLTest {
         var Roles: MutableList<Role> = mutableListOf(readRole, writeRole)
         var ObjectRules : DSLRole = DSLRole("a", Roles)
         val roles = parser.getDSLRulesfromString(ainput)
-        assertEquals(ObjectRules, parser.getDSLRulesfromString(ainput))
+        assertEquals(ObjectRules.toString(), parser.getDSLRulesfromString(ainput).toString())
     }
     @Test
     fun testbstr(){

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.roland</groupId>
     <artifactId>Odin</artifactId>
-    <version>4.0.8</version>
+    <version>4.0.9</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
