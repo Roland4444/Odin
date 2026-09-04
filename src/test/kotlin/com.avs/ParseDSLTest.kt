@@ -31,6 +31,13 @@ internal class ParseDSLTest {
     }
 
     @Test
+    fun testInputWithparamString(){
+        val res = parser.parseRoles(inputwithparam);
+        val img  = res.toString();
+        println("Result:{$img}")
+    }
+
+    @Test
     fun parsewithparams(){
         val etalon= mutableListOf<Any>();
         etalon.add(12);

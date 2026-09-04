@@ -12,7 +12,8 @@
         <java.version>15</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <kotlin.version>1.5.10</kotlin.version>
+<!--        <kotlin.version>1.5.10</kotlin.version>-->
+        <kotlin.version>2.1.10</kotlin.version>
         <junit.version>4.12</junit.version>
         <main.class>com.avs.Odin</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,26 +39,26 @@
             <artifactId>java-uuid-generator</artifactId>
             <version>3.1.4</version>
         </dependency>
-        <dependency>
-            <groupId>fr.roland</groupId>
-            <artifactId>Executor</artifactId>
-            <version>1.0.6</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>fr.roland</groupId>-->
+<!--            <artifactId>Executor</artifactId>-->
+<!--            <version>1.0.6</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.22</version>
         </dependency>
-        <dependency>
-            <groupId>uk.roland</groupId>
-            <artifactId>Messaging</artifactId>
-            <version>4.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>MessagingAVS</artifactId>
-            <version>1.5-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>uk.roland</groupId>-->
+<!--            <artifactId>Messaging</artifactId>-->
+<!--            <version>4.2-SNAPSHOT</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.example</groupId>-->
+<!--            <artifactId>MessagingAVS</artifactId>-->
+<!--            <version>1.5-SNAPSHOT</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
